@@ -25,11 +25,23 @@ public class User {
     public User() {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Register new user ***");
-        System.out.println("Insert new userName");
+        System.out.println("Insert new userName: ");
+        this.userName = sc.next();
+        System.out.println("Insert password: ");
+        this.passWord=sc.next();
+        System.out.println("Insert address: ");
+        this.address =sc.next();
+        System.out.println("Insert date of birthday (dd/mm/yyyy): ");
+        String auxDate=sc.next();
+        this.dob = new Date(auxDate);
+        System.out.println("Insert phone number: ");
+        this.phoneNumber = sc.nextInt();
+        System.out.println("Insert mail address: ");
+        this.mail=sc.next();
 
     }
 
-    public boolean testUserName(String un){
+    public boolean testUserName(String un){ // test if UserName already exists
         return(this.userName==un);
     }
 
