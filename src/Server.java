@@ -8,7 +8,7 @@ import java.net.Socket;
  * Created by Diogo on 14/10/2014.
  */
 public class Server {
-
+//TODO static array list de dataoutputstrams
     public static boolean mainServer;
 
     public static void main(String[] args) {
@@ -66,6 +66,7 @@ class Connection extends Thread {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
+            //TODO aicionaro out au al
             this.start();
         } catch (IOException e) {
             System.out.println("Connection: " + e.getMessage());
@@ -77,10 +78,12 @@ class Connection extends Thread {
         try {
             name = in.readUTF();
             System.out.println("-> " + name + " connected");
+            //TODO for para percorrer os clients e mandar a mensagem p todos
             out.writeUTF("Ola " + name);
         } catch (IOException e) {
             System.out.println("Receiving name: " + e.getMessage());
         } finally {
+            //TODO retirar o this.out do al
             if (name != null) {
                 System.out.println("-> " + name + " disconnected");
             }

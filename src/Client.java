@@ -34,6 +34,7 @@ public class Client {
         }
 
         try {
+            //TODO meter while para escrever e fazer thread para leitura, init thread
             socket = new Socket(args[0], ServerSocket);
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
