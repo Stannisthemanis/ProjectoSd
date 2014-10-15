@@ -1,10 +1,10 @@
-import java.net.Socket;
-
 /**
  * Created by Diogo on 14/10/2014.
  */
 public class Client {
     public static void main(String[] args) {
+<<<<<<< Temporary merge branch 1
+=======
 
         if (args.length != 1) {
             System.out.println("Sintax: java Client hostname");

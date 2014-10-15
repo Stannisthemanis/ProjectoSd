@@ -1,16 +1,7 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
-
 /**
  * Created by Diogo on 14/10/2014.
  */
 public class Server {
-
-    public static boolean mainServer = true;
-
     public static void main(String[] args) {
 
         if (args.length != 1) {
