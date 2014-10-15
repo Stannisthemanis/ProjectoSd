@@ -44,6 +44,7 @@ public class Server {
                 while (true) {
                     Socket clientSocket = listenSocket.accept();
                     System.out.println("Client connected with socket: " + clientSocket);
+                    new Connection(clientSocket);
                 }
             } catch (IOException e) {
                 System.out.println("Listen: " + e.getMessage());
@@ -72,11 +73,17 @@ class Connection extends Thread {
     }
 
     public void run() {
+        String name = null;
         try {
-            String name = in.readUTF();
-            System.out.println("-> " + name + "connected");
+            name = in.readUTF();
+            System.out.println("-> " + name + " connected");
+            out.writeUTF("Ola " + name);
         } catch (IOException e) {
             System.out.println("Receiving name: " + e.getMessage());
+        } finally {
+            if (name != null) {
+                System.out.println("-> " + name + " disconnected");
+            }
         }
     }
 }
