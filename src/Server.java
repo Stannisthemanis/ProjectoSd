@@ -31,7 +31,7 @@ public class Server {
             System.exit(0);
         }
 
-        if (mainServer == true) {
+        if (mainServer) {
 
             try {
                 int serverPort = 6000;
@@ -60,11 +60,23 @@ class Connection extends Thread {
     DataInputStream in;
     Socket clientSocket;
 
-    Connection(DataOutputStream out, DataInputStream in, Socket clientSocket) {
-        this.out = out;
-        this.in = in;
-        this.clientSocket = clientSocket;
+    Connection(Socket cSocket) {
+        try {
+            this.clientSocket = cSocket;
+            this.out = new DataOutputStream(clientSocket.getOutputStream());
+            this.in = new DataInputStream(clientSocket.getInputStream());
+            this.start();
+        } catch (IOException e) {
+            System.out.println("Connection: " + e.getMessage());
+        }
     }
 
-
+    public void run() {
+        try {
+            String name = in.readUTF();
+            System.out.println("-> " + name + "connected");
+        } catch (IOException e) {
+            System.out.println("Receiving name: " + e.getMessage());
+        }
+    }
 }
