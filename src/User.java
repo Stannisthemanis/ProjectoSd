@@ -1,4 +1,5 @@
 import java.util.Date;
+import java.util.Scanner;
 
 /**
  * Created by Ricardo on 15/10/2014.
@@ -19,6 +20,21 @@ public class User {
         this.dob = dob;
         this.phoneNumber = phoneNumber;
         this.mail = mail;
+    }
+
+    public User() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("*** Register new user ***");
+        System.out.println("Insert new userName");
+
+    }
+
+    public boolean testUserName(String un){
+        return(this.userName==un);
+    }
+
+    public boolean testLogIn(String un, String pw){
+        return ((this.userName==un) && (this.passWord == pw));
     }
 
     public String getUserName() {
