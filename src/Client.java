@@ -20,7 +20,7 @@ public class Client {
         }
 
         Socket socket = null;
-        int ServerSocket = 6000;
+        int ServerSocket = 6001;
 
         int tries = 0;
         while ((username = login()) == null) {
