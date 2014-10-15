@@ -38,9 +38,9 @@ public class Invite {
 
     @Override
     public String toString() {
-        return "Invite: " +'\n'+
-                "Meeting: " + meeting +'\n'+
-                "Decision: " + decision +'\n'+
+        return "Invite: " + '\n' +
+                "Meeting: " + meeting + '\n' +
+                "Decision: " + decision + '\n' +
                 "Invited User: " + invitedUser;
     }
 }

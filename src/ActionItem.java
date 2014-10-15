@@ -41,6 +41,6 @@ public class ActionItem {
         return "ActionItem: " +
                 "Action item name: " + name + '\n' +
                 "Responsible User: " + userResponsible + '\n' +
-                "Related Agenda Item: " + agendaItem ;
+                "Related Agenda Item: " + agendaItem;
     }
 }

@@ -9,14 +9,14 @@ public class Meeting {
     protected String local;
     protected String responsibleUser;
     protected String desireOutcome;
-    protected Date   date;
-    protected Date   duration; //hours
+    protected Date date;
+    protected Date duration; //hours
     protected ArrayList<Invite> invitations;
     protected ArrayList<AgendaItem> agendaItems;
     protected ArrayList<ActionItem> actionItems;
 
     public Meeting(String meetingTitle, String local, String responsibleUser, String desireOutcome, Date date, Date duration,
-           ArrayList<Invite> invitations, ArrayList<AgendaItem> agendaItems, ArrayList<ActionItem> actionItems) {
+                   ArrayList<Invite> invitations, ArrayList<AgendaItem> agendaItems, ArrayList<ActionItem> actionItems) {
         this.meetingTitle = meetingTitle;
         this.local = local;
         this.responsibleUser = responsibleUser;
@@ -100,41 +100,41 @@ public class Meeting {
         this.actionItems = actionItems;
     }
 
-    public String printInvitations(ArrayList<Invite> invitations){
-        String outPut="";
+    public String printInvitations(ArrayList<Invite> invitations) {
+        String outPut = "";
         for (Invite invitation : invitations) {
-            outPut+= invitation.toString()+'\n';
+            outPut += invitation.toString() + '\n';
         }
         return outPut;
     }
 
-    public String printAgendaItems(ArrayList<AgendaItem> agendaItems){
-        String outPut="";
+    public String printAgendaItems(ArrayList<AgendaItem> agendaItems) {
+        String outPut = "";
         for (AgendaItem agendaItem : agendaItems) {
-            outPut+=agendaItem.toString()+'\n';
+            outPut += agendaItem.toString() + '\n';
         }
         return outPut;
     }
 
-    public String printActionItems(ArrayList<ActionItem> actionItems){
-        String outPut="";
+    public String printActionItems(ArrayList<ActionItem> actionItems) {
+        String outPut = "";
         for (ActionItem actionItem : actionItems) {
-            outPut+=actionItem.toString();
+            outPut += actionItem.toString();
         }
         return outPut;
     }
 
     @Override
     public String toString() {
-        return "Meeting info: " +"\n"+
+        return "Meeting info: " + "\n" +
                 "Title: " + meetingTitle + "\n" +
                 "Local: " + local + '\n' +
                 "Responsible User=: " + responsibleUser + '\n' +
                 "Desire Outcome: " + desireOutcome + '\n' +
-                "Date: " + date +"\n"+
-                "Duration: " + duration +"\n"+
-                "Invitations: " + printInvitations(this.invitations) +"\n"+
-                "Agenda Items: " + printAgendaItems(this.agendaItems) +"\n"+
-                "Action Items: " + printActionItems(this.actionItems) ;
+                "Date: " + date + "\n" +
+                "Duration: " + duration + "\n" +
+                "Invitations: " + printInvitations(this.invitations) + "\n" +
+                "Agenda Items: " + printAgendaItems(this.agendaItems) + "\n" +
+                "Action Items: " + printActionItems(this.actionItems);
     }
 }

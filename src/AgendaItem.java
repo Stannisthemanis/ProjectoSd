@@ -18,7 +18,7 @@ public class AgendaItem {
 
     @Override
     public String toString() {
-        return "AgendaItem: " +'\n'+
-                "Item to Discuss: " + ItemToDiscuss ;
+        return "AgendaItem: " + '\n' +
+                "Item to Discuss: " + ItemToDiscuss;
     }
 }

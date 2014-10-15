@@ -74,7 +74,7 @@ public class User {
         return "User Info: " +
                 "Username: " + userName + '\n' +
                 "Password: " + passWord + '\n' +
-                "Address: "  + address + '\n' +
+                "Address: " + address + '\n' +
                 "Date of Birthday: " + dob +
                 "Phone number: " + phoneNumber +
                 "Mail: " + mail;
