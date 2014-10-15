@@ -1,7 +1,6 @@
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -24,7 +23,7 @@ public class Client {
 
         int tries = 0;
         while ((username = login()) == null) {
-            System.out.println("Invalid username/password please try again");
+            System.out.println("Invalid username/password please try again (" + (2 - tries) + " left)");
             tries++;
 
             if (tries == 3) {
@@ -34,21 +33,42 @@ public class Client {
         }
 
         try {
-            //TODO meter while para escrever e fazer thread para leitura, init thread
             socket = new Socket(args[0], ServerSocket);
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
-
             out.writeUTF(username);
-
             System.out.println("Server: " + in.readUTF());
+            System.out.println("\nYou're in! Please introduce some text: \n >> ");
 
+            InputStreamReader isr = new InputStreamReader(System.in);
+            BufferedReader bfr = new BufferedReader(isr);
+
+            // reading thread
+            new readingThread(in);
+
+            String text = "";
+            while (true) {
+                try {
+                    text = bfr.readLine();
+                } catch (Exception e) {
+                }
+                out.writeUTF(text); //writing in the socket
+            }
+        } catch (UnknownHostException e) {
+            System.out.println("Sock:" + e.getMessage());
+        } catch (EOFException e) {
+            System.out.println("EOF:" + e.getMessage());
         } catch (IOException e) {
-            System.out.println("Conection: " + e.getMessage());
+            System.out.println("IO:" + e.getMessage());
+        } finally {
+            if (socket != null)
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    System.out.println("close:" + e.getMessage());
+                }
         }
-
-
     }
 
     private static String login() {
@@ -67,4 +87,23 @@ public class Client {
         }
     }
 
+}
+
+class readingThread extends Thread {
+    protected DataInputStream din;
+
+    public readingThread(DataInputStream in){
+        this.din=in;
+        this.start();
+    }
+    public void run(){
+        try {
+            while (true){
+                System.out.println("Server says: "+din.readUTF());
+                System.out.println(">> ");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

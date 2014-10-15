@@ -3,12 +3,14 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by Diogo on 14/10/2014.
  */
 public class Server {
 //TODO static array list de dataoutputstrams
+    public static ArrayList<DataOutputStream> douts = new ArrayList<DataOutputStream>();
     public static boolean mainServer;
 
     public static void main(String[] args) {
@@ -66,7 +68,7 @@ class Connection extends Thread {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
-            //TODO aicionaro out au al
+            Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
             System.out.println("Connection: " + e.getMessage());
@@ -75,15 +77,24 @@ class Connection extends Thread {
 
     public void run() {
         String name = null;
+        String text = "";
         try {
+            //saying hello!
             name = in.readUTF();
             System.out.println("-> " + name + " connected");
-            //TODO for para percorrer os clients e mandar a mensagem p todos
             out.writeUTF("Ola " + name);
+            //
+            while (true) {
+                text = in.readUTF();
+                for (DataOutputStream dout : Server.douts) { //
+                    dout.writeUTF(text.toUpperCase());
+                    System.out.println("sending... tam: "+Server.douts.size());
+                }
+            }
         } catch (IOException e) {
             System.out.println("Receiving name: " + e.getMessage());
         } finally {
-            //TODO retirar o this.out do al
+            Server.douts.remove(this.out); //
             if (name != null) {
                 System.out.println("-> " + name + " disconnected");
             }
