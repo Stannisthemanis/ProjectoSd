@@ -39,9 +39,8 @@ public class Client {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
                 out.writeUTF("teste");
-                chat(in, out);
 
-                //            mainMenu(in,out);
+                mainMenu(in, out);
                 //chat(in, out);
             } catch (UnknownHostException e) {
             } catch (EOFException e) {
@@ -137,9 +136,6 @@ public class Client {
     }
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        String textSent = "test";
-        out.writeUTF(textSent);
-        System.out.println("Server: " + in.readUTF());
         System.out.print("\nPlease introduce some text: \n >> ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
