@@ -38,6 +38,7 @@ public class Client {
 
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
+                out.writeUTF("teste");
                 chat(in, out);
 
                 //            mainMenu(in,out);
