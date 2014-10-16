@@ -36,12 +36,12 @@ public class Client {
             try {
                 socket = new Socket(hostname, ServerSocket);
 
-
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
-
                 out.writeUTF("teste");
-                mainMenu(in, out);
+                chat(in, out);
+
+                //            mainMenu(in,out);
                 //chat(in, out);
             } catch (UnknownHostException e) {
             } catch (EOFException e) {
@@ -100,11 +100,12 @@ public class Client {
                             break;
                             case 2: {
                                 System.out.println(" Check upcoming meetings");
-                                checkUpcomingMeetings(in, out);
+                                requestUpcomingMeetings(in, out);
                             }
                             break;
                             case 3: {
-                                System.out.println("option 3");
+                                System.out.println("Check past meetings");
+                                requestPastMeetings(in, out);
                             }
                             break;
                             case 4: {
@@ -196,10 +197,23 @@ public class Client {
         }
     }
 
-    public static void checkUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+    public static void requestUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+        String result = "";
         try {
-            out.write(1);
-        } catch (IOException e) {
+            out.write(2);
+            result = in.readUTF();
+        } catch (Exception e) {
+            System.out.println(result);
+        }
+    }
+
+    public static void requestPastMeetings(DataInputStream in, DataOutputStream out) {
+        String result = "";
+        try {
+            out.write(3);
+            result = in.readUTF();
+        } catch (Exception e) {
+            System.out.println(result);
         }
     }
 }
