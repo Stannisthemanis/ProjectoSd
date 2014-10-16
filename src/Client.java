@@ -96,23 +96,20 @@ public class Client {
                             case 1: {
                                 System.out.println("Creat new meeting: ");
                                 creatNewMeeting(in, out);
-                                System.exit(0);
                             }
                             break;
                             case 2: {
                                 System.out.println(" Check upcoming meetings");
-                                checkUpcomingMeetings(in, out);
-                                System.exit(0);
+                                requestUpcomingMeetings(in, out);
                             }
                             break;
                             case 3: {
-                                System.out.println("option 3");
-                                System.exit(0);
+                                System.out.println("Check past meetings");
+                                requestPastMeetings(in, out);
                             }
                             break;
                             case 4: {
                                 System.out.println("option 4");
-                                System.exit(0);
                             }
                             break;
                             default: {
@@ -200,10 +197,23 @@ public class Client {
         }
     }
 
-    public static void checkUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+    public static void requestUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+        String result = "";
         try {
-            out.write(1);
-        } catch (IOException e) {
+            out.write(2);
+            result = in.readUTF();
+        } catch (Exception e) {
+            System.out.println(result);
+        }
+    }
+
+    public static void requestPastMeetings(DataInputStream in, DataOutputStream out) {
+        String result = "";
+        try {
+            out.write(3);
+            result = in.readUTF();
+        } catch (Exception e) {
+            System.out.println(result);
         }
     }
 }
