@@ -18,6 +18,7 @@ public class Server {
             createServer();
         } catch (IOException e) {
 //            mainServer = false;
+            System.out.println("\n********************************************");
             System.out.println("Secundary Server: ok...");
             checkMainServer();
         }
@@ -40,11 +41,13 @@ public class Server {
             while (true) {
                 if (((((System.currentTimeMillis() / 1000) % 10) == 0) || (((System.currentTimeMillis() / 1000) % 10) == 5)) && flag == true) {
                     DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+                    System.out.println("\n********************************************");
                     System.out.println("Sending request to Main...");
                     dataSocket.send(request);
                     byte[] buffer = new byte[1000];
                     DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                     dataSocket.receive(reply);
+                    System.out.println("\n********************************************");
                     System.out.println("Received reply from Main...");
                     flag = false;
                 } else if ((((System.currentTimeMillis() / 1000) % 10) != 0) && (((System.currentTimeMillis() / 1000) % 10) != 5)) {
@@ -59,7 +62,9 @@ public class Server {
             System.out.println("IO: " + e.getMessage());
         } finally {
             if (dataSocket != null) dataSocket.close();
+            System.out.println("\n********************************************");
             System.out.println("Main Server Timeout...");
+            System.out.println("\n********************************************");
             System.out.println("Becoming Main Server...");
             try {
                 createServer();
@@ -74,14 +79,18 @@ public class Server {
     private static void createServer() throws IOException {
         int serverPort = 6000;
         ServerSocket listenSocket = new ServerSocket(serverPort);
+        System.out.println("\n********************************************");
         System.out.println("Main Server: ok...");
+        System.out.println("\n********************************************");
         System.out.println("Main server listening in port: " + serverPort);
+        System.out.println("\n********************************************");
         System.out.println("LISTEN SOCKET= " + listenSocket);
 
         new respondToSecundary();
 
         while (true) {
             Socket clientSocket = listenSocket.accept();
+            System.out.println("\n+++++++++++++++++++++++++++++++++++++++++++");
             System.out.println("Client connected with socket: " + clientSocket);
             new Connection(clientSocket);
         }
@@ -100,13 +109,16 @@ class respondToSecundary extends Thread {
     public void run() {
         try {
             dataSocket = new DatagramSocket(dataSocketPort);
+            System.out.println("\n********************************************");
             System.out.println("Socket to Secundary: Ready in port " + dataSocketPort);
             while (true) {
                 byte[] buffer = new byte[1000];
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
                 dataSocket.receive(request);
+                System.out.println("\n********************************************");
                 System.out.println("Server: Received request from Secundary...");
                 DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
+                System.out.println("\n********************************************");
                 System.out.println("Server: Responding to Secundary...");
                 dataSocket.send(reply);
             }

@@ -13,14 +13,11 @@ public class Client {
     public static void main(String[] args) {
         String username = "", password;
 
-        //args[0] = hostname
-        if (args.length != 1) {
-            System.out.println("Sintax: java Client hostname");
-            System.exit(0);
-        }
 
         Socket socket = null;
         int ServerSocket = 6000;
+        String hostname = "localhost";
+
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -35,26 +32,26 @@ public class Client {
         System.out.println("Welcome " + username);
 
 
-        try {
-            socket = new Socket(args[0], ServerSocket);
+        while (true) {
+            try {
+                socket = new Socket(hostname, ServerSocket);
 
-            DataOutputStream out = new DataOutputStream(socket.getOutputStream());
-            DataInputStream in = new DataInputStream(socket.getInputStream());
-            mainMenu(in,out);
-            //chat(in, out);
-        } catch (UnknownHostException e) {
-            System.out.println("Sock:" + e.getMessage());
-        } catch (EOFException e) {
-            System.out.println("EOF:" + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("IO:" + e.getMessage());
-        } finally {
-            if (socket != null)
-                try {
-                    socket.close();
-                } catch (IOException e) {
-                    System.out.println("close:" + e.getMessage());
-                }
+                DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+                DataInputStream in = new DataInputStream(socket.getInputStream());
+                chat(in, out);
+
+                //            mainMenu(in,out);
+                //chat(in, out);
+            } catch (UnknownHostException e) {
+            } catch (EOFException e) {
+            } catch (IOException e) {
+            } finally {
+                if (socket != null)
+                    try {
+                        socket.close();
+                    } catch (IOException e) {
+                    }
+            }
         }
     }
 
@@ -145,7 +142,7 @@ public class Client {
         String textSent="test";
         out.writeUTF(textSent);
         System.out.println("Server: " + in.readUTF());
-        System.out.println("\nPlease introduce some text: \n >> ");
+        System.out.print("\nPlease introduce some text: \n >> ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
         new readingThread(in);
@@ -199,7 +196,6 @@ class readingThread extends Thread {
                 System.out.println(">> ");
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
