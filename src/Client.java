@@ -8,49 +8,28 @@ import java.util.Scanner;
  * Created by Diogo on 14/10/2014.
  */
 public class Client {
+    public static Scanner sc = new Scanner(System.in);
+
     public static void main(String[] args) {
-
-        String username, password;
-
+        String username = "", password;
+        
 
         Socket socket = null;
         int ServerSocket = 6000;
         String host = "localhost";
 
-        int tries = 0;
-        while ((username = login()) == null) {
-            System.out.println("Invalid username/password please try again (" + (2 - tries) + " left)");
-            tries++;
-
-            if (tries == 3) {
-                System.out.println("You execeded maximum number of tries(3)");
-                System.exit(0);
-            }
-        }
+//        int tries = 0;
+//        while ((username = login()) == null) {
+//            System.out.println("Invalid username/password please try again (" + (2 - tries) + " left)");
+//            tries++;
 
         try {
             socket = new Socket(host, ServerSocket);
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
-            out.writeUTF(username);
-            System.out.println("Server: " + in.readUTF());
-            System.out.println("\nYou're in! Please introduce some text: \n >> ");
-
-            InputStreamReader isr = new InputStreamReader(System.in);
-            BufferedReader bfr = new BufferedReader(isr);
-
-            // reading thread
-            new readingThread(in);
-
-            String text = "";
-            while (true) {
-                try {
-                    text = bfr.readLine();
-                } catch (Exception e) {
-                }
-                out.writeUTF(text); //writing in the socket
-            }
+            mainMenu(in,out);
+            //chat(in, out);
         } catch (UnknownHostException e) {
             System.out.println("Sock:" + e.getMessage());
         } catch (EOFException e) {
@@ -88,14 +67,15 @@ public class Client {
 class readingThread extends Thread {
     protected DataInputStream din;
 
-    public readingThread(DataInputStream in){
-        this.din=in;
+    public readingThread(DataInputStream in) {
+        this.din = in;
         this.start();
     }
-    public void run(){
+
+    public void run() {
         try {
-            while (true){
-                System.out.println("Server says: "+din.readUTF());
+            while (true) {
+                System.out.println("Server says: " + din.readUTF());
                 System.out.println(">> ");
             }
         } catch (IOException e) {
