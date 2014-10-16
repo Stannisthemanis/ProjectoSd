@@ -128,7 +128,6 @@ public class Client {
                 case 2: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("All messages: ");
-                    System.exit(0);
                 }
                 break;
                 default: {
@@ -137,7 +136,7 @@ public class Client {
                 }
                 break;
             }
-        } while (optionMainMenu < 1 || optionMainMenu > 2);
+        } while (true);
     }
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
