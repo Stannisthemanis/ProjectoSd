@@ -137,12 +137,14 @@ class Connection extends Thread {
     DataOutputStream out;
     DataInputStream in;
     Socket clientSocket;
+    String name;
 
     Connection(Socket cSocket) {
         try {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
+            this.name = in.readUTF();
             Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
@@ -151,6 +153,38 @@ class Connection extends Thread {
     }
 
     public void run() {
+        int request;
+        while (true) {
+            try {
+                request = in.read();
+                switch (request) {
+                    case 1:
+                        replyNewMeeting();
+                        break;
+                }
+
+            } catch (IOException e) {
+                System.out.println("Receiving request from client: " + e.getMessage());
+            }
+        }
+
+    }
+
+
+    public void replyNewMeeting() {
+        String newMeeting = null;
+        try {
+            System.out.println("Server: Received request from " + this.name + " to create new meeting");
+            out.writeBoolean(true);
+            System.out.println("Server: Waiting for meeting information");
+            newMeeting = in.readUTF();
+            out.writeBoolean(true);
+        } catch (IOException e) {
+            System.out.println("Reply new Meeting: " + e.getMessage());
+        }
+    }
+
+    public void chat() {
         String name = null;
         String text = "";
         try {
