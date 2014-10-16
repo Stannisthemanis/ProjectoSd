@@ -178,7 +178,9 @@ class Connection extends Thread {
             out.writeBoolean(true);
             System.out.println("Server: Waiting for meeting information");
             newMeeting = in.readUTF();
+            System.out.println("Server: Information received");
             out.writeBoolean(true);
+            System.out.println("Server: New meeting created");
         } catch (IOException e) {
             System.out.println("Reply new Meeting: " + e.getMessage());
         }

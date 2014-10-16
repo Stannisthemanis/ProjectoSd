@@ -36,11 +36,12 @@ public class Client {
             try {
                 socket = new Socket(hostname, ServerSocket);
 
+
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
-                chat(in, out);
 
-                //            mainMenu(in,out);
+                out.writeUTF("teste");
+                mainMenu(in, out);
                 //chat(in, out);
             } catch (UnknownHostException e) {
             } catch (EOFException e) {
@@ -95,23 +96,19 @@ public class Client {
                             case 1: {
                                 System.out.println("Creat new meeting: ");
                                 creatNewMeeting(in, out);
-                                System.exit(0);
                             }
                             break;
                             case 2: {
                                 System.out.println(" Check upcoming meetings");
                                 checkUpcomingMeetings(in, out);
-                                System.exit(0);
                             }
                             break;
                             case 3: {
                                 System.out.println("option 3");
-                                System.exit(0);
                             }
                             break;
                             case 4: {
                                 System.out.println("option 4");
-                                System.exit(0);
                             }
                             break;
                             default: {
@@ -127,7 +124,6 @@ public class Client {
                 case 2: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("All messages: ");
-                    System.exit(0);
                 }
                 break;
                 default: {
@@ -136,7 +132,7 @@ public class Client {
                 }
                 break;
             }
-        } while (optionMainMenu < 1 || optionMainMenu > 2);
+        } while (true);
     }
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
