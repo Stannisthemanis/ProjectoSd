@@ -86,20 +86,21 @@ public class Client {
                     do {
                         System.out.println("Main Meetings");
                         System.out.println("1-> Create new meeting");
-                        System.out.println("2-> Check upcomming meetings");
+                        System.out.println("2-> Check upcoming meetings");
                         System.out.println("3-> Check past meetings");
                         System.out.println("4-> Modify items from the agenda");
                         System.out.print("Choose option: ");
                         optionMenu1 = sc.nextInt();
                         switch (optionMenu1) {
                             case 1: {
-                                System.out.println("Creat new meeting");
+                                System.out.println("Creat new meeting: ");
                                 creatNewMeeting(in, out);
                                 System.exit(0);
                             }
                             break;
                             case 2: {
-                                System.out.println("option 2");
+                                System.out.println(" Check upcoming meetings");
+                                checkUpcomingMeetings(in, out);
                                 System.exit(0);
                             }
                             break;
@@ -138,8 +139,8 @@ public class Client {
         } while (optionMainMenu < 1 || optionMainMenu > 2);
     }
 
-    public static void chat(DataInputStream in, DataOutputStream out) throws IOException{
-        String textSent="test";
+    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
+        String textSent = "test";
         out.writeUTF(textSent);
         System.out.println("Server: " + in.readUTF());
         System.out.print("\nPlease introduce some text: \n >> ");
@@ -156,28 +157,56 @@ public class Client {
         }
     }
 
-    public static void creatNewMeeting(DataInputStream in, DataOutputStream out){
+    public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
         String responsible, desireOutCome, local, title, date, guests, agendaItems, duration, request;
-        System.out.print("Responsile: "); responsible=sc.next();
-        System.out.print("Desire outcome: "); desireOutCome=sc.next();
-        System.out.print("Local: "); local=sc.next();
-        System.out.print("Title: "); title=sc.next();
-        System.out.print("Date (dd/mm/yy): "); date=sc.next();
-        System.out.print("Guests (g1,g2,...): "); guests=sc.next();
-        System.out.print("agendaItems (ai1,ai2,...): "); agendaItems=sc.next();
-        System.out.print("Duration: (dd:hh:mm) "); duration=sc.next();
+        System.out.print("Responsile: ");
+        responsible = sc.next();
+        System.out.print("Desire outcome: ");
+        desireOutCome = sc.next();
+        System.out.print("Local: ");
+        local = sc.next();
+        System.out.print("Title: ");
+        title = sc.next();
+        System.out.print("Date (dd/mm/yy): ");
+        date = sc.next();
+        System.out.print("Guests (g1,g2,...): ");
+        guests = sc.next();
+        System.out.print("agendaItems (ai1,ai2,...): ");
+        agendaItems = sc.next();
+        System.out.print("Duration: (dd:hh:mm) ");
+        duration = sc.next();
         System.out.println();
-        request = responsible+","+desireOutCome;
-        boolean success=requestServerNewMeeting(in, out);
-        if(success)
+        request = responsible + "/" + desireOutCome + "/" + local + "/" + title + "/" + date + "/," + guests + "/" + agendaItems + "/" + duration;
+        boolean success = requestServerNewMeeting(in, out, request);
+        if (success)
             System.out.println("Meeting successfully created!");
         else
             System.out.println("Error creating meeting...");
     }
 
-    public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out){
-        //out.writeUtf;
-        return true;
+    public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
+        String result = "";
+        try {
+            out.writeUTF(request);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            result = in.readUTF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (result == "t")
+            return true;
+        return false;
+    }
+
+
+    public static void checkUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+        try {
+            out.write(1);
+        } catch (IOException e) {
+        }
     }
 }
 
@@ -196,6 +225,7 @@ class readingThread extends Thread {
                 System.out.println(">> ");
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
