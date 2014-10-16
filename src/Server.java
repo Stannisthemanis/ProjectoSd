@@ -145,6 +145,7 @@ class Connection extends Thread {
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.name = in.readUTF();
+            System.out.println("Server: " + name + "Connected");
             Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
@@ -161,6 +162,12 @@ class Connection extends Thread {
                     case 1:
                         replyNewMeeting();
                         break;
+                    case 2:
+                        replyCheckUpcumingMeetings();
+                        break;
+                    case 3:
+                        replyCheckPassedMeetings();
+                        break;
                 }
 
             } catch (IOException e) {
@@ -169,7 +176,6 @@ class Connection extends Thread {
         }
 
     }
-
 
     public void replyNewMeeting() {
         String newMeeting = null;
@@ -183,6 +189,26 @@ class Connection extends Thread {
             System.out.println("Server: New meeting created");
         } catch (IOException e) {
             System.out.println("Reply new Meeting: " + e.getMessage());
+        }
+    }
+
+    public void replyCheckUpcumingMeetings() {
+        System.out.println("Server: Received request to send all upcuming meeting of " + this.name);
+        try {
+            System.out.println("Server: Sending all upcuming meeting of " + this.name);
+            out.writeUTF("1- Reuniao de equipa");
+        } catch (IOException e) {
+            System.out.println("Replying upcuming meeting: " + e.getMessage());
+        }
+    }
+
+    public void replyCheckPassedMeetings() {
+        System.out.println("Server: Received request to send all passed meeting of " + this.name);
+        try {
+            System.out.println("Server: Sending all passed meeting of " + this.name);
+            out.writeUTF("1- Stannis the Mannis Meeting\n2- Stannis King of the andal and YOUR MOTHER");
+        } catch (IOException e) {
+            System.out.println("Replying upcuming meeting: " + e.getMessage());
         }
     }
 
