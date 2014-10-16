@@ -185,22 +185,20 @@ public class Client {
     }
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
-        String result = "";
+        boolean aceptSignal;
         try {
-            out.writeUTF(request);
+            out.write(1);
         } catch (Exception e) {
-            e.printStackTrace();
+            return false;
         }
         try {
-            result = in.readUTF();
+            aceptSignal = in.readBoolean();
+            out.writeUTF(request);
+            return in.readBoolean();
         } catch (IOException e) {
-            e.printStackTrace();
+            return false;
         }
-        if (result == "t")
-            return true;
-        return false;
     }
-
 
     public static void checkUpcomingMeetings(DataInputStream in, DataOutputStream out) {
         try {
