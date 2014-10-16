@@ -1,59 +1,122 @@
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
+import java.net.*;
 import java.util.ArrayList;
 
 /**
  * Created by Diogo on 14/10/2014.
  */
 public class Server {
-//TODO static array list de dataoutputstrams
+
     public static ArrayList<DataOutputStream> douts = new ArrayList<DataOutputStream>();
-    public static boolean mainServer;
+//    public static boolean mainServer;
 
     public static void main(String[] args) {
-
-        if (args.length != 1) {
-            System.out.println("Sintax: java Server function(0 = main Server, 1 = secundary)");
-            System.exit(0);
+        try {
+            createServer();
+        } catch (IOException e) {
+//            mainServer = false;
+            System.out.println("Secundary Server: ok...");
+            checkMainServer();
         }
 
 
-        //args[0] define se e servidor principal ou secundario
-        if (args[0].equals("0")) {
-            mainServer = true;
-            System.out.println("Main Server: ok..");
-        } else if (args[0].equals("1")) {
-            System.out.println("Secundary Server: ok..");
-            mainServer = false;
-        } else {
-            System.out.println("Sintax: java Server function(0 = main Server, 1 = secundary)");
-            System.exit(0);
-        }
+    }
 
-        if (mainServer) {
+    private static void checkMainServer() {
+        DatagramSocket dataSocket = null;
+        String host = "localhost";
+        int serverPort = 6666;
+        byte[] m = new byte[1000];
+        boolean flag = false;
 
-            try {
-                int serverPort = 6000;
-                System.out.println("Main server listening in port: " + serverPort);
-                ServerSocket listenSocket = new ServerSocket(serverPort);
-                System.out.println("LISTEN SOCKET= " + listenSocket);
+        try {
+            InetAddress aHost = InetAddress.getByName(host);
+            dataSocket = new DatagramSocket();
+            dataSocket.setSoTimeout(10000);
 
-                //estar a escuta de clientes
-
-                while (true) {
-                    Socket clientSocket = listenSocket.accept();
-                    System.out.println("Client connected with socket: " + clientSocket);
-                    new Connection(clientSocket);
+            while (true) {
+                if (((((System.currentTimeMillis() / 1000) % 10) == 0) || (((System.currentTimeMillis() / 1000) % 10) == 5)) && flag == true) {
+                    DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+                    System.out.println("Sending request to Main...");
+                    dataSocket.send(request);
+                    byte[] buffer = new byte[1000];
+                    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+                    dataSocket.receive(reply);
+                    System.out.println("Received reply from Main...");
+                    flag = false;
+                } else if ((((System.currentTimeMillis() / 1000) % 10) != 0) && (((System.currentTimeMillis() / 1000) % 10) != 5)) {
+                    flag = true;
                 }
-            } catch (IOException e) {
-                System.out.println("Listen: " + e.getMessage());
             }
+        } catch (SocketException e) {
+            System.out.println("Socket: " + e.getMessage());
+        } catch (EOFException e) {
+            System.out.println("EOF: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("IO: " + e.getMessage());
+        } finally {
+            if (dataSocket != null) dataSocket.close();
+            System.out.println("Main Server Timeout...");
+            System.out.println("Becoming Main Server...");
+            try {
+                createServer();
+            } catch (IOException e) {
 
+            }
         }
 
+
+    }
+
+    private static void createServer() throws IOException {
+        int serverPort = 6000;
+        ServerSocket listenSocket = new ServerSocket(serverPort);
+        System.out.println("Main Server: ok...");
+        System.out.println("Main server listening in port: " + serverPort);
+        System.out.println("LISTEN SOCKET= " + listenSocket);
+
+        new respondToSecundary();
+
+        while (true) {
+            Socket clientSocket = listenSocket.accept();
+            System.out.println("Client connected with socket: " + clientSocket);
+            new Connection(clientSocket);
+        }
+    }
+}
+
+class respondToSecundary extends Thread {
+    DatagramSocket dataSocket;
+    int dataSocketPort;
+
+    respondToSecundary() {
+        dataSocketPort = 6666;
+        this.start();
+    }
+
+    public void run() {
+        try {
+            dataSocket = new DatagramSocket(dataSocketPort);
+            System.out.println("Socket to Secundary: Ready in port " + dataSocketPort);
+            while (true) {
+                byte[] buffer = new byte[1000];
+                DatagramPacket request = new DatagramPacket(buffer, buffer.length);
+                dataSocket.receive(request);
+                System.out.println("Server: Received request from Secundary...");
+                DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
+                System.out.println("Server: Responding to Secundary...");
+                dataSocket.send(reply);
+            }
+        } catch (SocketException e) {
+            System.out.println("DatagramSocket: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Comunication to Secundary: " + e.getMessage());
+        } finally {
+            if (dataSocket != null) dataSocket.close();
+        }
     }
 }
 
@@ -88,7 +151,7 @@ class Connection extends Thread {
                 text = in.readUTF();
                 for (DataOutputStream dout : Server.douts) { //
                     dout.writeUTF(text.toUpperCase());
-                    System.out.println("sending... tam: "+Server.douts.size());
+                    System.out.println("sending... tam: " + Server.douts.size());
                 }
             }
         } catch (IOException e) {

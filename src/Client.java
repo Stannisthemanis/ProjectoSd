@@ -12,14 +12,10 @@ public class Client {
 
         String username, password;
 
-        //args[0] = hostname
-        if (args.length != 1) {
-            System.out.println("Sintax: java Client hostname");
-            System.exit(0);
-        }
 
         Socket socket = null;
         int ServerSocket = 6000;
+        String host = "localhost";
 
         int tries = 0;
         while ((username = login()) == null) {
@@ -33,7 +29,7 @@ public class Client {
         }
 
         try {
-            socket = new Socket(args[0], ServerSocket);
+            socket = new Socket(host, ServerSocket);
 
             DataOutputStream out = new DataOutputStream(socket.getOutputStream());
             DataInputStream in = new DataInputStream(socket.getInputStream());
