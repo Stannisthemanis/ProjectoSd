@@ -1,16 +1,18 @@
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Scanner;
 
 /**
  * Created by Ricardo on 15/10/2014.
  */
-public class User {
+public class User implements Serializable {
     protected String userName; // chave prime
     protected String passWord;
     protected String address;
     protected Date dob;
     protected Number phoneNumber;
     protected String mail;
+
 
     public User(String userName, String passWord, String address,
                 Date dob, Number phoneNumber, String mail) {
@@ -99,12 +101,11 @@ public class User {
 
     @Override
     public String toString() {
-        return "User Info: " +
-                "Username: " + userName + '\n' +
-                "Password: " + passWord + '\n' +
-                "Address: " + address + '\n' +
-                "Date of Birthday: " + dob +
-                "Phone number: " + phoneNumber +
-                "Mail: " + mail;
+        return "\nUsername: " + userName +
+                "\nPassword: " + passWord +
+                "\nAddress: " + address +
+                "\nDate of Birthday: " + dob +
+                "\nPhone number: " + phoneNumber +
+                "\nMail: " + mail;
     }
 }

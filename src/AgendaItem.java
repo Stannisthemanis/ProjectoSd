@@ -1,9 +1,10 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Created by Ricardo on 15/10/2014.
  */
-public class AgendaItem {
+public class AgendaItem implements Serializable {
     protected String ItemToDiscuss;
     protected ArrayList<String> chat;
 

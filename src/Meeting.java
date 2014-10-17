@@ -1,13 +1,14 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
  * Created by Ricardo on 15/10/2014.
  */
-public class Meeting {
+public class Meeting implements Serializable {
     protected String meetingTitle;
     protected String local;
-    protected String responsibleUser;
+    protected User responsibleUser;
     protected String desireOutcome;
     protected Date date;
     protected Date duration; //hours
@@ -15,17 +16,17 @@ public class Meeting {
     protected ArrayList<AgendaItem> agendaItems;
     protected ArrayList<ActionItem> actionItems;
 
-    public Meeting(String meetingTitle, String local, String responsibleUser, String desireOutcome, Date date, Date duration,
-                   ArrayList<Invite> invitations, ArrayList<AgendaItem> agendaItems, ArrayList<ActionItem> actionItems) {
+    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, Date duration,
+                   ArrayList<AgendaItem> agendaItems) {
         this.meetingTitle = meetingTitle;
         this.local = local;
         this.responsibleUser = responsibleUser;
         this.desireOutcome = desireOutcome;
         this.date = date;
         this.duration = duration;
-        this.invitations = invitations;
+        this.invitations = new ArrayList<Invite>();
         this.agendaItems = agendaItems;
-        this.actionItems = actionItems;
+        this.actionItems = new ArrayList<ActionItem>();
     }
 
     public String getMeetingTitle() {
@@ -36,7 +37,7 @@ public class Meeting {
         return local;
     }
 
-    public String getResponsibleUser() {
+    public User getResponsibleUser() {
         return responsibleUser;
     }
 
@@ -72,7 +73,7 @@ public class Meeting {
         this.local = local;
     }
 
-    public void setResponsibleUser(String responsibleUser) {
+    public void setResponsibleUser(User responsibleUser) {
         this.responsibleUser = responsibleUser;
     }
 
@@ -98,6 +99,14 @@ public class Meeting {
 
     public void setActionItems(ArrayList<ActionItem> actionItems) {
         this.actionItems = actionItems;
+    }
+
+    public void addInvite(Invite invite) {
+        this.invitations.add(invite);
+    }
+
+    public void addActionItem(ActionItem actionItem) {
+        this.actionItems.add(actionItem);
     }
 
     public String printInvitations(ArrayList<Invite> invitations) {
