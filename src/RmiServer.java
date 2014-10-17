@@ -9,10 +9,15 @@ import java.util.Date;
  */
 public class RmiServer extends UnicastRemoteObject implements RmiServerInterface {
     ArrayList<Meeting> meetings;
+    ArrayList<User> users;
+
+
 
     protected RmiServer() throws RemoteException {
         super();
         meetings = new ArrayList<Meeting>();
+        users = new ArrayList<User>();
+
     }
 
     public boolean addNewMeeting(String newMeeting) throws RemoteException {
@@ -26,7 +31,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         ArrayList<ActionItem> actionItems = new ArrayList<ActionItem>();
 
-        for (String s : newMeeting.split("/")) {
+        for (String s : newMeeting.split("-")) {
             System.out.println(s);
         }
 

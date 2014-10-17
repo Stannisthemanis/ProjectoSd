@@ -283,6 +283,7 @@ public class Client {
         String responsible, desireOutCome, local, title, date, guests, agendaItems, duration, request;
         responsible = admin.getUserName();
         System.out.print("Desire outcome: ");
+        sc.nextLine();
         desireOutCome = sc.nextLine();
         System.out.print("Local: ");
         local = sc.nextLine();
@@ -290,14 +291,16 @@ public class Client {
         title = sc.nextLine();
         System.out.print("Date (dd/mm/yy): ");
         date = sc.next();
+        sc.nextLine();
         System.out.print("Guests (g1,g2,...): ");
         guests = sc.nextLine();
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = sc.nextLine();
         System.out.print("Duration: (dd:hh:mm) ");
         duration = sc.next();
+        sc.nextLine();
         System.out.println();
-        request = responsible + "/" + desireOutCome + "/" + local + "/" + title + "/" + date + "/," + guests + "/" + agendaItems + "/" + duration;
+        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
         boolean success = requestServerNewMeeting(in, out, request);
         if (success)
             System.out.println("Meeting successfully created!");
