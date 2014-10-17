@@ -39,9 +39,9 @@ public class Client {
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
                 out.writeUTF("teste");
-                chat(in, out);
+               // chat(in, out);
 
-                //            mainMenu(in,out);
+                mainMenu(in,out);
                 //chat(in, out);
             } catch (UnknownHostException e) {
             } catch (EOFException e) {
@@ -73,14 +73,16 @@ public class Client {
     }
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
-        int optionMainMenu, optionMenu1, optionMenu2;
+        int optionMainMenu, optionMenu1, optionMenu2, optCai;
         do {
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
             System.out.println("2-> Messages");
+            System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             optionMainMenu = sc.nextInt();
             switch (optionMainMenu) {
+                case 0: System.exit(0);
                 case 1: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     //Submenu meetings
@@ -89,27 +91,63 @@ public class Client {
                         System.out.println("1-> Create new meeting");
                         System.out.println("2-> Check upcoming meetings");
                         System.out.println("3-> Check past meetings");
-                        System.out.println("4-> Modify items from the agenda");
+                        System.out.println("0-> Back");
                         System.out.print("Choose option: ");
                         optionMenu1 = sc.nextInt();
                         switch (optionMenu1) {
+                            case 0 : break;
                             case 1: {
-                                System.out.println("Creat new meeting: ");
+                                System.out.println("Create new meeting: ");
                                 creatNewMeeting(in, out);
                             }
                             break;
                             case 2: {
+                                int optAux, size, optUm, optUmCa;
                                 System.out.println(" Check upcoming meetings");
-                                requestUpcomingMeetings(in, out);
+                                String options = requestUpcomingMeetings(in, out);
+                                String [] countOptions = options.split("\n");
+                                size=countOptions.length;
+                                do{
+                                    System.out.println(options); //display name of all upcoming meetings
+                                    System.out.print("Choose an option: ");
+                                    optAux = sc.nextInt();
+                                }while(optAux<1 || optAux>size);
+                                do{
+                                    System.out.println("Options from meeting "+optAux);
+                                    System.out.println("1-> Consult Agenda Items");
+                                    System.out.println("0-> Back");
+                                    System.out.print("Choose an option: ");
+                                    optUm=sc.nextInt();
+                                    switch (optUm){
+                                        case 0: break;
+                                        case 1: {
+                                            //display agenda items
+                                            String agendaItems = requestAgendaItems(in,out);
+                                            System.out.println(agendaItems);
+                                            String [] countOptionsAi = agendaItems.split("\n");
+                                            size=countOptionsAi.length;
+                                            System.out.print("Choose an option: ");
+                                            optAux = sc.nextInt();
+                                            do{
+                                                System.out.println("1-> Add items");
+                                                System.out.println("2-> Modify items");
+                                                System.out.println("3-> Delete items");
+                                                System.out.println("0-> Back");
+                                                System.out.println("Choose an option: ");
+                                                optCai = sc.nextInt();
+
+
+                                            }while(optCai<0 || optCai>3);
+
+                                        }break;
+                                    }
+
+                                }while(optUm < 0 || optUm > 3);
                             }
                             break;
                             case 3: {
                                 System.out.println("Check past meetings");
                                 requestPastMeetings(in, out);
-                            }
-                            break;
-                            case 4: {
-                                System.out.println("option 4");
                             }
                             break;
                             default: {
@@ -137,9 +175,6 @@ public class Client {
     }
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        String textSent = "test";
-        out.writeUTF(textSent);
-        System.out.println("Server: " + in.readUTF());
         System.out.print("\nPlease introduce some text: \n >> ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
@@ -197,14 +232,14 @@ public class Client {
         }
     }
 
-    public static void requestUpcomingMeetings(DataInputStream in, DataOutputStream out) {
+    public static String requestUpcomingMeetings(DataInputStream in, DataOutputStream out) {
         String result = "";
         try {
             out.write(2);
             result = in.readUTF();
         } catch (Exception e) {
-            System.out.println(result);
         }
+        return result;
     }
 
     public static void requestPastMeetings(DataInputStream in, DataOutputStream out) {
@@ -213,8 +248,12 @@ public class Client {
             out.write(3);
             result = in.readUTF();
         } catch (Exception e) {
-            System.out.println(result);
         }
+        System.out.println(result);
+    }
+
+    public static String requestAgendaItems(DataInputStream in, DataOutputStream out){
+        return "Stannis king of your mother";
     }
 }
 
