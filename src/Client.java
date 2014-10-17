@@ -358,7 +358,7 @@ public class Client {
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = sc.nextLine();
         System.out.print("Duration: (dd:hh:mm) ");
-        duration = sc.next();
+        duration = sc.next().replaceAll(":","/");
         sc.nextLine();
         System.out.println();
         request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
