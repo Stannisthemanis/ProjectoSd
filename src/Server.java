@@ -20,7 +20,7 @@ public class Server {
             createServer();
         } catch (IOException e) {
 //            mainServer = false;
-            System.out.println("Secundary Server: ok...");
+            System.out.println("->> Server2: Secundary Server ok...");
             checkMainServer();
         }
 
@@ -42,27 +42,27 @@ public class Server {
             while (true) {
                 if (((((System.currentTimeMillis() / 1000) % 10) == 0) || (((System.currentTimeMillis() / 1000) % 10) == 5)) && flag == true) {
                     DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-                    System.out.println("Sending request to Main...");
+                    System.out.println("->> Server2: Sending request to Main...");
                     dataSocket.send(request);
                     byte[] buffer = new byte[1000];
                     DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
                     dataSocket.receive(reply);
-                    System.out.println("Received reply from Main...");
+                    System.out.println("->> Server2: Received reply from Main...");
                     flag = false;
                 } else if ((((System.currentTimeMillis() / 1000) % 10) != 0) && (((System.currentTimeMillis() / 1000) % 10) != 5)) {
                     flag = true;
                 }
             }
         } catch (SocketException e) {
-            System.out.println("Socket: " + e.getMessage());
+            System.out.println("*** Socket: " + e.getMessage());
         } catch (EOFException e) {
-            System.out.println("EOF: " + e.getMessage());
+            System.out.println("*** EOF: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("IO: " + e.getMessage());
+            System.out.println("*** IO: " + e.getMessage());
         } finally {
             if (dataSocket != null) dataSocket.close();
-            System.out.println("Main Server Timeout...");
-            System.out.println("Becoming Main Server...");
+            System.out.println("->> Server2: Main Server Timeout...");
+            System.out.println("->> Becoming Main Server...");
             try {
                 createServer();
             } catch (IOException e) {
@@ -76,30 +76,36 @@ public class Server {
     private static void createServer() throws IOException {
         int serverPort = 6000;
         ServerSocket listenSocket = new ServerSocket(serverPort);
-        System.out.println("Main Server: ok...");
-        System.out.println("Main server listening in port: " + serverPort);
-        System.out.println("LISTEN SOCKET= " + listenSocket);
+        System.out.println("->> Server: Main Server ok...");
+        System.out.println("->> Server: Main server listening in port: " + serverPort);
+        System.out.println("->> Server: LISTEN SOCKET= " + listenSocket);
 
 //        System.getProperties().put("java.security.policy", "policy.all");
 //        System.setSecurityManager(new RMISecurityManager());
 
+        //Thread para responder ao 2o servidor que este ainda esta up
         new respondToSecundary();
 
         RmiServerInterface dataBaseServer = null;
+
+        //Acesso ao servidor rmi
         try {
             dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
         } catch (NotBoundException e) {
-            System.out.println("Server: Registing to rmiServer " + e.getMessage());
+            System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
         }
 
+        //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
             Socket clientSocket = listenSocket.accept();
-            System.out.println("Client connected with socket: " + clientSocket);
+            System.out.println("->> Server: Client connected with socket " + clientSocket);
             new Connection(clientSocket, dataBaseServer);
         }
     }
 }
 
+
+//Thread que lida com a connecçao ao 2o server
 class respondToSecundary extends Thread {
     DatagramSocket dataSocket;
     int dataSocketPort;
@@ -112,20 +118,20 @@ class respondToSecundary extends Thread {
     public void run() {
         try {
             dataSocket = new DatagramSocket(dataSocketPort);
-            System.out.println("Socket to Secundary: Ready in port " + dataSocketPort);
+            System.out.println("->> Server: Socket to Secundary ready in port " + dataSocketPort);
             while (true) {
                 byte[] buffer = new byte[1000];
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
                 dataSocket.receive(request);
-                System.out.println("Server: Received request from Secundary...");
+                System.out.println("->> Server: Received request from Secundary...");
                 DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
-                System.out.println("Server: Responding to Secundary...");
+                System.out.println("->> Server: Responding to Secundary...");
                 dataSocket.send(reply);
             }
         } catch (SocketException e) {
-            System.out.println("DatagramSocket: " + e.getMessage());
+            System.out.println("*** DatagramSocket: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("Comunication to Secundary: " + e.getMessage());
+            System.out.println("*** Comunication to Secundary: " + e.getMessage());
         } finally {
             if (dataSocket != null) dataSocket.close();
         }
@@ -147,18 +153,18 @@ class Connection extends Thread {
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.name = in.readUTF();
             this.dataBaseServer = dataBaseServer;
-            System.out.println("Server: " + name + "Connected");
+            System.out.println("->> Server: " + name + "Connected");
             Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
-            System.out.println("Connection: " + e.getMessage());
+            System.out.println("*** Connection: " + e.getMessage());
         }
     }
 
     public void run() {
         int request;
-        while (true) {
-            try {
+        try {
+            while (true) {
                 request = in.read();
                 switch (request) {
                     case 1:
@@ -171,37 +177,42 @@ class Connection extends Thread {
                         replyCheckPassedMeetings();
                         break;
                 }
-
-            } catch (IOException e) {
-                System.out.println("Receiving request from client: " + e.getMessage());
             }
+        } catch (EOFException e) {
+            System.out.println("*** Receiving request from client: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("*** Receiving request from client: " + e.getMessage());
         }
 
     }
 
-    public void replyNewMeeting() {
+    public synchronized void replyNewMeeting() {
         String newMeeting = null;
         try {
-            System.out.println("Server: Received request from " + this.name + " to create new meeting");
+            System.out.println("->> Server: Received request from " + this.name + " to create new meeting");
             out.writeBoolean(true);
-            System.out.println("Server: Waiting for meeting information");
+            System.out.println("->>Server: Waiting for meeting information");
             newMeeting = in.readUTF();
-            System.out.println("Server: Information received");
-            out.writeBoolean(true);
-            System.out.println("Server: New meeting created");
+            System.out.println("->> Server: Information received");
+            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
+                out.writeBoolean(true);
+                System.out.println("->> Server: New meeting created");
+            } else {
+                out.writeBoolean(false);
+                System.out.println("->> Server: Failed to create new meeting");
+            }
         } catch (IOException e) {
-            System.out.println("Reply new Meeting: " + e.getMessage());
+            System.out.println("*** Reply new Meeting: " + e.getMessage());
         }
     }
 
     public void replyCheckUpcumingMeetings() {
-        System.out.println("Server: Received request to send all upcuming meeting of " + this.name);
+        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.name);
         try {
-            System.out.println("Server: Sending all upcuming meeting of " + this.name);
-            System.out.println(dataBaseServer.teste());
+            System.out.println("->> Server: Sending all upcuming meeting of " + this.name);
             out.writeUTF("1- Reuniao de equipa");
         } catch (IOException e) {
-            System.out.println("Replying upcuming meeting: " + e.getMessage());
+            System.out.println("->> Replying upcuming meeting: " + e.getMessage());
         }
     }
 
