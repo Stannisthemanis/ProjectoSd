@@ -143,8 +143,9 @@ class Connection extends Thread {
 
     public void run() {
         int request;
-        while (true) {
-            try {
+
+        try {
+            while (true) {
                 request = in.read();
                 switch (request) {
                     case 1:
@@ -157,11 +158,11 @@ class Connection extends Thread {
                         replyCheckPassedMeetings();
                         break;
                 }
-
-            } catch (IOException e) {
-                System.out.println("Receiving request from client: " + e.getMessage());
             }
+        } catch (IOException e) {
+            System.out.println("Receiving request from client: " + e.getMessage());
         }
+
 
     }
 
