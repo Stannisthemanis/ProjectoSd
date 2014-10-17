@@ -6,8 +6,14 @@ import java.rmi.RemoteException;
  */
 public interface RmiServerInterface extends Remote {
 
-    public boolean addNewMeeting(String newMeeting) throws RemoteException;
-//    public String getAllUpcumingMeetings(User user);
-//    public String getAllPassedMeetings(User user);
+    public Meeting addNewMeeting(String newMeeting) throws RemoteException;
+
+    public User findUser(String username) throws RemoteException;
+
+    public boolean checkLogin(String username, String password) throws RemoteException;
+
+    public String getUpcumingMeetings(User user) throws RemoteException;
+
+    public String getPassedMeetings(User user) throws RemoteException;
 
 }

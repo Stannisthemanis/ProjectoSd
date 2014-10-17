@@ -1,7 +1,9 @@
+import java.io.Serializable;
+
 /**
  * Created by Ricardo on 15/10/2014.
  */
-public class ActionItem {
+public class ActionItem implements Serializable {
     protected String name;
     protected String userResponsible;
     protected AgendaItem agendaItem; // ecah actionItem is related to one agendaItem

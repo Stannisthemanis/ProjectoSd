@@ -143,7 +143,7 @@ class Connection extends Thread {
     DataOutputStream out;
     DataInputStream in;
     Socket clientSocket;
-    String name;
+    User user;
     RmiServerInterface dataBaseServer;
 
     Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
@@ -151,9 +151,10 @@ class Connection extends Thread {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
-            this.name = in.readUTF();
             this.dataBaseServer = dataBaseServer;
-            System.out.println("->> Server: " + name + "Connected");
+            this.user = dataBaseServer.findUser(in.readUTF());
+
+            System.out.println("->> Server: " + user.getUserName() + " connected");
             Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
@@ -189,38 +190,39 @@ class Connection extends Thread {
     public synchronized void replyNewMeeting() {
         String newMeeting = null;
         try {
-            System.out.println("->> Server: Received request from " + this.name + " to create new meeting");
+            System.out.println("->> Server: Received request from " + this.user.getUserName() + " to create new meeting");
             out.writeBoolean(true);
             System.out.println("->>Server: Waiting for meeting information");
             newMeeting = in.readUTF();
             System.out.println("->> Server: Information received");
-            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
-                out.writeBoolean(true);
-                System.out.println("->> Server: New meeting created");
-            } else {
-                out.writeBoolean(false);
-                System.out.println("->> Server: Failed to create new meeting");
-            }
+            System.out.println(dataBaseServer.addNewMeeting(newMeeting).getMeetingTitle());
+//            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
+//                System.out.println("->> Server: New meeting created");
+//            } else {
+//                out.writeBoolean(false);
+//                System.out.println("->> Server: Failed to create new meeting");
+//            }
+            out.writeBoolean(true);
         } catch (IOException e) {
             System.out.println("*** Reply new Meeting: " + e.getMessage());
         }
     }
 
     public void replyCheckUpcumingMeetings() {
-        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.name);
+        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.user.getUserName());
         try {
-            System.out.println("->> Server: Sending all upcuming meeting of " + this.name);
-            out.writeUTF("1- Reuniao de equipa");
+            System.out.println("->> Server: Sending all upcuming meeting of " + this.user.getUserName());
+            out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
         } catch (IOException e) {
             System.out.println("->> Replying upcuming meeting: " + e.getMessage());
         }
     }
 
     public void replyCheckPassedMeetings() {
-        System.out.println("Server: Received request to send all passed meeting of " + this.name);
+        System.out.println("Server: Received request to send all passed meeting of " + this.user.getUserName());
         try {
-            System.out.println("Server: Sending all passed meeting of " + this.name);
-            out.writeUTF("1- Stannis the Mannis Meeting\n2- Stannis King of the andal and YOUR MOTHER");
+            System.out.println("Server: Sending all passed meeting of " + this.user.getUserName());
+            out.writeUTF(dataBaseServer.getPassedMeetings(user));
         } catch (IOException e) {
             System.out.println("Replying upcuming meeting: " + e.getMessage());
         }

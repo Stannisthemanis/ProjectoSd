@@ -1,12 +1,15 @@
+import java.io.Serializable;
+
 /**
  * Created by Ricardo on 15/10/2014.
  */
-public class Invite {
+public class Invite implements Serializable {
     protected Meeting meeting;
-    protected boolean decision;
+    //0- pending, 1- accepted , 2- recused
+    protected int decision;
     protected User invitedUser;
 
-    public Invite(Meeting meeting, boolean decision, User invitedUser) {
+    public Invite(Meeting meeting, int decision, User invitedUser) {
         this.meeting = meeting;
         this.decision = decision;
         this.invitedUser = invitedUser;
@@ -20,11 +23,11 @@ public class Invite {
         this.meeting = meeting;
     }
 
-    public boolean isDecision() {
+    public int hisDecision() {
         return decision;
     }
 
-    public void setDecision(boolean decision) {
+    public void setDecision(int decision) {
         this.decision = decision;
     }
 

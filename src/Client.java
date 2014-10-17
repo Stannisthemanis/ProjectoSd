@@ -39,7 +39,7 @@ public class Client {
 
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
-                out.writeUTF("teste");
+                out.writeUTF(admin.getUserName());
                 // chat(in, out);
 
                 mainMenu(in, out);
@@ -100,8 +100,8 @@ public class Client {
             }
 
             }
-            while (true) ;
-        }
+        while (true);
+    }
 
     public static void subMenuMeetings(DataInputStream in, DataOutputStream out){
         int option;
@@ -282,25 +282,27 @@ public class Client {
     public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
         String responsible, desireOutCome, local, title, date, guests, agendaItems, duration, request;
         responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
+//        System.out.print("Desire outcome: ");
         sc.nextLine();
-        desireOutCome = sc.nextLine();
-        System.out.print("Local: ");
-        local = sc.nextLine();
+//        desireOutCome = sc.nextLine();
+//        System.out.print("Local: ");
+//        local = sc.nextLine();
         System.out.print("Title: ");
         title = sc.nextLine();
         System.out.print("Date (dd/mm/yy): ");
         date = sc.next();
-        sc.nextLine();
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
-        System.out.print("agendaItems (ai1,ai2,...): ");
-        agendaItems = sc.nextLine();
-        System.out.print("Duration: (dd:hh:mm) ");
-        duration = sc.next();
-        sc.nextLine();
-        System.out.println();
-        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
+//        sc.nextLine();
+//        System.out.print("Guests (g1,g2,...): ");
+//        guests = sc.nextLine();
+//        System.out.print("agendaItems (ai1,ai2,...): ");
+//        agendaItems = sc.nextLine();
+//        System.out.print("Duration: (dd:hh:mm) ");
+//        duration = sc.next();
+//        sc.nextLine();
+//        System.out.println();
+//        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
+        request = responsible + "-" + "desireOutCome" + "-" + "local" + "-" + title + "-" + date + "-" + "Stannis,Jon Snow" + "-" + "agendaItems" + "-" + "1:1:1".replaceAll(":", "/");
+
         boolean success = requestServerNewMeeting(in, out, request);
         if (success)
             System.out.println("Meeting successfully created!");
@@ -340,6 +342,7 @@ public class Client {
             out.write(3);
             result = in.readUTF();
         } catch (Exception e) {
+            System.out.println("there gjagjaj");
         }
         System.out.println(result);
     }
