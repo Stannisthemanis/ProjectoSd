@@ -150,6 +150,10 @@ public class Client {
                                 requestPastMeetings(in, out);
                             }
                             break;
+                            case 4: {
+                                System.out.println("option 4");
+                            }
+                            break;
                             default: {
                                 System.out.println("Wrong option");
                                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
