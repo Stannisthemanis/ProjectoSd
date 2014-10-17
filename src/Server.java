@@ -178,7 +178,7 @@ class Connection extends Thread {
                         break;
                 }
             }
-        } catch (EOFException e) {
+        }catch (EOFException e) {
             System.out.println("*** Receiving request from client: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("*** Receiving request from client: " + e.getMessage());
