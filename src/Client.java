@@ -9,6 +9,7 @@ import java.util.Scanner;
  */
 public class Client {
     public static Scanner sc = new Scanner(System.in);
+
     public static User admin;
 
     public static void main(String[] args) {
@@ -108,8 +109,8 @@ public class Client {
 
     public static void subMenuMeetings(DataInputStream in, DataOutputStream out) {
         int option;
-        System.out.println("\n\n\n\n\n\n\n\n");
         do {
+            System.out.println("\n\n\n");
             System.out.println("Menu Meetings");
             System.out.println("1-> Create new meeting");
             System.out.println("2-> Check upcoming meetings");
@@ -160,7 +161,7 @@ public class Client {
         size = countOptions.length;
         do {
             System.out.println(options); //display name of all upcoming meetings
-            System.out.println("0-> Back");
+            System.out.println("\n0-> Back");
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
@@ -233,6 +234,7 @@ public class Client {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println("Options for Agenda item " + optUm);
             System.out.println("1-> Open chat");
             System.out.println("0-> Back");
@@ -244,10 +246,11 @@ public class Client {
             }
             switch (opt2) {
                 case 1: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("\n\n\n");
                     System.out.println("Opening Chat... ");
                     System.out.println("You will adress Stannis the mannis by 'Your grace' or GFO!");
                     System.out.println("Under construction... sorry :( \n\n");
+                    sc.next();
                 }break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
@@ -304,7 +307,7 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Consult Agenda Items: ");
-                    System.out.println("Under construction... sorry :( \n\n");
+                    //System.out.println("Under construction... sorry :( \n\n");
                     SubMenuConsultAgendaItemsPM(in, out, optUm);
                 }
                 break;
@@ -434,7 +437,7 @@ public class Client {
         } catch (IOException e) {
         }
         return result;*/
-        return "1->Resume: Stannis choosen of R'llhor\n2-> Resume: Stannis king of you're mother";
+        return "Resume: Stannis choosen of R'llhor and king of you're mother";
     }
 
     public static String requestActionItemsPastMeeting(DataInputStream in, DataOutputStream out, int opt) {
