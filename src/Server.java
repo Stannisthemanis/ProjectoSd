@@ -3,6 +3,8 @@ import java.io.DataOutputStream;
 import java.io.EOFException;
 import java.io.IOException;
 import java.net.*;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.util.ArrayList;
 
 /**
@@ -78,12 +80,22 @@ public class Server {
         System.out.println("Main server listening in port: " + serverPort);
         System.out.println("LISTEN SOCKET= " + listenSocket);
 
+//        System.getProperties().put("java.security.policy", "policy.all");
+//        System.setSecurityManager(new RMISecurityManager());
+
         new respondToSecundary();
+
+        RmiServerInterface dataBaseServer = null;
+        try {
+            dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
+        } catch (NotBoundException e) {
+            System.out.println("Server: Registing to rmiServer " + e.getMessage());
+        }
 
         while (true) {
             Socket clientSocket = listenSocket.accept();
             System.out.println("Client connected with socket: " + clientSocket);
-            new Connection(clientSocket);
+            new Connection(clientSocket, dataBaseServer);
         }
     }
 }
@@ -126,13 +138,15 @@ class Connection extends Thread {
     DataInputStream in;
     Socket clientSocket;
     String name;
+    RmiServerInterface dataBaseServer;
 
-    Connection(Socket cSocket) {
+    Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
         try {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.name = in.readUTF();
+            this.dataBaseServer = dataBaseServer;
             System.out.println("Server: " + name + "Connected");
             Server.douts.add(this.out); //
             this.start();
@@ -185,6 +199,7 @@ class Connection extends Thread {
         System.out.println("Server: Received request to send all upcuming meeting of " + this.name);
         try {
             System.out.println("Server: Sending all upcuming meeting of " + this.name);
+            System.out.println(dataBaseServer.teste());
             out.writeUTF("1- Reuniao de equipa");
         } catch (IOException e) {
             System.out.println("Replying upcuming meeting: " + e.getMessage());
