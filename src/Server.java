@@ -204,6 +204,9 @@ class Connection extends Thread {
                     case 7:
                         replyAgendaItensFromMeeting(2);
                         break;
+                    case 8:
+                        replyUnreadMessages();
+                        break;
 
                 }
             }
@@ -284,6 +287,10 @@ class Connection extends Thread {
         } catch (IOException e) {
             System.out.println("*** Receiving meeting number for agenda item... " + e.getMessage());
         }
+    }
+
+    public void replyUnreadMessages() {
+
     }
 
     public void chat() {
