@@ -76,7 +76,6 @@ public class Client {
     }
 
 
-
     //-------------------------------------- MENUS
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
@@ -85,7 +84,8 @@ public class Client {
         do {
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
-            System.out.println("2-> Messages");
+//            System.out.println("2-> Messages ("+requestNumberOfMessegesToRead(in, out)+" new messages)");
+            System.out.println("2-> messages");
             System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             option = sc.nextInt();
@@ -109,6 +109,46 @@ public class Client {
 
         }
         while (true);
+    }
+
+    public static void subMenuMessages(DataInputStream in, DataOutputStream out) {
+        int optUm, size;
+        String dec = "";
+        boolean aux=false;
+        String options = requestMessages(in, out);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display all messages
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optUm = sc.nextInt();
+        } while (optUm < 0 || optUm > size);
+        do {
+            if (optUm == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            System.out.println("Resume from message " + optUm);
+            System.out.println(requestResumeMesage(in, out, optUm));
+            System.out.println("Do you accept this invite? (s/n)");
+            dec = sc.next();
+            dec = dec.toLowerCase();
+            //reply
+            if (dec.equals("s")) {
+                aux=replyInvite(in, out, true);
+                break;
+            } else if (dec.equals("s")) {
+                aux=replyInvite(in, out, false);
+                break;
+            }
+            //response
+            if(aux){
+                System.out.println("Invite accept with success!");
+            }else{
+                System.out.println("Invite not accepted...");
+            }
+        } while (true);
     }
 
     public static void subMenuMeetings(DataInputStream in, DataOutputStream out) {
@@ -150,11 +190,6 @@ public class Client {
                 break;
             }
         } while (true);
-    }
-
-    public static void subMenuMessages(DataInputStream in, DataOutputStream out) {
-        System.out.println("All Messages: ");
-        System.out.println("Under construction... sorry :( \n\n");
     }
 
     public static void SubMenuUpcomingMeetings(DataInputStream in, DataOutputStream out) {
@@ -334,57 +369,16 @@ public class Client {
     }
 
 
+    //-------------------------------------- REQUEST/REPLY
 
-   //-------------------------------------- REQUEST
-
-    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        System.out.print("\nPlease introduce some text: \n >> ");
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader bfr = new BufferedReader(isr);
-        new readingThread(in);
-        String textRecived = "";
-        while (true) {
-            try {
-                textRecived = bfr.readLine();
-            } catch (Exception e) {
-            }
-            out.writeUTF(textRecived); //writing in the socket
+    public static int requestNumberOfMessegesToRead(DataInputStream in, DataOutputStream out){
+        try {
+            out.write(10);
+            return in.read();
+        } catch (IOException e) {
+            return -1;
         }
     }
-
-    public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
-        int duration;
-        responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
-        sc.nextLine();
-        desireOutCome = sc.nextLine();
-        System.out.print("Local: ");
-        local = sc.nextLine();
-        System.out.print("Title: ");
-        title = sc.nextLine();
-        System.out.print("Date (dd/mm/yy): ");
-        date = sc.next();
-        sc.nextLine();
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
-        System.out.print("agendaItems (ai1,ai2,...): ");
-        agendaItems = sc.nextLine();
-        System.out.print("Duration in minutes: ");
-        duration = sc.nextInt();
-        sc.nextLine();
-        System.out.println();
-        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
-        boolean success = requestServerNewMeeting(in, out, request);
-        if (success)
-            System.out.println("Meeting successfully created!");
-        else
-            System.out.println("Error creating meeting...");
-    }
-
-
-
-    //-------------------------------------- REQUEST
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
         boolean aceptSignal;
@@ -419,7 +413,16 @@ public class Client {
             result = in.readUTF();
         } catch (Exception e) {
         }
-        System.out.println("RESULT-> "+result);
+        return result;
+    }
+
+    public static String requestMessages(DataInputStream in, DataOutputStream out) {
+        String result = "";
+        try {
+            out.write(8);
+            result = in.readUTF();
+        } catch (Exception e) {
+        }
         return result;
     }
 
@@ -432,7 +435,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt-1);
+            out.write(opt - 1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -448,7 +451,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt-1);
+            out.write(opt - 1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -479,6 +482,21 @@ public class Client {
         try {
             in.readBoolean();
             out.write(opt - 1);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
+    }
+
+    public static String requestResumeMesage(DataInputStream in, DataOutputStream out, int opt) {
+        String result = "";
+        try {
+            out.write(9);
+        } catch (Exception e) {
+        }
+        try {
+            in.readBoolean();
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -521,6 +539,14 @@ public class Client {
         return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
     }
 
+    public static boolean replyInvite(DataInputStream in, DataOutputStream out, boolean decision) {
+        try {
+            out.writeBoolean(decision);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
 
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
@@ -569,7 +595,6 @@ public class Client {
         else
             System.out.println("Error creating meeting...");
     }
-
 
 
     //-------------------------------------- TEST DATA INPUT

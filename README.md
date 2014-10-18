@@ -22,3 +22,6 @@ REQUEST CODE:
 5- request passed meeting
 6- request list of agenda items from upcoming meetings
 7- request list of agenda items from past meetings
+8- request messages
+9- request resume of message
+10- requestNumber of messages to read
