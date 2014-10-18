@@ -75,6 +75,8 @@ public class Client {
         }
     }
 
+
+
     //-------------------------------------- MENUS
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
@@ -222,7 +224,7 @@ public class Client {
 
     public static void SubMenuConsultAgendaItems(DataInputStream in, DataOutputStream out, int opt) {
         int optUm, size, opt2;
-        String options = requestAgendaItems(in, out, opt);
+        String options = requestAgendaItemsFromUpComingMeeting(in, out, opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
@@ -266,7 +268,7 @@ public class Client {
 
     public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
         int optUm, size, opt2;
-        String options = requestAgendaItems(in, out, opt);
+        String options = requestAgendaItemsFromPastMeeting(in, out, opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
@@ -333,56 +335,7 @@ public class Client {
 
 
 
-    //-------------------------------------- AUXILIAR FUNCTIONS MENU
-
-    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        System.out.print("\nPlease introduce some text: \n >> ");
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader bfr = new BufferedReader(isr);
-        new readingThread(in);
-        String textRecived = "";
-        while (true) {
-            try {
-                textRecived = bfr.readLine();
-            } catch (Exception e) {
-            }
-            out.writeUTF(textRecived); //writing in the socket
-        }
-    }
-
-    public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
-        int duration;
-        responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
-        sc.nextLine();
-        desireOutCome = sc.nextLine();
-        System.out.print("Local: ");
-        local = sc.nextLine();
-        System.out.print("Title: ");
-        title = sc.nextLine();
-        System.out.print("Date (dd/mm/yy): ");
-        date = sc.next();
-        sc.nextLine();
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
-        System.out.print("agendaItems (ai1,ai2,...): ");
-        agendaItems = sc.nextLine();
-        System.out.print("Duration in minutes: ");
-        duration = sc.nextInt();
-        sc.nextLine();
-        System.out.println();
-        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
-        boolean success = requestServerNewMeeting(in, out, request);
-        if (success)
-            System.out.println("Meeting successfully created!");
-        else
-            System.out.println("Error creating meeting...");
-    }
-
-
-
-    //-------------------------------------- REQUEST
+   //-------------------------------------- REQUEST
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
         boolean aceptSignal;
@@ -421,21 +374,36 @@ public class Client {
         return result;
     }
 
-    public static String requestAgendaItems(DataInputStream in, DataOutputStream out, int opt) {
-/*        boolean aceptSignal;
+    public static String requestAgendaItemsFromUpComingMeeting(DataInputStream in, DataOutputStream out, int opt) {
+        boolean aceptSignal;
         String result = "";
         try {
-            out.write(5);
+            out.write(6);
         } catch (Exception e) {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt);
+            out.write(opt-1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
-        return result;*/
-        return "1->Item: Stannis the mannis\n2-> Item: Stannis protextor of the realm";
+        return result;
+    }
+
+    public static String requestAgendaItemsFromPastMeeting(DataInputStream in, DataOutputStream out, int opt) {
+        boolean aceptSignal;
+        String result = "";
+        try {
+            out.write(7);
+        } catch (Exception e) {
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(opt-1);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
     }
 
     public static String requestResumeUpcumingMeeting(DataInputStream in, DataOutputStream out, int opt) {
@@ -502,6 +470,55 @@ public class Client {
         }
         return result;*/
         return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
+    }
+
+
+
+    //-------------------------------------- AUXILIAR FUNCTIONS MENU
+
+    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
+        System.out.print("\nPlease introduce some text: \n >> ");
+        InputStreamReader isr = new InputStreamReader(System.in);
+        BufferedReader bfr = new BufferedReader(isr);
+        new readingThread(in);
+        String textRecived = "";
+        while (true) {
+            try {
+                textRecived = bfr.readLine();
+            } catch (Exception e) {
+            }
+            out.writeUTF(textRecived); //writing in the socket
+        }
+    }
+
+    public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
+        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
+        int duration;
+        responsible = admin.getUserName();
+        System.out.print("Desire outcome: ");
+        sc.nextLine();
+        desireOutCome = sc.nextLine();
+        System.out.print("Local: ");
+        local = sc.nextLine();
+        System.out.print("Title: ");
+        title = sc.nextLine();
+        System.out.print("Date (dd/mm/yy): ");
+        date = sc.next();
+        sc.nextLine();
+        System.out.print("Guests (g1,g2,...): ");
+        guests = sc.nextLine();
+        System.out.print("agendaItems (ai1,ai2,...): ");
+        agendaItems = sc.nextLine();
+        System.out.print("Duration in minutes: ");
+        duration = sc.nextInt();
+        sc.nextLine();
+        System.out.println();
+        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
+        boolean success = requestServerNewMeeting(in, out, request);
+        if (success)
+            System.out.println("Meeting successfully created!");
+        else
+            System.out.println("Error creating meeting...");
     }
 
 

@@ -52,6 +52,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String local = tokenizer[2];
         String meetingTitle = tokenizer[3];
         Date date = new Date(tokenizer[4]);
+        System.out.println(tokenizer[4]);
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         for (String s : tokenizer[6].split(",")) {
             agendaItems.add(new AgendaItem(s));

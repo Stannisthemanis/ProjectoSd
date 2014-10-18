@@ -20,4 +20,5 @@ REQUEST CODE:
 3- check passed meetings
 4- request future meeting
 5- request passed meeting
-
+6- request list of agenda items from upcoming meetings
+7- request list of agenda items from past meetings
