@@ -75,6 +75,8 @@ public class Client {
         }
     }
 
+    //-------------------------------------- MENUS
+
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
         int option;
         System.out.println("\n\n\n\n\n\n\n\n\n");
@@ -248,7 +250,7 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n");
                     System.out.println("Opening Chat... ");
-                    System.out.println("You will adress Stannis the mannis by 'Your grace' or GFO!");
+                    System.out.println("You will address Stannis the mannis by 'Your grace' or GFO!");
                     System.out.println("Under construction... sorry :( \n\n");
                     sc.next();
                 }
@@ -327,6 +329,10 @@ public class Client {
         } while (true);
     }
 
+
+
+    //-------------------------------------- AUXILIAR FUNCTIONS MENU
+
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
         System.out.print("\nPlease introduce some text: \n >> ");
         InputStreamReader isr = new InputStreamReader(System.in);
@@ -371,6 +377,10 @@ public class Client {
         else
             System.out.println("Error creating meeting...");
     }
+
+
+
+    //-------------------------------------- REQUEST
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
         boolean aceptSignal;
@@ -474,6 +484,36 @@ public class Client {
         }
         return result;*/
         return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
+    }
+
+
+
+    //-------------------------------------- TEST DATA INPUT
+    public static boolean myDateTest(int dia, int mes, int ano) {
+        Date actualDate = new Date();
+        int ano2 = actualDate.getYear() + 1900;
+        if (ano < (ano2 - 100) || ano > ano2) {
+            return false;
+        } else {
+            if (mes < 1 || mes > 12) {
+                return false;
+            } else {
+                if (dia < 1 || dia > 31) {
+                    return false;
+                } else if (dia > 28 && mes == 2 && isLeapYear(ano) == false) {
+                    return false;
+                } else if (dia > 29 && mes == 2 && isLeapYear(ano) == true) {
+                    return false;
+                } else if (dia > 30 && (mes == 4 || mes == 6 || mes == 9 || mes == 11)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isLeapYear(int ano) {
+        return (ano % 4 == 0);
     }
 }
 

@@ -17,12 +17,16 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     protected RmiServer() throws RemoteException {
         super();
-//        meetings = new ArrayList<Meeting>();
-//        users = new ArrayList<User>();
-//        invitations = new ArrayList<Invite>();
-  /*      for (User i : users) {
-            System.out.println(i);
-        }*/
+        try {
+            Save.loadForAL();
+            displayAllAL(); // all info in the files
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
+        }
+//        try {
+//            this.firstUse();
+//        } catch (RemoteException e) {
+//        }
     }
 
     public User findUser(String username) throws RemoteException {
@@ -122,7 +126,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
 
-    public static void firstUse() {
+    public void firstUse() throws RemoteException{
 
         users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));
         users.add(new User("Jon Snow", "root", "Winterfell/Wall/The North", new Date("10/10/1000"), 912345678, "JonSnow@bastard.wall"));
@@ -132,41 +136,15 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-
-        ArrayList<AgendaItem> agendaItems1 = new ArrayList<AgendaItem>();
-        ArrayList<AgendaItem> agendaItems2 = new ArrayList<AgendaItem>();
-        ArrayList<AgendaItem> agendaItems3 = new ArrayList<AgendaItem>();
-        agendaItems1.add(new AgendaItem("talk about stannis"));
-        agendaItems1.add(new AgendaItem("talk about davos"));
-        agendaItems2.add(new AgendaItem("talk about robb"));
-        agendaItems2.add(new AgendaItem("talk about catelyn"));
-        agendaItems3.add(new AgendaItem("talk about cersei"));
-        agendaItems3.add(new AgendaItem("talk about jaime"));
-
-        meetings.add(new Meeting("bastard", "wall", users.get(1), "kill the bastard in the wal", new Date("17/10/2014"), 1,agendaItems1));
-        meetings.add(new Meeting("montain", "Dorne", users.get(2), "Delay Montain's head delivey", new Date("19/10/2014"), 2, agendaItems2));
-        meetings.add(new Meeting("alayne", "eary", users.get(1), "get layd with sansa", new Date("3/10/2014"), 3,agendaItems3));
-
-        invitations.add(new Invite(meetings.get(2), 1, users.get(1)));
-        invitations.add(new Invite(meetings.get(1), 0, users.get(3)));
-        invitations.add(new Invite(meetings.get(0), 1, users.get(3)));
-        invitations.add(new Invite(meetings.get(1), 1, users.get(4)));
-        invitations.add(new Invite(meetings.get(2), 1, users.get(0)));
-        invitations.add(new Invite(meetings.get(1), 1, users.get(1)));
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-12/2/2010-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-12/2/2011-manel,Jon Snow-Ai1,Ai2-");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-12/2/2015-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
+        addNewMeeting("manel-talk about Robert-wall-robertthemannis-12/2/2016-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
     }
 
     public static void main(String[] args) {
         try {
             RmiServer rmiServer = new RmiServer();
-
-            try { //load from files
-//        firstUse();
-                Save.loadForAL();
-                displayAllAL(); // all info in the files
-            } catch (IOException e) {
-            } catch (ClassNotFoundException e) {
-            }
-
             LocateRegistry.createRegistry(1099).rebind("DataBase", rmiServer);
             System.out.println("RmiServer Ready");
         } catch (Exception e) {
