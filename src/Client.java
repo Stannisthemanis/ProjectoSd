@@ -76,7 +76,6 @@ public class Client {
     }
 
 
-
     //-------------------------------------- MENUS
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
@@ -334,56 +333,6 @@ public class Client {
     }
 
 
-
-   //-------------------------------------- REQUEST
-
-    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        System.out.print("\nPlease introduce some text: \n >> ");
-        InputStreamReader isr = new InputStreamReader(System.in);
-        BufferedReader bfr = new BufferedReader(isr);
-        new readingThread(in);
-        String textRecived = "";
-        while (true) {
-            try {
-                textRecived = bfr.readLine();
-            } catch (Exception e) {
-            }
-            out.writeUTF(textRecived); //writing in the socket
-        }
-    }
-
-    public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
-        int duration;
-        responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
-        sc.nextLine();
-        desireOutCome = sc.nextLine();
-        System.out.print("Local: ");
-        local = sc.nextLine();
-        System.out.print("Title: ");
-        title = sc.nextLine();
-        System.out.print("Date (dd/mm/yy): ");
-        date = sc.next();
-        sc.nextLine();
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
-        System.out.print("agendaItems (ai1,ai2,...): ");
-        agendaItems = sc.nextLine();
-        System.out.print("Duration in minutes: ");
-        duration = sc.nextInt();
-        sc.nextLine();
-        System.out.println();
-        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
-        boolean success = requestServerNewMeeting(in, out, request);
-        if (success)
-            System.out.println("Meeting successfully created!");
-        else
-            System.out.println("Error creating meeting...");
-    }
-
-
-
     //-------------------------------------- REQUEST
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
@@ -419,7 +368,6 @@ public class Client {
             result = in.readUTF();
         } catch (Exception e) {
         }
-        System.out.println("RESULT-> "+result);
         return result;
     }
 
@@ -432,7 +380,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt-1);
+            out.write(opt - 1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -448,7 +396,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt-1);
+            out.write(opt - 1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -522,7 +470,6 @@ public class Client {
     }
 
 
-
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
@@ -569,7 +516,6 @@ public class Client {
         else
             System.out.println("Error creating meeting...");
     }
-
 
 
     //-------------------------------------- TEST DATA INPUT

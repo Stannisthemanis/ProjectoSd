@@ -20,4 +20,12 @@ public interface RmiServerInterface extends Remote {
 
     public String getAgendaItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException;
 
+    public String getMessagesByUser(User user) throws RemoteException;
+
+    public int getNumberOfMessages(User user) throws RemoteException;
+
+    public String getResumeOfMessage(User user, int message) throws RemoteException;
+
+    public boolean setReplyOfInvite(User user, int message, boolean decision) throws RemoteException;
+
 }

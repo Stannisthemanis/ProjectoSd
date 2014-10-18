@@ -207,7 +207,12 @@ class Connection extends Thread {
                     case 8:
                         replyUnreadMessages();
                         break;
-
+                    case 9:
+                        replyMessage();
+                        break;
+                    case 10:
+                        replyNumberOfMessages();
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -290,7 +295,39 @@ class Connection extends Thread {
     }
 
     public void replyUnreadMessages() {
+        try {
+            out.writeUTF(dataBaseServer.getMessagesByUser(user));
+        } catch (IOException e) {
+            System.out.println("*** Sending messages: " + e.getMessage());
+        }
+    }
 
+    public void replyMessage() {
+        System.out.println("->> Server: Received request of " + user.getUserName() + " to respond to a message..");
+        int n;
+        boolean reply;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for message number..");
+            n = in.read();
+            System.out.println("->> Server: Sending message resume..");
+            out.writeUTF(dataBaseServer.getResumeOfMessage(user, n));
+            System.out.println("->> Server: Waiting for user to decline or accept..");
+            reply = in.readBoolean();
+            out.writeBoolean(dataBaseServer.setReplyOfInvite(user, n, reply));
+        } catch (IOException e) {
+            System.out.println("*** Replying to message: " + e.getMessage());
+        }
+
+    }
+
+    public void replyNumberOfMessages() {
+        System.out.println("->> Server: Received request to send number of messages of user " + user.getUserName());
+        try {
+            out.write(dataBaseServer.getNumberOfMessages(user));
+        } catch (IOException e) {
+            System.out.println("->> Server: Sending number of messages of user " + user.getUserName());
+        }
     }
 
     public void chat() {

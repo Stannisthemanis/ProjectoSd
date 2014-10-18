@@ -146,6 +146,57 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         }
     }
 
+    public String getMessagesByUser(User user) throws RemoteException {
+        int j = 1;
+        String output = null;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName())) {
+                if (output == null)
+                    output = "";
+                output += j + "- Meeting: " + i.getMeeting().getMeetingTitle() + "| Created by: " + i.getMeeting().getResponsibleUser() + "\n";
+            }
+        }
+        if (output == null)
+            output = "You have no messages";
+        return output;
+    }
+
+    public int getNumberOfMessages(User user) throws RemoteException {
+        int i = 0;
+        for (Invite invitation : invitations) {
+            if (invitation.getInvitedUser().equals(user.getUserName()))
+                i++;
+        }
+        return i;
+    }
+
+    public String getResumeOfMessage(User user, int message) throws RemoteException {
+        int j = 0;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName()))
+                j++;
+            if (j == message) {
+                return i.getMeeting().toString();
+            }
+        }
+        return "Error!!";
+    }
+
+    public boolean setReplyOfInvite(User user, int message, boolean decision) throws RemoteException {
+        int j = 0;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName()))
+                j++;
+            if (j == message) {
+                if (decision == true) {
+                    i.getMeeting().addUser(findUser(user.getUserName()));
+                }
+                invitations.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void firstUse() throws RemoteException {
 
