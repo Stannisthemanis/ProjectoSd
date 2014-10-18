@@ -137,10 +137,8 @@ public class Client {
             //reply
             if (dec.equals("s")) {
                 aux=replyInvite(in, out, true);
-                break;
             } else if (dec.equals("s")) {
                 aux=replyInvite(in, out, false);
-                break;
             }
             //response
             if(aux){
