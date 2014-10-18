@@ -124,8 +124,32 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         }
     }
 
+    public String getAgendaItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException {
+        ArrayList<Meeting> upMeetings = new ArrayList<Meeting>();
+        //flag 1- future meeting 2- passed meeting
+        if (flag == 1) {
+            for (Meeting m : meetings) {
+                if (m.getDate().after(new Date())) {
+                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                        upMeetings.add(m);
+                    }
+                }
+            }
+            return upMeetings.get(nMeeting).printAgendaItems();
+        } else {
+            for (Meeting m : meetings) {
+                if (m.getDate().before(new Date())) {
+                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                        upMeetings.add(m);
+                    }
+                }
+            }
+            return upMeetings.get(nMeeting).printAgendaItems();
+        }
+    }
 
-    public void firstUse() throws RemoteException{
+
+    public void firstUse() throws RemoteException {
 
         users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));
         users.add(new User("Jon Snow", "root", "Winterfell/Wall/The North", new Date("10/10/1000"), 912345678, "JonSnow@bastard.wall"));
@@ -136,9 +160,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
         addNewMeeting("manel-talk about stannis-wall-stannisthemannis-12/2/2010-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-12/2/2011-manel,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-12/2/2015-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("manel-talk about Robert-wall-robertthemannis-12/2/2016-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-12/2/2011-manel,Jon Snow-Ai3,Ai4-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-12/2/2015-Stannis Baratheon,Jon Snow-Ai5,Ai6-120");
+        addNewMeeting("manel-talk about Robert-wall-robertthemannis-12/2/2016-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
     }
 
     public static void main(String[] args) {

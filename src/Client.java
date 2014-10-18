@@ -332,7 +332,6 @@ public class Client {
     }
 
 
-
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
     public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
@@ -381,7 +380,6 @@ public class Client {
     }
 
 
-
     //-------------------------------------- REQUEST
 
     public static boolean requestServerNewMeeting(DataInputStream in, DataOutputStream out, String request) {
@@ -417,7 +415,6 @@ public class Client {
             result = in.readUTF();
         } catch (Exception e) {
         }
-        System.out.println("RESULT-> "+result);
         return result;
     }
 
@@ -503,7 +500,6 @@ public class Client {
         return result;*/
         return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
     }
-
 
 
     //-------------------------------------- TEST DATA INPUT
