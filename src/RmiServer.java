@@ -200,6 +200,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
+    public boolean addAgendaItem(int nMeeting, String newAgendaItem, User user) throws RemoteException {
+        AgendaItem nAgendaItem = new AgendaItem(newAgendaItem);
+        int i = 0;
+        for (Meeting m : meetings) {
+            if (m.getDate().after(new Date())) {
+                if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    m.addAgendaItem(nAgendaItem);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void firstUse() throws RemoteException {
 
         users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));

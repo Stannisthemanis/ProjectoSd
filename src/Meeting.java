@@ -15,7 +15,6 @@ public class Meeting implements Serializable {
     protected int duration; //hours
     protected ArrayList<User> usersAccepted;
     protected ArrayList<AgendaItem> agendaItems;
-    protected ArrayList<ActionItem> actionItems;
 
     public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, int duration,
                    ArrayList<AgendaItem> agendaItems) {
@@ -27,7 +26,6 @@ public class Meeting implements Serializable {
         this.duration = duration;
         this.usersAccepted = new ArrayList<User>();
         this.agendaItems = agendaItems;
-        this.actionItems = new ArrayList<ActionItem>();
     }
 
     public String getMeetingTitle() {
@@ -62,9 +60,6 @@ public class Meeting implements Serializable {
         return agendaItems;
     }
 
-    public ArrayList<ActionItem> getActionItems() {
-        return actionItems;
-    }
 
     public void setMeetingTitle(String meetingTitle) {
         this.meetingTitle = meetingTitle;
@@ -90,21 +85,15 @@ public class Meeting implements Serializable {
         this.duration = duration;
     }
 
-    public void setAgendaItems(ArrayList<AgendaItem> agendaItems) {
-        this.agendaItems = agendaItems;
+    public void addAgendaItem(AgendaItem agendaItem) {
+        this.agendaItems.add(agendaItem);
     }
 
-    public void setActionItems(ArrayList<ActionItem> actionItems) {
-        this.actionItems = actionItems;
-    }
 
     public void addUser(User userAccepted) {
         this.usersAccepted.add(userAccepted);
     }
 
-    public void addActionItem(ActionItem actionItem) {
-        this.actionItems.add(actionItem);
-    }
 
     public boolean isInvited(String username) {
         for (User i : usersAccepted) {

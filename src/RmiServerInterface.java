@@ -28,4 +28,8 @@ public interface RmiServerInterface extends Remote {
 
     public boolean setReplyOfInvite(User user, int message, boolean decision) throws RemoteException;
 
+    public boolean addAgendaItem(int nMeeting, String newAgendaItem, User user) throws RemoteException;
+
+//    public boolean deleteAgendaItem();
+
 }

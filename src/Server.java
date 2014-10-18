@@ -213,6 +213,9 @@ class Connection extends Thread {
                     case 10:
                         replyNumberOfMessages();
                         break;
+                    case 11:
+                        addAgendaItem();
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -329,6 +332,22 @@ class Connection extends Thread {
         } catch (IOException e) {
             System.out.println("->> Server: Sending number of messages of user " + user.getUserName());
         }
+    }
+
+    public void addAgendaItem() {
+        String newItem = "";
+        int n;
+        try {
+            System.out.println("->> Server: Received ");
+            out.writeBoolean(true);
+            n = in.read();
+            out.writeBoolean(true);
+            newItem = in.readUTF();
+            out.writeBoolean(dataBaseServer.addAgendaItem(n, newItem, user));
+        } catch (IOException e) {
+            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+        }
+
     }
 
     public void chat() {
