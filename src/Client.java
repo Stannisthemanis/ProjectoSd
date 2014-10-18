@@ -84,8 +84,8 @@ public class Client {
         do {
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
-//            System.out.println("2-> Messages ("+requestNumberOfMessegesToRead(in, out)+" new messages)");
-            System.out.println("2-> messages");
+            System.out.println("2-> Messages ("+requestNumberOfMessegesToRead(in, out)+" new messages)");
+//            System.out.println("2-> messages");
             System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             option = sc.nextInt();
@@ -145,8 +145,10 @@ public class Client {
             //response
             if(aux){
                 System.out.println("Invite accept with success!");
+                break;
             }else{
                 System.out.println("Invite not accepted...");
+                break;
             }
         } while (true);
     }
