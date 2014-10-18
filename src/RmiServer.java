@@ -153,7 +153,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             if (i.getInvitedUser().getUserName().equals(user.getUserName())) {
                 if (output == null)
                     output = "";
-                output += j + "- Meeting: " + i.getMeeting().getMeetingTitle() + "| Created by: " + i.getMeeting().getResponsibleUser() + "\n";
+                output += j + "- Meeting: " + i.getMeeting().getMeetingTitle() + "| Created by: " + i.getMeeting().getResponsibleUser().getUserName() + "\n";
             }
         }
         if (output == null)
