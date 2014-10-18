@@ -198,6 +198,12 @@ class Connection extends Thread {
                     case 5:
                         replyInfoMeeting(2);
                         break;
+                    case 6:
+                        replyAgendaItensFromMeeting(1);
+                        break;
+                    case 7:
+                        replyAgendaItensFromMeeting(2);
+                        break;
 
                 }
             }
@@ -262,6 +268,22 @@ class Connection extends Thread {
             System.out.println("*** Replying to send info of meeting");
         }
 
+    }
+
+    //flag 1- FutureMeeting 2- PassedMeeting
+    public void replyAgendaItensFromMeeting(int flag) {
+        System.out.println("->> Server: Received request to send agenda itens from a meeting by " + user.getUserName());
+        int n;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Wainting for info meeting...");
+            n = in.read();
+            System.out.println("->> Server: Sending agenda itens of meeting.. ");
+            out.writeUTF(dataBaseServer.getAgendaItemFromMeeting(flag, n, user));
+            System.out.println("->> Server Info send with sucess..");
+        } catch (IOException e) {
+            System.out.println("*** Receiving meeting number for agenda item... " + e.getMessage());
+        }
     }
 
     public void chat() {

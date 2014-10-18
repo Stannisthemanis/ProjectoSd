@@ -126,10 +126,10 @@ public class Meeting implements Serializable {
         return outPut;
     }
 
-    private String printAgendaItems(ArrayList<AgendaItem> agendaItems) {
+    public String printAgendaItems() {
         String outPut = "";
-        for (int i = 0; i < agendaItems.size(); i++) {
-            outPut += (i + 1) + "- " + agendaItems.get(i).getItemToDiscuss() + "\n";
+        for (int i = 0; i < this.agendaItems.size(); i++) {
+            outPut += (i + 1) + "- " + this.agendaItems.get(i).getItemToDiscuss() + "\n";
         }
         return outPut;
     }
@@ -152,6 +152,6 @@ public class Meeting implements Serializable {
                 "DATE: " + printDate() +
                 "DURATION: " + duration + " minutes\n" +
                 "INVITATIONS: " + printInvitations(this.invitations) + "\n" +
-                "AGENDA ITEMS:\n" + printAgendaItems(this.agendaItems);
+                "AGENDA ITEMS:\n" + printAgendaItems();
     }
 }
