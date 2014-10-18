@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -11,12 +12,12 @@ public class Meeting implements Serializable {
     protected User responsibleUser;
     protected String desireOutcome;
     protected Date date;
-    protected Date duration; //hours
+    protected int duration; //hours
     protected ArrayList<Invite> invitations;
     protected ArrayList<AgendaItem> agendaItems;
     protected ArrayList<ActionItem> actionItems;
 
-    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, Date duration,
+    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, int duration,
                    ArrayList<AgendaItem> agendaItems) {
         this.meetingTitle = meetingTitle;
         this.local = local;
@@ -60,7 +61,7 @@ public class Meeting implements Serializable {
         return date;
     }
 
-    public Date getDuration() {
+    public int getDuration() {
         return duration;
     }
 
@@ -96,7 +97,7 @@ public class Meeting implements Serializable {
         this.date = date;
     }
 
-    public void setDuration(Date duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -120,41 +121,48 @@ public class Meeting implements Serializable {
         this.actionItems.add(actionItem);
     }
 
-    public String printInvitations(ArrayList<Invite> invitations) {
-        String outPut = "";
+    public boolean isInvited(String username) {
+        for (Invite i : invitations) {
+            i.getInvitedUser().getUserName().equals(username);
+            return true;
+        }
+        return false;
+    }
+
+    private String printInvitations(ArrayList<Invite> invitations) {
+        String outPut = "| ";
         for (Invite invitation : invitations) {
-            outPut += invitation.toString() + '\n';
+            outPut += invitation.getInvitedUser().getUserName() + " | ";
         }
         return outPut;
     }
 
-    public String printAgendaItems(ArrayList<AgendaItem> agendaItems) {
+    private String printAgendaItems(ArrayList<AgendaItem> agendaItems) {
         String outPut = "";
-        for (AgendaItem agendaItem : agendaItems) {
-            outPut += agendaItem.toString() + '\n';
+        for (int i = 0; i < agendaItems.size(); i++) {
+            outPut += (i + 1) + "- " + agendaItems.get(i).getItemToDiscuss() + "\n";
         }
         return outPut;
     }
 
-    public String printActionItems(ArrayList<ActionItem> actionItems) {
-        String outPut = "";
-        for (ActionItem actionItem : actionItems) {
-            outPut += actionItem.toString();
-        }
-        return outPut;
+    private String printDate() {
+        Calendar pDate = Calendar.getInstance();
+        pDate.setTime(this.date);
+        return pDate.get(Calendar.DAY_OF_MONTH) + "/" +
+                pDate.get(Calendar.MONTH + 1) + "/" +
+                pDate.get(Calendar.YEAR) + "\n";
     }
+
 
     @Override
     public String toString() {
-        return "Meeting info: " + "\n" +
-                "Title: " + meetingTitle + "\n" +
-                "Local: " + local + '\n' +
-                "Responsible User=: " + responsibleUser + '\n' +
-                "Desire Outcome: " + desireOutcome + '\n' +
-                "Date: " + date + "\n" +
-                "Duration: " + duration + "\n" +
-                "Invitations: " + printInvitations(this.invitations) + "\n" +
-                "Agenda Items: " + printAgendaItems(this.agendaItems) + "\n" +
-                "Action Items: " + printActionItems(this.actionItems);
+        return "TITLE: " + meetingTitle + "\n" +
+                "LOCAL: " + local + '\n' +
+                "RESPONSIBLE USER: " + responsibleUser.getUserName() + '\n' +
+                "DESIRE OUTCOME: " + desireOutcome + '\n' +
+                "DATE: " + printDate() +
+                "DURATION: " + duration + " minutes\n" +
+                "INVITATIONS: " + printInvitations(this.invitations) + "\n" +
+                "AGENDA ITEMS:\n" + printAgendaItems(this.agendaItems);
     }
 }

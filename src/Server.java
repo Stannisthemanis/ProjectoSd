@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.*;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
@@ -20,6 +21,7 @@ public class Server {
             createServer();
         } catch (IOException e) {
 //            mainServer = false;
+            System.out.println("*** Creating Server: " + e.getMessage());
             System.out.println("->> Server2: Secundary Server ok...");
             checkMainServer();
         }
@@ -89,17 +91,31 @@ public class Server {
         RmiServerInterface dataBaseServer = null;
 
         //Acesso ao servidor rmi
-        try {
-            dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
-        } catch (NotBoundException e) {
-            System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+        boolean connected = false;
+        while (connected == false) {
+            try {
+                dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
+                connected = true;
+            } catch (MalformedURLException e) {
+                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            } catch (NotBoundException e) {
+                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            } catch (RemoteException e) {
+                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            }
         }
+        System.out.println("->> Server: Connection to RmiServer ok...");
 
         //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
             Socket clientSocket = listenSocket.accept();
             System.out.println("->> Server: Client connected with socket " + clientSocket);
-            new Connection(clientSocket, dataBaseServer);
+            synchronized (dataBaseServer) {
+                new Connection(clientSocket, dataBaseServer);
+            }
         }
     }
 }
@@ -176,9 +192,16 @@ class Connection extends Thread {
                     case 3:
                         replyCheckPassedMeetings();
                         break;
+                    case 4:
+                        replyInfoMeeting(1);
+                        break;
+                    case 5:
+                        replyInfoMeeting(2);
+                        break;
+
                 }
             }
-        }catch (EOFException e) {
+        } catch (EOFException e) {
             System.out.println("*** Receiving request from client: " + e.getMessage());
         } catch (IOException e) {
             System.out.println("*** Receiving request from client: " + e.getMessage());
@@ -186,7 +209,7 @@ class Connection extends Thread {
 
     }
 
-    public synchronized void replyNewMeeting() {
+    public void replyNewMeeting() {
         String newMeeting = null;
         try {
             System.out.println("->> Server: Received request from " + this.user.getUserName() + " to create new meeting");
@@ -194,14 +217,13 @@ class Connection extends Thread {
             System.out.println("->>Server: Waiting for meeting information");
             newMeeting = in.readUTF();
             System.out.println("->> Server: Information received");
-            System.out.println(dataBaseServer.addNewMeeting(newMeeting).getMeetingTitle());
-//            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
-//                System.out.println("->> Server: New meeting created");
-//            } else {
-//                out.writeBoolean(false);
-//                System.out.println("->> Server: Failed to create new meeting");
-//            }
-            out.writeBoolean(true);
+            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
+                System.out.println("->> Server: New meeting created");
+                out.writeBoolean(true);
+            } else {
+                out.writeBoolean(false);
+                System.out.println("->> Server: Failed to create new meeting");
+            }
         } catch (IOException e) {
             System.out.println("*** Reply new Meeting: " + e.getMessage());
         }
@@ -213,18 +235,33 @@ class Connection extends Thread {
             System.out.println("->> Server: Sending all upcuming meeting of " + this.user.getUserName());
             out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
         } catch (IOException e) {
-            System.out.println("->> Replying upcuming meeting: " + e.getMessage());
+            System.out.println("*** Replying upcuming meeting: " + e.getMessage());
         }
     }
 
     public void replyCheckPassedMeetings() {
-        System.out.println("Server: Received request to send all passed meeting of " + this.user.getUserName());
+        System.out.println("->> Server: Received request to send all passed meeting of " + this.user.getUserName());
         try {
-            System.out.println("Server: Sending all passed meeting of " + this.user.getUserName());
+            System.out.println("->> Server: Sending all passed meeting of " + this.user.getUserName());
             out.writeUTF(dataBaseServer.getPassedMeetings(user));
         } catch (IOException e) {
-            System.out.println("Replying upcuming meeting: " + e.getMessage());
+            System.out.println("*** Replying upcuming meeting: " + e.getMessage());
         }
+    }
+
+    //flag 1- FutureMeeting 2- PassedMeeting
+    public void replyInfoMeeting(int flag) {
+        System.out.println("->> Server: Received request to send meeting information from " + this.user.getUserName());
+        int meeting;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for info of requested meeting...");
+            meeting = in.read();
+            out.writeUTF(dataBaseServer.getMeetingInfo(flag, meeting, this.user));
+        } catch (IOException e) {
+            System.out.println("*** Replying to send info of meeting");
+        }
+
     }
 
     public void chat() {

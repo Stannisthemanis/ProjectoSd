@@ -165,13 +165,13 @@ public class Client {
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-        System.out.println("Resume from meeting "+optUm);
-        System.out.println("\n" + requestResumeMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
+            System.out.println("Resume from meeting " + optUm);
+            System.out.println("\n" + requestResumeUpcumingMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions for meeting " + optUm);
             System.out.println("1-> Consult Agenda Items");
             System.out.println("2-> Add items to agenda");
@@ -251,14 +251,15 @@ public class Client {
                     System.out.println("You will adress Stannis the mannis by 'Your grace' or GFO!");
                     System.out.println("Under construction... sorry :( \n\n");
                     sc.next();
-                }break;
+                }
+                break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
                 }
                 break;
             }
-        }while (true);
+        } while (true);
     }
 
     public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
@@ -272,7 +273,7 @@ public class Client {
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-        System.out.println(resquestChatFromItemPastMeeting(in,out,optUm));
+        System.out.println(resquestChatFromItemPastMeeting(in, out, optUm));
     }
 
     public static void SubMenupPastMeetings(DataInputStream in, DataOutputStream out) {
@@ -315,7 +316,8 @@ public class Client {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Consult Action Items: ");
                     System.out.println(requestActionItemsPastMeeting(in, out, optUm));
-                }break;
+                }
+                break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
@@ -341,27 +343,29 @@ public class Client {
     }
 
     public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date, guests, agendaItems, duration, request;
+        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
+        int duration;
         responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
+//        System.out.print("Desire outcome: ");
         sc.nextLine();
-        desireOutCome = sc.nextLine();
-        System.out.print("Local: ");
-        local = sc.nextLine();
-        System.out.print("Title: ");
-        title = sc.nextLine();
+//        desireOutCome = sc.nextLine();
+//        System.out.print("Local: ");
+//        local = sc.nextLine();
+//        System.out.print("Title: ");
+//        title = sc.nextLine();
         System.out.print("Date (dd/mm/yy): ");
         date = sc.next();
         sc.nextLine();
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
-        System.out.print("agendaItems (ai1,ai2,...): ");
-        agendaItems = sc.nextLine();
-        System.out.print("Duration: (dd:hh:mm) ");
-        duration = sc.next().replaceAll(":","/");
+//        System.out.print("Guests (g1,g2,...): ");
+//        guests = sc.nextLine();
+//        System.out.print("agendaItems (ai1,ai2,...): ");
+//        agendaItems = sc.nextLine();
+        System.out.print("Duration in minutes: ");
+        duration = sc.nextInt();
         sc.nextLine();
-        System.out.println();
-        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
+//        System.out.println();
+//        request = responsible + "-" + desireOutCome + "-" + local + "-" + title + "-" + date + "-" + guests + "-" + agendaItems + "-" + duration;
+        request = responsible + "-" + "desireOutCome" + "-" + "local" + "-" + "title" + "-" + date + "-" + "Stannis,Jon Snow" + "-" + "agendaItems" + "-" + duration;
         boolean success = requestServerNewMeeting(in, out, request);
         if (success)
             System.out.println("Meeting successfully created!");
@@ -422,22 +426,19 @@ public class Client {
         return "1->Item: Stannis the mannis\n2-> Item: Stannis protextor of the realm";
     }
 
-    public static String requestResumeMeeting(DataInputStream in, DataOutputStream out, int opt) {
-    /*
-        boolean aceptSignal;
+    public static String requestResumeUpcumingMeeting(DataInputStream in, DataOutputStream out, int opt) {
         String result = "";
         try {
             out.write(4);
         } catch (Exception e) {
         }
         try {
-            aceptSignal = in.readBoolean();
-            out.write(opt);
+            in.readBoolean();
+            out.write(opt - 1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
-        return result;*/
-        return "Resume: Stannis choosen of R'llhor and king of you're mother";
+        return result;
     }
 
     public static String requestActionItemsPastMeeting(DataInputStream in, DataOutputStream out, int opt) {

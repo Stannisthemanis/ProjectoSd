@@ -7,10 +7,12 @@ import java.util.ArrayList;
 public class AgendaItem implements Serializable {
     protected String ItemToDiscuss;
     protected ArrayList<String> chat;
+    protected ActionItem actionItem;
 
     public AgendaItem(String itemToDiscuss) {
         ItemToDiscuss = itemToDiscuss;
         chat = new ArrayList<String>();
+        actionItem = null;
     }
 
     public String getItemToDiscuss() {
@@ -27,6 +29,14 @@ public class AgendaItem implements Serializable {
 
     public void setChat(ArrayList<String> chat) {
         this.chat = chat;
+    }
+
+    public ActionItem getActionItem() {
+        return actionItem;
+    }
+
+    public void setActionItem(ActionItem actionItem) {
+        this.actionItem = actionItem;
     }
 
     @Override
