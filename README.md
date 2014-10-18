@@ -8,7 +8,6 @@ TODO:
 
 - melhor reconexao dos clientes.
 - melhor data das reunioes
-- Gravar em ficheiros
 - Arranjay toStrings() das restantes classes
 - melhor gravar em ficheiro
 
