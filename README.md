@@ -10,8 +10,7 @@ TODO:
 - melhor data das reunioes
 - Gravar em ficheiros
 - Arranjay toStrings() das restantes classes
-
-
+- melhor gravar em ficheiro
 
 
 REQUEST CODE:
