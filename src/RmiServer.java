@@ -4,6 +4,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Scanner;
 
 /**
  * Created by Diogo on 16/10/2014.
@@ -131,9 +132,20 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        meetings.add(new Meeting("bastard", "wall", users.get(1), "kill the bastard in the wal", new Date(), new Date()));
-        meetings.add(new Meeting("montain", "Dorne", users.get(2), "Delay Montain's head delivey", new Date(), new Date()));
-        meetings.add(new Meeting("alayne", "eary", users.get(1), "get layd with sansa", new Date(), new Date()));
+
+        ArrayList<AgendaItem> agendaItems1 = new ArrayList<AgendaItem>();
+        ArrayList<AgendaItem> agendaItems2 = new ArrayList<AgendaItem>();
+        ArrayList<AgendaItem> agendaItems3 = new ArrayList<AgendaItem>();
+        agendaItems1.add(new AgendaItem("talk about stannis"));
+        agendaItems1.add(new AgendaItem("talk about davos"));
+        agendaItems2.add(new AgendaItem("talk about robb"));
+        agendaItems2.add(new AgendaItem("talk about catelyn"));
+        agendaItems3.add(new AgendaItem("talk about cersei"));
+        agendaItems3.add(new AgendaItem("talk about jaime"));
+
+        meetings.add(new Meeting("bastard", "wall", users.get(1), "kill the bastard in the wal", new Date("17/10/2014"), 1,agendaItems1));
+        meetings.add(new Meeting("montain", "Dorne", users.get(2), "Delay Montain's head delivey", new Date("19/10/2014"), 2, agendaItems2));
+        meetings.add(new Meeting("alayne", "eary", users.get(1), "get layd with sansa", new Date("3/10/2014"), 3,agendaItems3));
 
         invitations.add(new Invite(meetings.get(2), 1, users.get(1)));
         invitations.add(new Invite(meetings.get(1), 0, users.get(3)));
