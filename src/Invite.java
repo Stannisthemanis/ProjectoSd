@@ -5,13 +5,11 @@ import java.io.Serializable;
  */
 public class Invite implements Serializable {
     protected Meeting meeting;
-    //0- pending, 1- accepted , 2- recused
-    protected int decision;
+
     protected User invitedUser;
 
     public Invite(Meeting meeting, int decision, User invitedUser) {
         this.meeting = meeting;
-        this.decision = decision;
         this.invitedUser = invitedUser;
     }
 
@@ -23,13 +21,6 @@ public class Invite implements Serializable {
         this.meeting = meeting;
     }
 
-    public int hisDecision() {
-        return decision;
-    }
-
-    public void setDecision(int decision) {
-        this.decision = decision;
-    }
 
     public User getInvitedUser() {
         return invitedUser;
@@ -43,7 +34,6 @@ public class Invite implements Serializable {
     public String toString() {
         return "Invite: " + '\n' +
                 "Meeting: " + meeting + '\n' +
-                "Decision: " + decision + '\n' +
                 "Invited User: " + invitedUser;
     }
 }

@@ -17,16 +17,16 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     protected RmiServer() throws RemoteException {
         super();
-        try {
-            Save.loadForAL();
-            displayAllAL(); // all info in the files
-        } catch (IOException e) {
-        } catch (ClassNotFoundException e) {
-        }
 //        try {
-//            this.firstUse();
-//        } catch (RemoteException e) {
+//            Save.loadForAL();
+//            displayAllAL(); // all info in the files
+//        } catch (IOException e) {
+//        } catch (ClassNotFoundException e) {
 //        }
+        try {
+            this.firstUse();
+        } catch (RemoteException e) {
+        }
     }
 
     public User findUser(String username) throws RemoteException {
@@ -65,9 +65,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         for (String s : tokenizer[5].split(",")) {
             newInvite = new Invite(meeting, 0, findUser(s));
             invitations.add(newInvite);
-            meeting.addInvite(newInvite);
         }
-
         return true;
 
     }
@@ -148,6 +146,57 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         }
     }
 
+    public String getMessagesByUser(User user) throws RemoteException {
+        int j = 1;
+        String output = null;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName())) {
+                if (output == null)
+                    output = "";
+                output += j + "- Meeting: " + i.getMeeting().getMeetingTitle() + "| Created by: " + i.getMeeting().getResponsibleUser() + "\n";
+            }
+        }
+        if (output == null)
+            output = "You have no messages";
+        return output;
+    }
+
+    public int getNumberOfMessages(User user) throws RemoteException {
+        int i = 0;
+        for (Invite invitation : invitations) {
+            if (invitation.getInvitedUser().equals(user.getUserName()))
+                i++;
+        }
+        return i;
+    }
+
+    public String getResumeOfMessage(User user, int message) throws RemoteException {
+        int j = 0;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName()))
+                j++;
+            if (j == message) {
+                return i.getMeeting().toString();
+            }
+        }
+        return "Error!!";
+    }
+
+    public boolean setReplyOfInvite(User user, int message, boolean decision) throws RemoteException {
+        int j = 0;
+        for (Invite i : invitations) {
+            if (i.getInvitedUser().getUserName().equals(user.getUserName()))
+                j++;
+            if (j == message) {
+                if (decision == true) {
+                    i.getMeeting().addUser(findUser(user.getUserName()));
+                }
+                invitations.remove(i);
+                return true;
+            }
+        }
+        return false;
+    }
 
     public void firstUse() throws RemoteException {
 
@@ -193,7 +242,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 //        }
 //        System.out.println("------------------------------");
 //        System.out.println("!!!!2"); sc.next();
-//        for (Invite invitation : invitations) {
+//        for (Invite invitation : usersAccepted) {
 //            System.out.println(invitation);
 //        }
 //        System.out.println("!!!!3" +
@@ -217,8 +266,8 @@ class Save {
             RmiServer.users = (ArrayList<User>) oos.readObject();
             oos.close();
         }
-        if (new File("invitations.dat").exists()) {
-            FileInputStream fis = new FileInputStream("invitations.dat");
+        if (new File("usersAccepted.dat").exists()) {
+            FileInputStream fis = new FileInputStream("usersAccepted.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.invitations = (ArrayList<Invite>) oos.readObject();
             oos.close();
@@ -232,7 +281,7 @@ class Save {
         ObjectOutputStream oos1 = new ObjectOutputStream(new FileOutputStream("users.dat"));
         oos1.writeObject(RmiServer.users);
         oos1.close();
-        ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream("invitations.dat"));
+        ObjectOutputStream oos2 = new ObjectOutputStream(new FileOutputStream("usersAccepted.dat"));
         oos2.writeObject(RmiServer.invitations);
         oos2.close();
         System.out.println("Files saved!");

@@ -13,7 +13,7 @@ public class Meeting implements Serializable {
     protected String desireOutcome;
     protected Date date;
     protected int duration; //hours
-    protected ArrayList<Invite> invitations;
+    protected ArrayList<User> usersAccepted;
     protected ArrayList<AgendaItem> agendaItems;
     protected ArrayList<ActionItem> actionItems;
 
@@ -25,7 +25,7 @@ public class Meeting implements Serializable {
         this.desireOutcome = desireOutcome;
         this.date = date;
         this.duration = duration;
-        this.invitations = new ArrayList<Invite>();
+        this.usersAccepted = new ArrayList<User>();
         this.agendaItems = agendaItems;
         this.actionItems = new ArrayList<ActionItem>();
     }
@@ -54,8 +54,8 @@ public class Meeting implements Serializable {
         return duration;
     }
 
-    public ArrayList<Invite> getUsersInvited() {
-        return invitations;
+    public ArrayList<User> getUsersInvited() {
+        return usersAccepted;
     }
 
     public ArrayList<AgendaItem> getAgendaItems() {
@@ -90,10 +90,6 @@ public class Meeting implements Serializable {
         this.duration = duration;
     }
 
-    public void setUsersInvited(ArrayList<Invite> invitations) {
-        this.invitations = invitations;
-    }
-
     public void setAgendaItems(ArrayList<AgendaItem> agendaItems) {
         this.agendaItems = agendaItems;
     }
@@ -102,8 +98,8 @@ public class Meeting implements Serializable {
         this.actionItems = actionItems;
     }
 
-    public void addInvite(Invite invite) {
-        this.invitations.add(invite);
+    public void addUser(User userAccepted) {
+        this.usersAccepted.add(userAccepted);
     }
 
     public void addActionItem(ActionItem actionItem) {
@@ -111,17 +107,18 @@ public class Meeting implements Serializable {
     }
 
     public boolean isInvited(String username) {
-        for (Invite i : invitations) {
-            i.getInvitedUser().getUserName().equals(username);
-            return true;
+        for (User i : usersAccepted) {
+            if (i.getUserName().equals(username))
+                return true;
         }
         return false;
     }
 
-    private String printInvitations(ArrayList<Invite> invitations) {
+    private String printAcceptedUsers() {
         String outPut = "| ";
-        for (Invite invitation : invitations) {
-            outPut += invitation.getInvitedUser().getUserName() + " | ";
+        for (User user : usersAccepted) {
+            outPut += user.getUserName() + " | ";
+
         }
         return outPut;
     }
@@ -151,7 +148,7 @@ public class Meeting implements Serializable {
                 "DESIRE OUTCOME: " + desireOutcome + '\n' +
                 "DATE: " + printDate() +
                 "DURATION: " + duration + " minutes\n" +
-                "INVITATIONS: " + printInvitations(this.invitations) + "\n" +
+                "INVITATIONS: " + printAcceptedUsers() + "\n" +
                 "AGENDA ITEMS:\n" + printAgendaItems();
     }
 }
