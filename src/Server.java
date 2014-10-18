@@ -315,6 +315,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Waiting for user to decline or accept..");
             reply = in.readBoolean();
             out.writeBoolean(dataBaseServer.setReplyOfInvite(user, n, reply));
+            System.out.println("->> Server: Answer received with sucess");
         } catch (IOException e) {
             System.out.println("*** Replying to message: " + e.getMessage());
         }

@@ -19,7 +19,7 @@ public class Client {
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("manel", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -137,7 +137,7 @@ public class Client {
             //reply
             if (dec.equals("s")) {
                 aux=replyInvite(in, out, true);
-            } else if (dec.equals("s")) {
+            } else if (dec.equals("n")) {
                 aux=replyInvite(in, out, false);
             }
             //response

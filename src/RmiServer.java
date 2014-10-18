@@ -163,10 +163,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     public int getNumberOfMessages(User user) throws RemoteException {
         int i = 0;
+        System.out.println("invSize.«: " + invitations.size());
         for (Invite invitation : invitations) {
-            if (invitation.getInvitedUser().equals(user.getUserName()))
+            if (invitation.getInvitedUser().getUserName().equals(user.getUserName()))
                 i++;
         }
+        System.out.println(i);
         return i;
     }
 
