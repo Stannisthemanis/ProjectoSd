@@ -232,8 +232,7 @@ public class Client {
                 break;
                 case 2: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Add items to agenda: ");
-                    System.out.println("Under construction... sorry :( \n\n");
+                    addItemstoAgenda(in, out, optUm);
                 }
                 break;
                 case 3: {
@@ -435,7 +434,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt - 1);
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -451,7 +450,7 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt - 1);
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -466,7 +465,7 @@ public class Client {
         }
         try {
             in.readBoolean();
-            out.write(opt - 1);
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -481,7 +480,7 @@ public class Client {
         }
         try {
             in.readBoolean();
-            out.write(opt - 1);
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -548,6 +547,24 @@ public class Client {
         }
     }
 
+    public static boolean requestAddItemToAgenda(DataInputStream in, DataOutputStream out, int opt, String itemToadd){
+        boolean aceptSignal;
+        try {
+            out.write(11);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(opt);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(itemToadd);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -594,6 +611,18 @@ public class Client {
             System.out.println("Meeting successfully created!");
         else
             System.out.println("Error creating meeting...");
+    }
+
+    public static void addItemstoAgenda(DataInputStream in, DataOutputStream out, int opt){
+        String itemToDiscuss;
+        System.out.println("Add items to agenda: ");
+        System.out.println("Item to discuss: ");
+        itemToDiscuss = sc.nextLine();
+        boolean success = requestAddItemToAgenda(in,out,opt,itemToDiscuss);
+        if(success)
+            System.out.println("Agenda item was added successfully!!");
+        else
+            System.out.println("Error adding Item to Agenda....");
     }
 
 

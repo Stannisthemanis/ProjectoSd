@@ -25,3 +25,4 @@ REQUEST CODE:
 8- request messages
 9- request resume of message
 10- request Number of messages to read
+11- request add items to agenda
