@@ -290,12 +290,14 @@ public class Client {
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
+            System.out.println("Resume from meeting " + optUm);
+
+            System.out.println("\n" + requestResumePastMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions from meeting " + optUm);
             System.out.println("1-> Consult Agenda Items");
             System.out.println("2-> Consult Action Items");
@@ -415,6 +417,7 @@ public class Client {
             result = in.readUTF();
         } catch (Exception e) {
         }
+        System.out.println("RESULT-> "+result);
         return result;
     }
 
@@ -439,6 +442,21 @@ public class Client {
         String result = "";
         try {
             out.write(4);
+        } catch (Exception e) {
+        }
+        try {
+            in.readBoolean();
+            out.write(opt - 1);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
+    }
+
+    public static String requestResumePastMeeting(DataInputStream in, DataOutputStream out, int opt) {
+        String result = "";
+        try {
+            out.write(5);
         } catch (Exception e) {
         }
         try {
