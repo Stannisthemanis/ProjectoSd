@@ -29,6 +29,17 @@ public class Meeting implements Serializable {
         this.actionItems = new ArrayList<ActionItem>();
     }
 
+    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, Date duration) {
+        this.meetingTitle = meetingTitle;
+        this.local = local;
+        this.responsibleUser = responsibleUser;
+        this.desireOutcome = desireOutcome;
+        this.date = date;
+        this.duration = duration;
+        this.invitations = new ArrayList<Invite>();
+        this.actionItems = new ArrayList<ActionItem>();
+    }
+
     public String getMeetingTitle() {
         return meetingTitle;
     }

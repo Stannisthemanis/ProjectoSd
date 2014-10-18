@@ -28,27 +28,33 @@ public class User implements Serializable {
         Scanner sc = new Scanner(System.in);
         System.out.println("*** Register new user ***");
         System.out.println("Insert new userName: ");
-        this.userName = sc.next();
+        this.userName = sc.nextLine();
         System.out.println("Insert password: ");
-        this.passWord=sc.next();
+        this.passWord = sc.nextLine();
         System.out.println("Insert address: ");
-        this.address =sc.next();
-        System.out.println("Insert date of birthday (dd/mm/yyyy): ");
-        String auxDate=sc.next();
-        this.dob = new Date(auxDate);
+        this.address = sc.nextLine();
+        do {
+            System.out.println("Insert date of birthday (dd/mm/yyyy): ");
+            String auxDate = sc.nextLine();
+            try {
+                this.dob = new Date(auxDate);
+                break;
+            } catch (Exception e) {
+                System.out.println("Wrong date");
+            }
+        } while (true);
         System.out.println("Insert phone number: ");
         this.phoneNumber = sc.nextInt();
         System.out.println("Insert mail address: ");
-        this.mail=sc.next();
-
+        this.mail = sc.next();
     }
 
-    public boolean testUserName(String un){ // test if UserName already exists
-        return(this.userName==un);
+    public boolean testUserName(String un) { // test if UserName already exists
+        return (this.userName == un);
     }
 
-    public boolean testLogIn(String un, String pw){
-        return ((this.userName==un) && (this.passWord == pw));
+    public boolean testLogIn(String un, String pw) {
+        return ((this.userName == un) && (this.passWord == pw));
     }
 
     public String getUserName() {

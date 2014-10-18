@@ -104,7 +104,6 @@ public class Server {
     }
 }
 
-
 //Thread que lida com a connecçao ao 2o server
 class respondToSecundary extends Thread {
     DatagramSocket dataSocket;
