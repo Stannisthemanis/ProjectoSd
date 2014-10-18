@@ -52,7 +52,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String local = tokenizer[2];
         String meetingTitle = tokenizer[3];
         Date date = new Date(tokenizer[4]);
-        System.out.println(tokenizer[4]);
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         for (String s : tokenizer[6].split(",")) {
             agendaItems.add(new AgendaItem(s));
@@ -136,10 +135,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-12/2/2010-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-12/2/2011-manel,Jon Snow-Ai1,Ai2-");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-12/2/2015-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
-        addNewMeeting("manel-talk about Robert-wall-robertthemannis-12/2/2016-Stannis Baratheon,Jon Snow-Ai1,Ai2-");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-12/2/2010-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-12/2/2011-manel,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-12/2/2015-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("manel-talk about Robert-wall-robertthemannis-12/2/2016-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
     }
 
     public static void main(String[] args) {
@@ -147,8 +146,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             RmiServer rmiServer = new RmiServer();
             LocateRegistry.createRegistry(1099).rebind("DataBase", rmiServer);
             System.out.println("RmiServer Ready");
-        } catch (Exception e) {
-            System.out.println("RmiServer: " + e.getMessage());
+        } catch (RemoteException e) {
+            System.out.println("*** RmiServer: " + e.getMessage());
         }
 
         try { //store in files
