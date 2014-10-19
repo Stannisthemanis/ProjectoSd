@@ -160,6 +160,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                 if (output == null)
                     output = "";
                 output += j + "- Meeting: " + i.getMeeting().getMeetingTitle() + "| Created by: " + i.getMeeting().getResponsibleUser().getUserName() + "\n";
+                j++;
             }
         }
         if (output == null)
@@ -207,7 +208,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public boolean addAgendaItem(int nMeeting, String newAgendaItem, User user) throws RemoteException {
-        AgendaItem nAgendaItem = new AgendaItem(newAgendaItem);
+        AgendaItem newItem = new AgendaItem(newAgendaItem);
         int i = 0;
         for (Meeting m : meetings) {
             if (m.getDate().after(new Date())) {
@@ -215,7 +216,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.addAgendaItem(nAgendaItem);
+                    m.addAgendaItem(newItem);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean removeAgendaItem(int nMeeting, int nAgenda, User user) throws RemoteException {
+        int i = 0;
+        for (Meeting m : meetings) {
+            if (m.getDate().after(new Date())) {
+                if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    m.removerAgendaItem(nAgenda);
                     return true;
                 }
             }
