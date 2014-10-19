@@ -7,7 +7,6 @@ Projecto bueda fixe
 TODO:
 
 - melhor reconexao dos clientes.
-- melhor data das reunioes
 - Arranjay toStrings() das restantes classes
 - melhor gravar em ficheiro
 
