@@ -99,51 +99,57 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public String getMeetingInfo(int flag, int nMeeting, User user) throws RemoteException {
-        ArrayList<Meeting> upMeetings = new ArrayList<Meeting>();
         //flag 1- future meeting 2- passed meeting
+        int i = 0;
         if (flag == 1) {
             for (Meeting m : meetings) {
                 if (m.getDate().after(new Date())) {
                     if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        upMeetings.add(m);
+                        i++;
+                        if (i == nMeeting)
+                            return m.toString();
                     }
                 }
             }
-            return upMeetings.get(nMeeting).toString();
         } else {
             for (Meeting m : meetings) {
                 if (m.getDate().before(new Date())) {
                     if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        upMeetings.add(m);
+                        i++;
+                        if (i == nMeeting)
+                            return m.toString();
                     }
                 }
             }
-            return upMeetings.get(nMeeting).toString();
         }
+        return "Meeting not found.. ";
     }
 
     public String getAgendaItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException {
-        ArrayList<Meeting> upMeetings = new ArrayList<Meeting>();
         //flag 1- future meeting 2- passed meeting
+        int i = 0;
         if (flag == 1) {
             for (Meeting m : meetings) {
                 if (m.getDate().after(new Date())) {
                     if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        upMeetings.add(m);
+                        i++;
+                        if (i == nMeeting)
+                            return m.printAgendaItems();
                     }
                 }
             }
-            return upMeetings.get(nMeeting).printAgendaItems();
         } else {
             for (Meeting m : meetings) {
                 if (m.getDate().before(new Date())) {
                     if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        upMeetings.add(m);
+                        i++;
+                        if (i == nMeeting)
+                            return m.printAgendaItems();
                     }
                 }
             }
-            return upMeetings.get(nMeeting).printAgendaItems();
         }
+        return "Meeting not found.. ";
     }
 
     public String getMessagesByUser(User user) throws RemoteException {
