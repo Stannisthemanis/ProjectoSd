@@ -8,7 +8,8 @@ TODO:
 
 - melhor reconexao dos clientes.
 - Arranjay toStrings() das restantes classes
-- melhor gravar em ficheiro
+- melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
+- protecçao de dados
 
 
 REQUEST CODE:
