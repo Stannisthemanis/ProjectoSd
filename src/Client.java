@@ -84,8 +84,8 @@ public class Client {
         do {
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
-            System.out.println("2-> Messages ("+requestNumberOfMessegesToRead(in, out)+" new messages)");
-            System.out.println("3-> TODO list ("+requestSizeToDo(in, out)+" actions to be done)");
+            System.out.println("2-> Messages (" + requestNumberOfMessegesToRead(in, out) + " new messages)");
+            System.out.println("3-> TODO list (" + requestSizeToDo(in, out) + " actions to be done)");
             System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             option = sc.nextInt();
@@ -118,7 +118,7 @@ public class Client {
     public static void subMenuMessages(DataInputStream in, DataOutputStream out) {
         int optUm, size;
         String dec = "";
-        boolean aux=false;
+        boolean aux = false;
         String options = requestMessages(in, out);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
@@ -140,15 +140,15 @@ public class Client {
             dec = dec.toLowerCase();
             //reply
             if (dec.equals("y")) {
-                aux=replyInvite(in, out, true);
+                aux = replyInvite(in, out, true);
             } else if (dec.equals("n")) {
-                aux=replyInvite(in, out, false);
+                aux = replyInvite(in, out, false);
             }
             //response
-            if(aux){
+            if (aux) {
                 System.out.println("Invite accept with success!");
                 break;
-            }else{
+            } else {
                 System.out.println("Invite not accepted...");
                 break;
             }
@@ -162,7 +162,8 @@ public class Client {
             System.out.println("Menu Meetings");
             System.out.println("1-> Create new meeting");
             System.out.println("2-> Check upcoming meetings");
-            System.out.println("3-> Check past meetings");
+            System.out.println("3-> Current Meetings");
+            System.out.println("4-> Check past meetings");
             System.out.println("0-> Back");
             System.out.print("Choose option: ");
             option = sc.nextInt();
@@ -183,6 +184,10 @@ public class Client {
                 }
                 break;
                 case 3: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    SubMenuCurrentMeetings(in, out);
+                }
+                case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     SubMenupPastMeetings(in, out);
                 }
@@ -220,7 +225,6 @@ public class Client {
             System.out.println("2-> Add items to agenda");
             System.out.println("3-> Modify items in agenda");
             System.out.println("4-> Delete items from agenda");
-            System.out.println("5-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
             optAi = sc.nextInt();
@@ -232,7 +236,7 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Consult Agenda Items: ");
-                    SubMenuConsultAgendaItems(in, out, optUm);
+                    SubMenuConsultAgendaItemsUM(in, out, optUm);
                 }
                 break;
                 case 2: {
@@ -251,10 +255,55 @@ public class Client {
                     System.out.println("Delete items from agenda: ");
                     DeleteItemstFromAgenda(in, out, optUm);
                 }
-                case 5: {
+                default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Add new Actin Item: ");
-                    addNewActionItem(in, out, optUm);
+                    System.out.println("Wrong option");
+                }
+                break;
+            }
+        } while (true);
+    }
+
+    public static void SubMenuCurrentMeetings(DataInputStream in, DataOutputStream out) {
+        int size, optMeeting, optAi;
+        System.out.println("All Current meetings: ");
+        String options = requestCurrentMeetings(in, out);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display name of all current meetings
+            System.out.println("\n0-> Back");
+            System.out.print("Choose an option: ");
+            optMeeting = sc.nextInt();
+        } while (optMeeting < 0 || optMeeting > size);
+        do {
+            if (optMeeting == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            System.out.println("Resume from meeting " + optMeeting);
+            System.out.println("\n" + requestResumeCurrentMeetings(in, out, optMeeting) + "\n"); // resume of chosen meeting
+            System.out.println("\nOptions for meeting " + optMeeting);
+            System.out.println("1-> Consult Agenda Items"); 
+            System.out.println("2-> Add new action Item");
+            System.out.println("0-> Back");
+            System.out.println("Choose an option: ");
+            optAi = sc.nextInt();
+            if (optAi == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            switch (optAi) {
+                case 1: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Consult Agenda Items: ");
+                    SubMenuConsultAgendaItemsCM(in, out, optMeeting);
+                }
+                break;
+                case 2: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Add new Action Item: ");
+                    addNewActionItem(in, out, optMeeting);
                 }
                 break;
                 default: {
@@ -266,9 +315,61 @@ public class Client {
         } while (true);
     }
 
-    public static void SubMenuConsultAgendaItems(DataInputStream in, DataOutputStream out, int opt) {
-        int optUm, size, opt2;
+    public static void SubMenuConsultAgendaItemsUM(DataInputStream in, DataOutputStream out, int opt) {
+        int optBack;
         String options = requestAgendaItemsFromUpComingMeeting(in, out, opt);
+        do {
+            System.out.println(options); //display name of all agenda items
+            System.out.println("0-> Back");
+            optBack=sc.nextInt();
+            if(optBack!=0){
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+        }while(optBack!=0);
+//        String[] countOptions = options.split("\n");
+//        size = countOptions.length;
+//        do {
+//            System.out.println("0-> Back");
+//            System.out.print("Choose an option: ");
+//            optUm = sc.nextInt();
+//        } while (optUm < 0 || optUm > size);
+//        do {
+//            if (optUm == 0) {
+//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+//                break;
+//            }
+//            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+//            System.out.println("Options for Agenda item " + optUm);
+//            System.out.println("1-> Open chat");
+//            System.out.println("0-> Back");
+//            System.out.println("Choose an option: ");
+//            opt2 = sc.nextInt();
+//            if (opt2 == 0) {
+//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+//                break;
+//            }
+//            switch (opt2) {
+//                case 1: {
+//                    System.out.println("\n\n\n");
+//                    System.out.println("Opening Chat... ");
+//                    System.out.println("You will address Stannis the mannis by 'Your grace' or GFO!");
+//                    System.out.println("Under construction... sorry :( \n\n");
+//                    sc.next();
+//                }
+//                break;
+//                default: {
+//                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+//                    System.out.println("Wrong option");
+//                }
+//                break;
+//            }
+//        } while (true);
+    }
+
+    public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
+        int optUm, size, opt2;
+        String options = requestAgendaItemsFromPastMeeting(in, out, opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
@@ -277,14 +378,28 @@ public class Client {
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
+        System.out.println(resquestChatFromItemPastMeeting(in, out, optUm));
+    }
+
+    public static void SubMenuConsultAgendaItemsCM(DataInputStream in, DataOutputStream out, int optMeeting) {
+        int optItem, opt2,size;
+        String options = requestAgendaItemsFromCurrentMeetings(in, out, optMeeting);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
         do {
-            if (optUm == 0) {
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optItem = sc.nextInt();
+        } while (optItem < 0 || optItem > size);
+        do {
+            if (optItem == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-            System.out.println("Options for Agenda item " + optUm);
+            System.out.println("Options for Agenda item " + optItem);
             System.out.println("1-> Open chat");
+            System.out.println("2-> Add key decsions");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
             opt2 = sc.nextInt();
@@ -301,6 +416,10 @@ public class Client {
                     sc.next();
                 }
                 break;
+                case 2: {
+                    System.out.println("Adding new ket decision");
+                    addNewKeyDecisionToAgendaitem(in,out,optMeeting,optItem);
+                }break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
@@ -308,20 +427,6 @@ public class Client {
                 break;
             }
         } while (true);
-    }
-
-    public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
-        int optUm, size, opt2;
-        String options = requestAgendaItemsFromPastMeeting(in, out, opt);
-        String[] countOptions = options.split("\n");
-        size = countOptions.length;
-        do {
-            System.out.println(options); //display name of all agenda items
-            System.out.println("0-> Back");
-            System.out.print("Choose an option: ");
-            optUm = sc.nextInt();
-        } while (optUm < 0 || optUm > size);
-        System.out.println(resquestChatFromItemPastMeeting(in, out, optUm));
     }
 
     public static void SubMenupPastMeetings(DataInputStream in, DataOutputStream out) {
@@ -377,7 +482,7 @@ public class Client {
         } while (true);
     }
 
-    public static void subMenuModifyAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting){
+    public static void subMenuModifyAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting) {
         int optItemtoModify, size;
         String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
         String[] countOptions = options.split("\n");
@@ -390,62 +495,101 @@ public class Client {
             if (optItemtoModify == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
-            }else if(optItemtoModify < 0 || optItemtoModify > size){
+            } else if (optItemtoModify < 0 || optItemtoModify > size) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option, try again");
             }
         } while (optItemtoModify < 0 || optItemtoModify > size);
 
         int opt;
-        do{
+        do {
             System.out.println("1-> Modify name ");
-            System.out.println("2-> Add new key decision");
             System.out.println("0-> Back");
-            opt=sc.nextInt();
-            if(opt==0){
+            opt = sc.nextInt();
+            if (opt == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            switch (opt){
+            switch (opt) {
                 case 1: {
-                    modifyNameFromAgendaItem(in,out,optMeeting,optItemtoModify);
-                }break;
-                case 2: {
-                    addNewKeyDecisionToAgendaitem(in, out, optMeeting, optItemtoModify);
-                }break;
+                    modifyNameFromAgendaItem(in, out, optMeeting, optItemtoModify);
+                }
+                break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
                 }
                 break;
             }
-        }while(true);
+        } while (true);
     }
 
-    public static void subMenuTodo(DataInputStream in, DataOutputStream out){
-//        int size, optUm, optAi;
-//        System.out.println("All my actions to be done: ");
-//        String options = requestActionItemsFromUser(in, out);
-//        String[] countOptions = options.split("\n");
-//        size = countOptions.length;
-//        do {
-//            System.out.println(options); //display name of all upcoming meetings
-//            System.out.println("\n0-> Back");
-//            System.out.print("Choose an option: ");
-//            optUm = sc.nextInt();
-//        } while (optUm < 0 || optUm > size);
-//        do {
-//            if (optUm == 0) {
-//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//                break;
-//            }
-//        }
+    public static void subMenuTodo(DataInputStream in, DataOutputStream out) {
+        int size, optActionItem, optAux;
+        System.out.println("All my actions to be done: ");
+        String options = requestActionItemsFromUser(in, out);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display all action items
+            System.out.println("\n0-> Back");
+            System.out.print("Choose an option: ");
+            optActionItem = sc.nextInt();
+        } while (optActionItem < 0 || optActionItem > size);
+        do {
+            boolean aux = false;
+            if (optActionItem == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            System.out.println("1-> Mark as done");
+            System.out.println("0-> Back");
+            System.out.println("Choose an option: ");
+            optAux = sc.nextInt();
+            if (optAux == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            switch (optAux) {
+                case 1: {
+                    String dec;
+
+                    do {
+                        System.out.println("Mark as done? (y/n)");
+                        dec = sc.next();
+                        dec = dec.toLowerCase();
+                        //reply
+                    } while (dec != "y" && dec != "n");
+                    if (dec.equals("y")) {
+                        aux = requestMarkActionAsDone(in, out, optActionItem, true);
+                    } else if (dec.equals("n")) {
+                        aux = requestMarkActionAsDone(in, out, optActionItem, false);
+                    }
+
+
+                    //response
+                    if (aux) {
+                        System.out.println("Invite accept with success!");
+                        break;
+                    } else {
+                        System.out.println("Invite not accepted...");
+                        break;
+                    }
+                }
+                default: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+                break;
+            }
+            if (aux) break;
+        } while (true);
     }
 
 
     //-------------------------------------- REQUEST/REPLY
 
-    public static int requestNumberOfMessegesToRead(DataInputStream in, DataOutputStream out){
+    public static int requestNumberOfMessegesToRead(DataInputStream in, DataOutputStream out) {
         try {
             out.write(10);
             return in.read();
@@ -521,6 +665,22 @@ public class Client {
         String result = "";
         try {
             out.write(7);
+        } catch (Exception e) {
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(opt);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
+    }
+    
+    public static String requestAgendaItemsFromCurrentMeetings(DataInputStream in, DataOutputStream out, int opt) {
+        boolean aceptSignal;
+        String result = "";
+        try {
+            out.write(21);
         } catch (Exception e) {
         }
         try {
@@ -622,7 +782,7 @@ public class Client {
         }
     }
 
-    public static boolean requestAddItemToAgenda(DataInputStream in, DataOutputStream out, int opt, String itemToadd){
+    public static boolean requestAddItemToAgenda(DataInputStream in, DataOutputStream out, int opt, String itemToadd) {
         boolean aceptSignal;
         try {
             out.write(11);
@@ -640,7 +800,7 @@ public class Client {
         }
     }
 
-    public static boolean requestDeleteItemToAgenda(DataInputStream in, DataOutputStream out, int optMeetenig, int itemToDelete){
+    public static boolean requestDeleteItemToAgenda(DataInputStream in, DataOutputStream out, int optMeetenig, int itemToDelete) {
         boolean aceptSignal;
         try {
             out.write(12);
@@ -658,7 +818,7 @@ public class Client {
         }
     }
 
-    public static boolean requestMofifyItemToAgenda(DataInputStream in, DataOutputStream out, int optMeeting, int optItemToModify, String newAgendaItem){
+    public static boolean requestMofifyItemToAgenda(DataInputStream in, DataOutputStream out, int optMeeting, int optItemToModify, String newAgendaItem) {
         boolean aceptSignal;
         try {
             out.write(13);
@@ -679,7 +839,7 @@ public class Client {
     }
 
     public static boolean requestAddKeyDecisionToAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting,
-                                                            int optItemToModify, String newKeyDecision){
+                                                            int optItemToModify, String newKeyDecision) {
         boolean aceptSignal;
         try {
             out.write(14);
@@ -699,7 +859,7 @@ public class Client {
         }
     }
 
-    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem){
+    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem) {
         boolean aceptSignal;
         try {
             out.write(15);
@@ -717,7 +877,7 @@ public class Client {
         }
     }
 
-    public static int requestSizeToDo(DataInputStream in, DataOutputStream out){
+    public static int requestSizeToDo(DataInputStream in, DataOutputStream out) {
         try {
             out.write(16);
             return in.read();
@@ -726,20 +886,57 @@ public class Client {
         }
     }
 
-    public static String requestActionItemsFromUser(DataInputStream in, DataOutputStream out){
+    public static String requestActionItemsFromUser(DataInputStream in, DataOutputStream out) {
         String result = "";
         try {
             out.write(17);
         } catch (Exception e) {
         }
         try {
-            result=in.readUTF();
+            result = in.readUTF();
         } catch (IOException e) {
         }
         return result;
     }
 
+    public static boolean requestMarkActionAsDone(DataInputStream in, DataOutputStream out, int optAction, boolean decision) {
+        boolean success;
+        try {
+            out.write(18);
+            success = in.readBoolean();
+            out.write(optAction);
+            success = in.readBoolean();
+            out.writeBoolean(decision);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
 
+    public static String requestCurrentMeetings(DataInputStream in, DataOutputStream out) {
+        String result = "";
+        try {
+            out.write(19);
+            result = in.readUTF();
+        } catch (Exception e) {
+        }
+        return result;
+    }
+
+    public static String requestResumeCurrentMeetings(DataInputStream in, DataOutputStream out, int optCurrentMeeting) {
+        String result = "";
+        try {
+            out.write(20);
+        } catch (Exception e) {
+        }
+        try {
+            in.readBoolean();
+            out.write(optCurrentMeeting);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
+    }
 
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
@@ -789,20 +986,20 @@ public class Client {
             System.out.println("Error creating meeting...");
     }
 
-    public static void addItemstoAgenda(DataInputStream in, DataOutputStream out, int opt){
+    public static void addItemstoAgenda(DataInputStream in, DataOutputStream out, int opt) {
         String itemToDiscuss;
         System.out.println("Add items to agenda: ");
         System.out.println("Item to discuss: ");
         sc.nextLine();
         itemToDiscuss = sc.nextLine();
-        boolean success = requestAddItemToAgenda(in,out,opt,itemToDiscuss);
-        if(success)
+        boolean success = requestAddItemToAgenda(in, out, opt, itemToDiscuss);
+        if (success)
             System.out.println("Agenda item was added successfully!!");
         else
             System.out.println("Error adding Item to Agenda....");
     }
 
-    public static void DeleteItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting){
+    public static void DeleteItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting) {
         int optItemtoDelete, size;
         String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
         String[] countOptions = options.split("\n");
@@ -815,56 +1012,55 @@ public class Client {
             if (optItemtoDelete == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
-            }else if(optItemtoDelete < 0 || optItemtoDelete > size){
+            } else if (optItemtoDelete < 0 || optItemtoDelete > size) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option, try again");
             }
         } while (optItemtoDelete < 0 || optItemtoDelete > size);
 
         boolean success = requestDeleteItemToAgenda(in, out, optMeeting, optItemtoDelete);
-        if(success) {
+        if (success) {
             System.out.println("Agenda item was deleted successfully!!");
-        }
-        else {
+        } else {
             System.out.println("Error deleting Item from Agenda....");
         }
 
 
     }
 
-    public static void modifyNameFromAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoModify){
+    public static void modifyNameFromAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoModify) {
         String NewItemToDiscuss;
         System.out.println("New item to discuss: ");
         sc.nextLine();
         NewItemToDiscuss = sc.nextLine();
-        boolean success = requestMofifyItemToAgenda(in, out, optMeeting,optItemtoModify, NewItemToDiscuss);
-        if(success)
+        boolean success = requestMofifyItemToAgenda(in, out, optMeeting, optItemtoModify, NewItemToDiscuss);
+        if (success)
             System.out.println("Agenda item was modified successfully!!");
         else
             System.out.println("Error changing Item fom Agenda....");
     }
 
-    public static void addNewKeyDecisionToAgendaitem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoAddKeyDecision){
+    public static void addNewKeyDecisionToAgendaitem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoAddKeyDecision) {
         String NewKeyDecision;
         System.out.println("New key Decision: ");
         sc.nextLine();
         NewKeyDecision = sc.nextLine();
         boolean success = requestAddKeyDecisionToAgendaItem(in, out, optMeeting, optItemtoAddKeyDecision, NewKeyDecision);
-        if(success)
+        if (success)
             System.out.println("Key decision added successfully!!");
         else
             System.out.println("Error ading key decision....");
     }
 
-    public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting){
-        String newActionItem="", responsableUser="";
+    public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting) {
+        String newActionItem = "", responsableUser = "";
         sc.nextLine();
         System.out.println("New ation Item: ");
         newActionItem = sc.nextLine();
         System.out.println("Responsable user: ");
         responsableUser = sc.nextLine();
         boolean success = requestAddNewAcionItem(in, out, optMeeting, newActionItem + "-" + responsableUser);
-        if(success)
+        if (success)
             System.out.println("Agenda item was added successfully!!");
         else
             System.out.println("Error adding Item to Agenda....");
