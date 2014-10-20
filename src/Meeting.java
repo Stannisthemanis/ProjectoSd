@@ -142,10 +142,12 @@ public class Meeting implements Serializable {
         return outPut;
     }
 
-    private String printDate() {
-        return startDate.get(Calendar.DAY_OF_MONTH) + "/" +
-                startDate.get(Calendar.MONTH) + "/" +
-                startDate.get(Calendar.YEAR) + "\n";
+    private String printDate(Calendar date) {
+        return date.get(Calendar.DAY_OF_MONTH) + "/" +
+                date.get(Calendar.MONTH) + "/" +
+                date.get(Calendar.YEAR) + " " +
+                date.get(Calendar.HOUR) + ":" +
+                date.get(Calendar.MINUTE) + "\n";
     }
 
     public String printActionItens() {
@@ -166,8 +168,8 @@ public class Meeting implements Serializable {
                 "LOCAL: " + local + '\n' +
                 "RESPONSIBLE USER: " + responsibleUser.getUserName() + '\n' +
                 "DESIRE OUTCOME: " + desireOutcome + '\n' +
-                "DATE: " + printDate() +
-                "DURATION: " + duration + " minutes\n" +
+                "START DATE: " + printDate(startDate) +
+                "END DATE: " + printDate(endDate) +
                 "INVITATIONS: " + printAcceptedUsers() + "\n" +
                 "AGENDA ITEMS:\n" + printAgendaItems() +
                 printActionItens();
