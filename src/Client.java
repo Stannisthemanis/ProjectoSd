@@ -465,7 +465,7 @@ public class Client {
         }
         try {
             in.readBoolean();
-            out.write(opt);
+            out.write(opt-1);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -617,6 +617,7 @@ public class Client {
         String itemToDiscuss;
         System.out.println("Add items to agenda: ");
         System.out.println("Item to discuss: ");
+        sc.nextLine();
         itemToDiscuss = sc.nextLine();
         boolean success = requestAddItemToAgenda(in,out,opt,itemToDiscuss);
         if(success)
