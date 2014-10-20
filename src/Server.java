@@ -217,6 +217,9 @@ class Connection extends Thread {
                     case 12:
                         replyRemoveAgendaItem();
                         break;
+                    case 13:
+                        replyModifyAgendaItem();
+                        break;
 
                 }
             }
@@ -372,6 +375,26 @@ class Connection extends Thread {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
         }
     }
+
+    public void replyModifyAgendaItem() {
+        int numAgendaItem;
+        int n;
+        try {
+            System.out.println("->> Server: Received request to modify agenda item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda item to modify..");
+            n = in.read();
+            out.writeBoolean(true);
+            numAgendaItem = in.read();
+            System.out.println("->> Server: Info received Waiting for new agenda itemToDiscuss now ..");
+            out.writeBoolean(true);
+            out.writeBoolean(dataBaseServer.modifyAgendaItem(n, numAgendaItem, in.readUTF(), user));
+            System.out.println("->> Server: Agenda item changed with sucess ..");
+        } catch (IOException e) {
+            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+        }
+    }
+
 
     public void chat() {
         String name = null;

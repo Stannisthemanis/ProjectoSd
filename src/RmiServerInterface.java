@@ -32,6 +32,6 @@ public interface RmiServerInterface extends Remote {
 
     public boolean removeAgendaItem(int nMeeting, int nAgenda, User user) throws RemoteException;
 
-//    public boolean deleteAgendaItem();
+    public boolean modifyAgendaItem(int nMeeting, int nAgenda, String mAgenda, User user) throws RemoteException;
 
 }
