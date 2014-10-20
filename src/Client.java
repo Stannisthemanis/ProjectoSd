@@ -82,6 +82,7 @@ public class Client {
         int option;
         System.out.println("\n\n\n\n\n\n\n\n\n");
         do {
+
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
             System.out.println("2-> Messages (" + requestNumberOfMessegesToRead(in, out) + " new messages)");
@@ -186,7 +187,8 @@ public class Client {
                 case 3: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     SubMenuCurrentMeetings(in, out);
-                }break;
+                }
+                break;
                 case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     SubMenupPastMeetings(in, out);
@@ -284,7 +286,7 @@ public class Client {
             System.out.println("Resume from meeting " + optMeeting);
             System.out.println("\n" + requestResumeCurrentMeetings(in, out, optMeeting) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions for meeting " + optMeeting);
-            System.out.println("1-> Consult Agenda Items"); 
+            System.out.println("1-> Consult Agenda Items");
             System.out.println("2-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
@@ -321,12 +323,12 @@ public class Client {
         do {
             System.out.println(options); //display name of all agenda items
             System.out.println("0-> Back");
-            optBack=sc.nextInt();
-            if(optBack!=0){
+            optBack = sc.nextInt();
+            if (optBack != 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-        }while(optBack!=0);
+        } while (optBack != 0);
 //        String[] countOptions = options.split("\n");
 //        size = countOptions.length;
 //        do {
@@ -382,21 +384,22 @@ public class Client {
     }
 
     public static void SubMenuConsultAgendaItemsCM(DataInputStream in, DataOutputStream out, int optMeeting) {
-        int optItem, opt2,size;
+        int optItem, opt2, size;
         String options = requestAgendaItemsFromCurrentMeetings(in, out, optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
+            System.out.println(options);
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optItem = sc.nextInt();
         } while (optItem < 0 || optItem > size);
+        System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
         do {
             if (optItem == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println("Options for Agenda item " + optItem);
             System.out.println("1-> Open chat");
             System.out.println("2-> Add key decsions");
@@ -418,8 +421,9 @@ public class Client {
                 break;
                 case 2: {
                     System.out.println("Adding new ket decision");
-                    addNewKeyDecisionToAgendaitem(in,out,optMeeting,optItem);
-                }break;
+                    addNewKeyDecisionToAgendaitem(in, out, optMeeting, optItem);
+                }
+                break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
@@ -675,7 +679,7 @@ public class Client {
         }
         return result;
     }
-    
+
     public static String requestAgendaItemsFromCurrentMeetings(DataInputStream in, DataOutputStream out, int opt) {
         boolean aceptSignal;
         String result = "";
@@ -1046,10 +1050,13 @@ public class Client {
         sc.nextLine();
         NewKeyDecision = sc.nextLine();
         boolean success = requestAddKeyDecisionToAgendaItem(in, out, optMeeting, optItemtoAddKeyDecision, NewKeyDecision);
-        if (success)
+        if (success) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
             System.out.println("Key decision added successfully!!");
-        else
+        } else {
             System.out.println("Error ading key decision....");
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+        }
     }
 
     public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting) {
