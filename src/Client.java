@@ -85,7 +85,7 @@ public class Client {
             System.out.println("Main Menu");
             System.out.println("1-> Meetings");
             System.out.println("2-> Messages ("+requestNumberOfMessegesToRead(in, out)+" new messages)");
-//            System.out.println("2-> messages");
+            System.out.println("3-> TODO list ("+requestSizeToDo(in, out)+" actions to be done)");
             System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             option = sc.nextInt();
@@ -98,6 +98,10 @@ public class Client {
                 break;
                 case 2: {
                     subMenuMessages(in, out);
+                }
+                break;
+                case 3: {
+                    subMenuTodo(in, out);
                 }
                 break;
                 default: {
@@ -418,6 +422,26 @@ public class Client {
         }while(true);
     }
 
+    public static void subMenuTodo(DataInputStream in, DataOutputStream out){
+//        int size, optUm, optAi;
+//        System.out.println("All my actions to be done: ");
+//        String options = requestActionItemsFromUser(in, out);
+//        String[] countOptions = options.split("\n");
+//        size = countOptions.length;
+//        do {
+//            System.out.println(options); //display name of all upcoming meetings
+//            System.out.println("\n0-> Back");
+//            System.out.print("Choose an option: ");
+//            optUm = sc.nextInt();
+//        } while (optUm < 0 || optUm > size);
+//        do {
+//            if (optUm == 0) {
+//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+//                break;
+//            }
+//        }
+    }
+
 
     //-------------------------------------- REQUEST/REPLY
 
@@ -675,7 +699,7 @@ public class Client {
         }
     }
 
-    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem, String userResponsile){
+    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem){
         boolean aceptSignal;
         try {
             out.write(15);
@@ -687,13 +711,34 @@ public class Client {
             out.write(opt);
             aceptSignal = in.readBoolean();
             out.writeUTF(newActionItem);
-            aceptSignal = in.readBoolean();
-            out.writeUTF(userResponsile);
             return in.readBoolean();
         } catch (IOException e) {
             return false;
         }
     }
+
+    public static int requestSizeToDo(DataInputStream in, DataOutputStream out){
+        try {
+            out.write(16);
+            return in.read();
+        } catch (IOException e) {
+            return -1;
+        }
+    }
+
+    public static String requestActionItemsFromUser(DataInputStream in, DataOutputStream out){
+        String result = "";
+        try {
+            out.write(17);
+        } catch (Exception e) {
+        }
+        try {
+            result=in.readUTF();
+        } catch (IOException e) {
+        }
+        return result;
+    }
+
 
 
 
@@ -813,11 +858,16 @@ public class Client {
 
     public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting){
         String newActionItem="", responsableUser="";
+        sc.nextLine();
         System.out.println("New ation Item: ");
-        newActionItem = sc.next();
+        newActionItem = sc.nextLine();
         System.out.println("Responsable user: ");
-        responsableUser = sc.next();
-        requestAddNewAcionItem(in,out,optMeeting,newActionItem,responsableUser);
+        responsableUser = sc.nextLine();
+        boolean success = requestAddNewAcionItem(in, out, optMeeting, newActionItem + "-" + responsableUser);
+        if(success)
+            System.out.println("Agenda item was added successfully!!");
+        else
+            System.out.println("Error adding Item to Agenda....");
 
     }
 

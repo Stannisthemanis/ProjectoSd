@@ -13,7 +13,8 @@ TODO:
 
 -menu login, register (3 tent, volta atras)
 -nov registro
--novo action item + responsavel
+- main menu todo-> (lista de action items minhas, mark as done ou GFO)
+- testes se users existe ou nao
 
 
 REQUEST CODE:
@@ -33,5 +34,5 @@ REQUEST CODE:
 13- request mofify agenda item
 14- request add key decision
 15- request add action item
-16- request list of action itens from upcuming meeting
-17- request list of action itens from past meeting
+16- request Size ToDo
+17- reques list of action items of user
