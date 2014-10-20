@@ -16,6 +16,8 @@ public interface RmiServerInterface extends Remote {
 
     public String getPassedMeetings(String user) throws RemoteException;
 
+    public String getCurrentMeetings(String user) throws RemoteException;
+
     public String getMeetingInfo(int flag, int nMeeting, String user) throws RemoteException;
 
     public String getAgendaItemFromMeeting(int flag, int nMeeting, String user) throws RemoteException;

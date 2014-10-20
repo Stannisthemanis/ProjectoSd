@@ -10,20 +10,23 @@ public class Meeting implements Serializable {
     protected String local;
     protected User responsibleUser;
     protected String desireOutcome;
-    protected Calendar date;
+    protected Calendar startDate;
+    protected Calendar endDate;
     protected int duration; //hours
     protected ArrayList<User> usersAccepted;
     protected ArrayList<AgendaItem> agendaItems;
     protected ArrayList<ActionItem> actionItems;
 
-    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Calendar date, int duration,
+    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Calendar startDate, int duration,
                    ArrayList<AgendaItem> agendaItems) {
         this.meetingTitle = meetingTitle;
         this.local = local;
         this.responsibleUser = responsibleUser;
         this.desireOutcome = desireOutcome;
-        this.date = date;
+        this.startDate = startDate;
         this.duration = duration;
+        this.endDate = startDate;
+        this.endDate.add(Calendar.MINUTE, duration);
         this.usersAccepted = new ArrayList<User>();
         this.agendaItems = agendaItems;
         this.actionItems = new ArrayList<ActionItem>();
@@ -45,8 +48,8 @@ public class Meeting implements Serializable {
         return desireOutcome;
     }
 
-    public Calendar getDate() {
-        return date;
+    public Calendar getStartDate() {
+        return startDate;
     }
 
     public int getDuration() {
@@ -78,8 +81,8 @@ public class Meeting implements Serializable {
         this.desireOutcome = desireOutcome;
     }
 
-    public void setDate(Calendar date) {
-        this.date = date;
+    public void setStartDate(Calendar startDate) {
+        this.startDate = startDate;
     }
 
     public void setDuration(int duration) {
@@ -100,6 +103,14 @@ public class Meeting implements Serializable {
 
     public void addUser(User userAccepted) {
         this.usersAccepted.add(userAccepted);
+    }
+
+    public Calendar getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Calendar endDate) {
+        this.endDate = endDate;
     }
 
 
@@ -132,9 +143,9 @@ public class Meeting implements Serializable {
     }
 
     private String printDate() {
-        return date.get(Calendar.DAY_OF_MONTH) + "/" +
-                date.get(Calendar.MONTH) + "/" +
-                date.get(Calendar.YEAR) + "\n";
+        return startDate.get(Calendar.DAY_OF_MONTH) + "/" +
+                startDate.get(Calendar.MONTH) + "/" +
+                startDate.get(Calendar.YEAR) + "\n";
     }
 
     public String printActionItens() {
