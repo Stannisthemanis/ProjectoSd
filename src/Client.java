@@ -286,7 +286,7 @@ public class Client {
             System.out.println("Resume from meeting " + optMeeting);
             System.out.println("\n" + requestResumeCurrentMeetings(in, out, optMeeting) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions for meeting " + optMeeting);
-            System.out.println("1-> Consult Agenda Items");
+            System.out.println("1-> Consult/modify Agenda Items");
             System.out.println("2-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
