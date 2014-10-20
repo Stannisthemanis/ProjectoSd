@@ -35,4 +35,11 @@ public interface RmiServerInterface extends Remote {
     public boolean modifyTitleAgendaItem(int nMeeting, int nAgenda, String mAgenda, User user) throws RemoteException;
 
     public boolean addKeyDecisionToAgendaItem(int nMeeting, int nAgenda, String keyDecision, User user) throws RemoteException;
+
+    public boolean addActionItem(int nMeeting, String actionItem, User user) throws RemoteException;
+
+    public String getActionItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException;
+
+    public int getSizeOfTodo(User user) throws RemoteException;
+
 }

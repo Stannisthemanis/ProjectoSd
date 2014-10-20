@@ -289,6 +289,66 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
+    public boolean addActionItem(int nMeeting, String newActionItem, User user) throws RemoteException {
+        ActionItem actionItem = new ActionItem(newActionItem.split("-")[0], findUser(newActionItem.split("-")[1]).getUserName());
+        int i = 0;
+        Calendar today = Calendar.getInstance();
+        today.setTime(new Date());
+        for (Meeting m : meetings) {
+            if (m.getDate().after(today)) {
+                if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    m.addActionItem(actionItem);
+                    findUser(actionItem.getUserResponsible()).addActionItem(actionItem);
+                    return true;
+                }
+            }
+        }
+        return false;
+
+    }
+
+    public String getActionItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException {
+        //flag 1- future meeting 2- passed meeting
+        int i = 0;
+        Calendar today = Calendar.getInstance();
+        today.setTime(new Date());
+        if (flag == 1) {
+            for (Meeting m : meetings) {
+                if (m.getDate().after(today)) {
+                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                        i++;
+                        if (i == nMeeting)
+                            return m.printActionItens();
+                    }
+                }
+            }
+        } else {
+            for (Meeting m : meetings) {
+                if (m.getDate().before(today)) {
+                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                        i++;
+                        if (i == nMeeting)
+                            return m.printActionItens();
+                    }
+                }
+            }
+        }
+        return "Meeting not found.. ";
+    }
+
+    public int getSizeOfTodo(User user) throws RemoteException {
+        int todoSize = 0;
+        if (user.getActionItems().size() > 0) {
+            for (ActionItem aItem : user.getActionItems()) {
+                if (aItem.completed == false)
+                    todoSize++;
+            }
+        }
+        return todoSize;
+    }
 
     public void firstUse() throws RemoteException {
 

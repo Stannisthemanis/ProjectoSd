@@ -222,6 +222,22 @@ class Connection extends Thread {
                         break;
                     case 14:
                         replyAddKeyDecisionToAgendaItem();
+                        break;
+                    case 15:
+                        replyAddActionItem();
+                        break;
+                    case 16:
+                        replyActionItensFromMeeting(1);
+                        break;
+                    case 17:
+                        replyActionItensFromMeeting(2);
+                        break;
+                    case 18:
+                        replySizeOfTodo();
+                        break;
+                    case 19:
+                        replyActionItemsFromUser();
+                        break;
 
                 }
             }
@@ -305,8 +321,11 @@ class Connection extends Thread {
     }
 
     public void replyUnreadMessages() {
+        System.out.println("->> Server: Received request to send messages of user: " + user.getUserName());
         try {
+            System.out.println("->> Server: Sending messages of " + user.getUserName());
             out.writeUTF(dataBaseServer.getMessagesByUser(user));
+            System.out.println("->> Server: Messages send with sucess ");
         } catch (IOException e) {
             System.out.println("*** Sending messages: " + e.getMessage());
         }
@@ -413,6 +432,60 @@ class Connection extends Thread {
             System.out.println("->> Server: Agenda item changed with sucess ..");
         } catch (IOException e) {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+        }
+    }
+
+    public void replyAddActionItem() {
+        String newItem = "";
+        int n;
+        try {
+            System.out.println("->> Server: Received request to add action item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of the new action item ..");
+            n = in.read();
+            out.writeBoolean(true);
+            newItem = in.readUTF();
+            System.out.println("->> Server: Info received add action item now ..");
+            out.writeBoolean(dataBaseServer.addActionItem(n, newItem, user));
+            System.out.println("->> Server: New action item added with sucess ..");
+        } catch (IOException e) {
+            System.out.println("*** Server: Adding new actionItem " + e.getMessage());
+        }
+
+    }
+
+    public void replyActionItensFromMeeting(int flag) {
+        System.out.println("->> Server: Received request to send action itens from a meeting by " + user.getUserName());
+        int n;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for info meeting...");
+            n = in.read();
+            System.out.println("->> Server: Sending agenda itens of meeting.. ");
+            out.writeUTF(dataBaseServer.getActionItemFromMeeting(flag, n, user));
+            System.out.println("->> Server Info send with sucess..");
+        } catch (IOException e) {
+            System.out.println("*** Receiving meeting number for action item... " + e.getMessage());
+        }
+    }
+
+    public void replySizeOfTodo() {
+        System.out.println("->> Server: Received request to send number of action itens of user " + user.getUserName());
+        try {
+            out.write(dataBaseServer.getSizeOfTodo(user));
+        } catch (IOException e) {
+            System.out.println("->> Server: Sending number of action itens of user " + user.getUserName());
+        }
+    }
+
+    public void replyActionItemsFromUser() {
+        System.out.println("->> Server: Received request to send action of user: " + user.getUserName());
+        try {
+            System.out.println("->> Server: Sending actions of " + user.getUserName());
+            out.writeUTF(dataBaseServer.findUser(user.getUserName()).printActionItens());
+            System.out.println("->> Server: actions send with sucess ");
+        } catch (IOException e) {
+            System.out.println("*** Sending actionItens of user: " + e.getMessage());
         }
     }
 

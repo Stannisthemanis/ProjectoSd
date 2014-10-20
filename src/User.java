@@ -86,6 +86,23 @@ public class User implements Serializable {
         this.actionItems.add(actionItem);
     }
 
+    public ArrayList<ActionItem> getActionItems() {
+        return actionItems;
+    }
+
+    public String printActionItens() {
+        String outPut = "You dont have any action to do";
+        int i = 1;
+        if (this.actionItems.size() > 0) {
+            outPut = "ACTION ITENS:\n";
+            for (ActionItem aItem : actionItems) {
+                outPut += (i++) + aItem.toString();
+            }
+        }
+        return outPut;
+    }
+
+
     @Override
     public String toString() {
         return "\nUsername: " + userName +

@@ -137,7 +137,7 @@ public class Meeting implements Serializable {
                 date.get(Calendar.YEAR) + "\n";
     }
 
-    private String printActionItens() {
+    public String printActionItens() {
         String outPut = "";
         int i = 1;
         if (this.actionItems.size() > 0) {
@@ -158,6 +158,7 @@ public class Meeting implements Serializable {
                 "DATE: " + printDate() +
                 "DURATION: " + duration + " minutes\n" +
                 "INVITATIONS: " + printAcceptedUsers() + "\n" +
-                "AGENDA ITEMS:\n" + printAgendaItems();
+                "AGENDA ITEMS:\n" + printAgendaItems() +
+                printActionItens();
     }
 }
