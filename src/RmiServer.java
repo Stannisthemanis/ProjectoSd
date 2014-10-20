@@ -415,7 +415,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
-            if (m.getEndDate().after(now)) {
+            if (m.getStartDate().after(now) && m.getEndDate().after(now)) {
                 i++;
                 if (i == nMeeting) {
                     System.out.println(m.getMeetingTitle());
