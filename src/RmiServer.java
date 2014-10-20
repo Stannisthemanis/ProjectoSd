@@ -102,7 +102,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.add(Calendar.MONTH, 1);
 
         for (Meeting m : meetings) {
-            if (m.getStartDate().before(now)) {
+            if (m.getStartDate().before(now) && m.getEndDate().before(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     meeting += i + "- " + m.getMeetingTitle() + "\n";
                     i++;
@@ -150,7 +150,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         } else if (flag == 2) {
             for (Meeting m : meetings) {
-                if (m.getStartDate().before(now)) {
+                if (m.getStartDate().before(now) && m.getEndDate().before(now)) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
                         if (i == nMeeting)
@@ -178,7 +178,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
-
         if (flag == 1) {
             for (Meeting m : meetings) {
                 if (m.getStartDate().after(now)) {
@@ -191,7 +190,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         } else if (flag == 2) {
             for (Meeting m : meetings) {
-                if (m.getStartDate().before(now)) {
+                if (m.getStartDate().before(now) && m.getEndDate().before(now)) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
                         if (i == nMeeting)
@@ -333,7 +332,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
-
         for (Meeting m : meetings) {
             if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
