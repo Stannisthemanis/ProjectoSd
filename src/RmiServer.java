@@ -253,7 +253,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
-    public boolean modifyAgendaItem(int nMeeting, int nAgenda, String mAgenda, User user) throws RemoteException {
+    public boolean modifyTitleAgendaItem(int nMeeting, int nAgenda, String mAgenda, User user) throws RemoteException {
         int i = 0;
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
@@ -270,6 +270,25 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         }
         return false;
     }
+
+    public boolean addKeyDecisionToAgendaItem(int nMeeting, int nAgenda, String keyDecision, User user) throws RemoteException {
+        int i = 0;
+        Calendar today = Calendar.getInstance();
+        today.setTime(new Date());
+        for (Meeting m : meetings) {
+            if (m.getDate().after(today)) {
+                if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    m.getAgendaItems().get(i - 1).setKeyDecision(keyDecision);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public void firstUse() throws RemoteException {
 
