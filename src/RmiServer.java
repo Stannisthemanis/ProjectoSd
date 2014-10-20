@@ -328,7 +328,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public boolean addKeyDecisionToAgendaItem(int nMeeting, int nAgenda, String keyDecision, String user) throws RemoteException {
-        int i = 1;
+        int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
@@ -338,7 +338,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.getAgendaItems().get(i - 1).setKeyDecision(keyDecision);
+                    m.getAgendaItems().get(nAgenda).setKeyDecision(keyDecision);
                     return true;
                 }
             }
