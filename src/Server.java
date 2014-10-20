@@ -227,16 +227,17 @@ class Connection extends Thread {
                         replyAddActionItem();
                         break;
                     case 16:
-                        replyActionItensFromMeeting(1);
                         break;
                     case 17:
-                        replyActionItensFromMeeting(2);
                         break;
                     case 18:
                         replySizeOfTodo();
                         break;
                     case 19:
                         replyActionItemsFromUser();
+                        break;
+                    case 20:
+                        replySetActionAsDone();
                         break;
 
                 }
@@ -454,21 +455,6 @@ class Connection extends Thread {
 
     }
 
-    public void replyActionItensFromMeeting(int flag) {
-        System.out.println("->> Server: Received request to send action itens from a meeting by " + user.getUserName());
-        int n;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for info meeting...");
-            n = in.read();
-            System.out.println("->> Server: Sending agenda itens of meeting.. ");
-            out.writeUTF(dataBaseServer.getActionItemFromMeeting(flag, n, user));
-            System.out.println("->> Server Info send with sucess..");
-        } catch (IOException e) {
-            System.out.println("*** Receiving meeting number for action item... " + e.getMessage());
-        }
-    }
-
     public void replySizeOfTodo() {
         System.out.println("->> Server: Received request to send number of action itens of user " + user.getUserName());
         try {
@@ -482,13 +468,34 @@ class Connection extends Thread {
         System.out.println("->> Server: Received request to send action of user: " + user.getUserName());
         try {
             System.out.println("->> Server: Sending actions of " + user.getUserName());
-            out.writeUTF(dataBaseServer.findUser(user.getUserName()).printActionItens());
+            out.writeUTF(dataBaseServer.getActionItemFromUser(user));
             System.out.println("->> Server: actions send with sucess ");
         } catch (IOException e) {
             System.out.println("*** Sending actionItens of user: " + e.getMessage());
         }
     }
 
+    public void replySetActionAsDone() {
+        System.out.println("->> Server: Received request of " + user.getUserName() + " to complete a action..");
+        int n;
+        boolean reply;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for action number..");
+            n = in.read();
+            System.out.println("->> Server: Waiting for user to decline or accept..");
+            reply = in.readBoolean();
+            if (reply) {
+                out.writeBoolean(dataBaseServer.setActionAsCompleted(user, n));
+                System.out.println("->> Server: Action set as completed with sucess");
+            } else
+                System.out.println("->> Server: Operation canceled by user");
+        } catch (IOException e) {
+            System.out.println("*** Replying to message: " + e.getMessage());
+        }
+
+
+    }
 
 
     public void chat() {

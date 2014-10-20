@@ -45,6 +45,6 @@ public class ActionItem implements Serializable {
             done = "To be Done";
         else
             done = "Allready Done";
-        return this.name + " -> Responsible user: " + userResponsible + " > " + done;
+        return "-> " + this.name + "  Responsible user: " + userResponsible + " > " + done + "\n";
     }
 }

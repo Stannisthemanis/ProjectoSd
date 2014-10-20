@@ -310,33 +310,20 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     }
 
-    public String getActionItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException {
-        //flag 1- future meeting 2- passed meeting
-        int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
-        if (flag == 1) {
-            for (Meeting m : meetings) {
-                if (m.getDate().after(today)) {
-                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        i++;
-                        if (i == nMeeting)
-                            return m.printActionItens();
-                    }
-                }
-            }
-        } else {
-            for (Meeting m : meetings) {
-                if (m.getDate().before(today)) {
-                    if (m.getResponsibleUser().getUserName().equals(user.getUserName()) || m.isInvited(user.getUserName())) {
-                        i++;
-                        if (i == nMeeting)
-                            return m.printActionItens();
-                    }
-                }
+    public String getActionItemFromUser(User user) throws RemoteException {
+        int j = 1;
+        String output = null;
+        for (ActionItem aItem : user.getActionItems()) {
+            if (!aItem.isCompleted()) {
+                if (output == null)
+                    output = "";
+                output += j + " - " + aItem.getName() + "\n";
+                j++;
             }
         }
-        return "Meeting not found.. ";
+        if (output == null)
+            output = "You have no action to be done";
+        return output;
     }
 
     public int getSizeOfTodo(User user) throws RemoteException {
@@ -348,6 +335,19 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         }
         return todoSize;
+    }
+
+    public boolean setActionAsCompleted(User user, int n) {
+        int i = 0;
+        for (ActionItem aItem : user.getActionItems()) {
+            if (!aItem.isCompleted())
+                i++;
+            if (i == n) {
+                aItem.setCompleted(true);
+                return true;
+            }
+        }
+        return false;
     }
 
     public void firstUse() throws RemoteException {

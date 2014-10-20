@@ -38,8 +38,10 @@ public interface RmiServerInterface extends Remote {
 
     public boolean addActionItem(int nMeeting, String actionItem, User user) throws RemoteException;
 
-    public String getActionItemFromMeeting(int flag, int nMeeting, User user) throws RemoteException;
+    public String getActionItemFromUser(User user) throws RemoteException;
 
     public int getSizeOfTodo(User user) throws RemoteException;
+
+    public boolean setActionAsCompleted(User user, int n);
 
 }
