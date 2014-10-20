@@ -156,7 +156,7 @@ class Connection extends Thread {
     DataOutputStream out;
     DataInputStream in;
     Socket clientSocket;
-    User user;
+    String user;
     RmiServerInterface dataBaseServer;
 
     Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
@@ -165,10 +165,9 @@ class Connection extends Thread {
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
-            this.user = dataBaseServer.findUser(in.readUTF());
-            System.out.println("->>>>>>>>>>> "+this.user.equals(dataBaseServer.findUser(user.getUserName())));
+            this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
 
-            System.out.println("->> Server: " + user.getUserName() + " connected");
+            System.out.println("->> Server: " + user + " connected");
             Server.douts.add(this.out); //
             this.start();
         } catch (IOException e) {
@@ -250,7 +249,7 @@ class Connection extends Thread {
     public void replyNewMeeting() {
         String newMeeting = null;
         try {
-            System.out.println("->> Server: Received request from " + this.user.getUserName() + " to create new meeting");
+            System.out.println("->> Server: Received request from " + this.user + " to create new meeting");
             out.writeBoolean(true);
             System.out.println("->>Server: Waiting for meeting information");
             newMeeting = in.readUTF();
@@ -268,9 +267,9 @@ class Connection extends Thread {
     }
 
     public void replyCheckUpcumingMeetings() {
-        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.user.getUserName());
+        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.user);
         try {
-            System.out.println("->> Server: Sending all upcuming meeting of " + this.user.getUserName());
+            System.out.println("->> Server: Sending all upcuming meeting of " + this.user);
             out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
         } catch (IOException e) {
             System.out.println("*** Replying upcuming meeting: " + e.getMessage());
@@ -278,9 +277,9 @@ class Connection extends Thread {
     }
 
     public void replyCheckPassedMeetings() {
-        System.out.println("->> Server: Received request to send all passed meeting of " + this.user.getUserName());
+        System.out.println("->> Server: Received request to send all passed meeting of " + this.user);
         try {
-            System.out.println("->> Server: Sending all passed meeting of " + this.user.getUserName());
+            System.out.println("->> Server: Sending all passed meeting of " + this.user);
             out.writeUTF(dataBaseServer.getPassedMeetings(user));
         } catch (IOException e) {
             System.out.println("*** Replying upcuming meeting: " + e.getMessage());
@@ -289,7 +288,7 @@ class Connection extends Thread {
 
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyInfoMeeting(int flag) {
-        System.out.println("->> Server: Received request to send meeting information from " + this.user.getUserName());
+        System.out.println("->> Server: Received request to send meeting information from " + this.user);
         int meeting;
         try {
             out.writeBoolean(true);
@@ -304,7 +303,7 @@ class Connection extends Thread {
 
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyAgendaItensFromMeeting(int flag) {
-        System.out.println("->> Server: Received request to send agenda itens from a meeting by " + user.getUserName());
+        System.out.println("->> Server: Received request to send agenda itens from a meeting by " + user);
         int n;
         try {
             out.writeBoolean(true);
@@ -319,9 +318,9 @@ class Connection extends Thread {
     }
 
     public void replyUnreadMessages() {
-        System.out.println("->> Server: Received request to send messages of user: " + user.getUserName());
+        System.out.println("->> Server: Received request to send messages of user: " + user);
         try {
-            System.out.println("->> Server: Sending messages of " + user.getUserName());
+            System.out.println("->> Server: Sending messages of " + user);
             out.writeUTF(dataBaseServer.getMessagesByUser(user));
             System.out.println("->> Server: Messages send with sucess ");
         } catch (IOException e) {
@@ -330,7 +329,7 @@ class Connection extends Thread {
     }
 
     public void replyMessage() {
-        System.out.println("->> Server: Received request of " + user.getUserName() + " to respond to a message..");
+        System.out.println("->> Server: Received request of " + user + " to respond to a message..");
         int n;
         boolean reply;
         try {
@@ -350,11 +349,11 @@ class Connection extends Thread {
     }
 
     public void replyNumberOfMessages() {
-        System.out.println("->> Server: Received request to send number of messages of user " + user.getUserName());
+        System.out.println("->> Server: Received request to send number of messages of user " + user);
         try {
             out.write(dataBaseServer.getNumberOfMessages(user));
         } catch (IOException e) {
-            System.out.println("->> Server: Sending number of messages of user " + user.getUserName());
+            System.out.println("->> Server: Sending number of messages of user " + user);
         }
     }
 
@@ -453,18 +452,18 @@ class Connection extends Thread {
     }
 
     public void replySizeOfTodo() {
-        System.out.println("->> Server: Received request to send number of action itens of user " + user.getUserName());
+        System.out.println("->> Server: Received request to send number of action itens of user " + user);
         try {
             out.write(dataBaseServer.getSizeOfTodo(user));
         } catch (IOException e) {
-            System.out.println("->> Server: Sending number of action itens of user " + user.getUserName());
+            System.out.println("->> Server: Sending number of action itens of user " + user);
         }
     }
 
     public void replyActionItemsFromUser() {
-        System.out.println("->> Server: Received request to send action of user: " + user.getUserName());
+        System.out.println("->> Server: Received request to send action of user: " + user);
         try {
-            System.out.println("->> Server: Sending actions of " + user.getUserName());
+            System.out.println("->> Server: Sending actions of " + user);
             out.writeUTF(dataBaseServer.getActionItemFromUser(user));
             System.out.println("->> Server: actions send with sucess ");
         } catch (IOException e) {
@@ -473,20 +472,23 @@ class Connection extends Thread {
     }
 
     public void replySetActionAsDone() {
-        System.out.println("->> Server: Received request of " + user.getUserName() + " to complete a action..");
+        System.out.println("->> Server: Received request of " + user + " to complete a action..");
         int n;
         boolean reply;
         try {
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for action number..");
             n = in.read();
+            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for user to decline or accept..");
             reply = in.readBoolean();
             if (reply) {
                 out.writeBoolean(dataBaseServer.setActionAsCompleted(user, n));
                 System.out.println("->> Server: Action set as completed with sucess");
-            } else
+            } else {
+                out.writeBoolean(false);
                 System.out.println("->> Server: Operation canceled by user");
+            }
         } catch (IOException e) {
             System.out.println("*** Replying to message: " + e.getMessage());
         }
