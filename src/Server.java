@@ -245,6 +245,9 @@ class Connection extends Thread {
                     case 21:
                         replyAgendaItensFromMeeting(3);
                         break;
+                    case 22:
+                        replyActionItensFromMeeting();
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -514,6 +517,21 @@ class Connection extends Thread {
         }
 
 
+    }
+
+    public void replyActionItensFromMeeting() {
+        System.out.println("->> Server: Received request to send action itens from a meeting by " + user);
+        int n;
+        try {
+            out.writeBoolean(true);
+            System.out.println("->> Server: Wainting for info meeting...");
+            n = in.read();
+            System.out.println("->> Server: Sending agenda itens of meeting.. ");
+            out.writeUTF(dataBaseServer.getActionItensFromMeeting(n, user));
+            System.out.println("->> Server Info send with sucess..");
+        } catch (IOException e) {
+            System.out.println("*** Receiving meeting number for action item... " + e.getMessage());
+        }
     }
 
 
