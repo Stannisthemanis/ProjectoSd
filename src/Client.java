@@ -238,7 +238,7 @@ public class Client {
                 case 3: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Modify items in agenda: ");
-                    modifyItemstFromAgenda(in,out,optUm);
+                    modifyItemstFromAgenda(in, out, optUm);
                 }
                 break;
                 case 4: {
@@ -583,6 +583,26 @@ public class Client {
         }
     }
 
+    public static boolean requestMofifyItemToAgenda(DataInputStream in, DataOutputStream out, int optMeeting, int optItemToModify, String newAgendaItem){
+        boolean aceptSignal;
+        try {
+            out.write(13);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(optMeeting);
+            aceptSignal = in.readBoolean();
+            out.write(optItemToModify);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(newAgendaItem);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -668,23 +688,40 @@ public class Client {
             System.out.println("Agenda item was deleted successfully!!");
         }
         else {
-            System.out.println("Error deleting Item to Agenda....");
+            System.out.println("Error deleting Item from Agenda....");
         }
 
 
     }
 
-    public static void modifyItemstFromAgenda(DataInputStream in, DataOutputStream out, int opt){
-//        String itemToDiscuss;
-//        System.out.println("Add items to agenda: ");
-//        System.out.println("Item to discuss: ");
-//        sc.nextLine();
-//        itemToDiscuss = sc.nextLine();
-//        boolean success = requestAddItemToAgenda(in,out,opt,itemToDiscuss);
-//        if(success)
-//            System.out.println("Agenda item was added successfully!!");
-//        else
-//            System.out.println("Error adding Item to Agenda....");
+    public static void modifyItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting){
+        int optItemtoModify, size;
+        String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display name of all agenda items
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optItemtoModify = sc.nextInt();
+            if (optItemtoModify == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }else if(optItemtoModify < 0 || optItemtoModify > size){
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option, try again");
+            }
+        } while (optItemtoModify < 0 || optItemtoModify > size);
+
+        String NewItemToDiscuss;
+        System.out.println("Item to discuss: ");
+        sc.nextLine();
+        NewItemToDiscuss = sc.nextLine();
+        boolean success = requestMofifyItemToAgenda(in, out, optMeeting,optItemtoModify, NewItemToDiscuss);
+        if(success)
+            System.out.println("Agenda item was modified successfully!!");
+        else
+            System.out.println("Error changing Item fom Agenda....");
     }
 
 

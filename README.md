@@ -11,6 +11,9 @@ TODO:
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
 
+-menu login, register (3 tent, volta atras)
+-nov registro
+
 
 REQUEST CODE:
 
@@ -26,3 +29,4 @@ REQUEST CODE:
 10- request Number of messages to read
 11- request add items to agenda
 12- request remove agenda item
+13- request mofify agenda item
