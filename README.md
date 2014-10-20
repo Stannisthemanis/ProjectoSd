@@ -11,8 +11,10 @@ TODO:
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
 
--menu login, register (3 tent, volta atras)
--nov registro
+- menu login, register (3 tent, volta atras)
+- novo registro
+- nao imprimir any O B no modifuy
+-adicionar novo key decision no modify c/menu
 
 
 REQUEST CODE:
@@ -30,3 +32,4 @@ REQUEST CODE:
 11- request add items to agenda
 12- request remove agenda item
 13- request mofify agenda item
+

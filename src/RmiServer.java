@@ -263,7 +263,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.getAgendaItems().get(i).setItemToDiscuss(mAgenda);
+                    m.getAgendaItems().get(i - 1).setItemToDiscuss(mAgenda);
                     return true;
                 }
             }
