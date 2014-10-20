@@ -438,7 +438,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-9/2/2011,16:00-manel,Jon Snow-Ai3,Ai4-120");
         addNewMeeting("manel-talk about Jon-wall-jonthemannis-20/10/2014,20:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-11/2/2016,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
-        meetings.get(0).addActionItem(new ActionItem("teste", "Jon Snow"));
+        ActionItem teste = new ActionItem("teste", "Jon Snow");
+        meetings.get(0).addActionItem(teste);
+        findUser("Jon Snow").addActionItem(teste);
     }
 
     public static void main(String[] args) {
