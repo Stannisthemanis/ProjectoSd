@@ -109,7 +109,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                 }
             }
         }
-        System.out.println(meeting);
         return meeting;
     }
 
@@ -415,12 +414,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
-            if (m.getStartDate().after(now) && m.getEndDate().after(now)) {
+            if (m.getStartDate().before(now) && m.getEndDate().before(now)) {
+                System.out.println(m.getMeetingTitle());
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
                 if (i == nMeeting) {
-                    System.out.println(m.getMeetingTitle());
                     return m.printActionItens();
                 }
             }

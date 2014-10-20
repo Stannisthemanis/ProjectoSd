@@ -248,6 +248,12 @@ class Connection extends Thread {
                     case 22:
                         replyActionItensFromMeeting();
                         break;
+                    case 23:
+                        replyMessagesFromAgendaItem();
+                        break;
+                    case 24:
+                        replyAddMessageToAgendaItem();
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -534,6 +540,13 @@ class Connection extends Thread {
         }
     }
 
+    public void replyMessagesFromAgendaItem() {
+
+    }
+
+    public void replyAddMessageToAgendaItem() {
+
+    }
 
 /*
     public void chat() {
