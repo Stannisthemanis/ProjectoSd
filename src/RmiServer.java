@@ -19,12 +19,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         super();
 //        try {
 //            Save.loadForAL();
-//            displayAllAL(); // all info in the files
 //        } catch (IOException e) {
 //        } catch (ClassNotFoundException e) {
 //        }
         try {
             this.firstUse();
+            displayAllAL(); // all info in the files
         } catch (RemoteException e) {
         }
     }
@@ -79,10 +79,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public String getUpcumingMeetings(String user) throws RemoteException {
         String meeting = "";
         int i = 1;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
-            if (m.getStartDate().after(today)) {
+            if (m.getStartDate().after(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     meeting += i + "- " + m.getMeetingTitle() + "\n";
                     i++;
@@ -95,10 +97,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public String getPassedMeetings(String user) throws RemoteException {
         String meeting = "";
         int i = 1;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
-            if (m.getStartDate().before(today)) {
+            if (m.getStartDate().before(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     meeting += i + "- " + m.getMeetingTitle() + "\n";
                     i++;
@@ -114,6 +118,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int i = 1;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
@@ -131,6 +136,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         if (flag == 1) {
             for (Meeting m : meetings) {
                 if (m.getStartDate().after(now)) {
@@ -170,6 +177,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         if (flag == 1) {
             for (Meeting m : meetings) {
                 if (m.getStartDate().after(now)) {
@@ -261,10 +270,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public boolean addAgendaItem(int nMeeting, String newAgendaItem, String user) throws RemoteException {
         AgendaItem newItem = new AgendaItem(newAgendaItem);
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
-            if (m.getStartDate().after(today)) {
+            if (m.getStartDate().after(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -279,10 +290,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     public boolean removeAgendaItem(int nMeeting, int nAgenda, String user) throws RemoteException {
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
-            if (m.getStartDate().after(today)) {
+            if (m.getStartDate().after(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -297,10 +310,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     public boolean modifyTitleAgendaItem(int nMeeting, int nAgenda, String mAgenda, String user) throws RemoteException {
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
-            if (m.getStartDate().after(today)) {
+            if (m.getStartDate().after(now)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -317,6 +332,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
             if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
@@ -336,6 +353,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
         for (Meeting m : meetings) {
             if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
