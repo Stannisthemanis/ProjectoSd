@@ -417,8 +417,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         for (Meeting m : meetings) {
             if (m.getEndDate().after(now)) {
                 i++;
-                if (i == nMeeting)
+                if (i == nMeeting) {
+                    System.out.println(m.getMeetingTitle());
                     return m.printActionItens();
+                }
             }
         }
         return "This meeting dont have any action itens";
