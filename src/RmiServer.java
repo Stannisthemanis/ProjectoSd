@@ -409,6 +409,21 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
+    public String getActionItensFromMeeting(int nMeeting, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (m.getEndDate().after(now)) {
+                i++;
+                if (i == nMeeting)
+                    return m.printActionItens();
+            }
+        }
+        return "This meeting dont have any action itens";
+    }
+
     public void firstUse() throws RemoteException {
 
         users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));

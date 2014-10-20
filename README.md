@@ -20,6 +20,7 @@ TODO:
                     -testar data valida
                     -er se os clientes existem
                     -so posso criar meeting para o futuro, com minimo de 1h
+                    
 -upcomming meeting: -consult agenda item, mudar para any key voltar atras
                     -no resumo da meeting meter so 1 \n depois de imprimir
                     -any other businness sempre no fim da lista
