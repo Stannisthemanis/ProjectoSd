@@ -30,3 +30,7 @@ REQUEST CODE:
 11- request add items to agenda
 12- request remove agenda item
 13- request mofify agenda item
+14- request add key decision
+15- request add action item
+16- request list of action itens from upcuming meeting
+17- request list of action itens from past meeting
