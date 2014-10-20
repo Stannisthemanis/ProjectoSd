@@ -86,7 +86,7 @@ public class Client {
             System.out.println("1-> Meetings");
             System.out.println("2-> Messages (" + requestNumberOfMessegesToRead(in, out) + " new messages)");
             System.out.println("3-> TODO list (" + requestSizeToDo(in, out) + " actions to be done)");
-            System.out.println("0-> Leave");
+            System.out.println("0-> GFO!");
             System.out.print("Choose option: ");
             option = sc.nextInt();
             switch (option) {
@@ -186,7 +186,7 @@ public class Client {
                 case 3: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     SubMenuCurrentMeetings(in, out);
-                }
+                }break;
                 case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     SubMenupPastMeetings(in, out);
