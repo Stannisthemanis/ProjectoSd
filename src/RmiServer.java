@@ -319,7 +319,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.getAgendaItems().get(i - 1).setItemToDiscuss(mAgenda);
+                    m.getAgendaItems().get(nAgenda - 1).setItemToDiscuss(mAgenda);
                     return true;
                 }
             }
@@ -338,7 +338,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.getAgendaItems().get(nAgenda).setKeyDecision(keyDecision);
+                    m.getAgendaItems().get(nAgenda - 1).setKeyDecision(keyDecision);
                     return true;
                 }
             }
