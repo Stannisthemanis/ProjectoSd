@@ -742,11 +742,10 @@ public class Client {
     }
 
     public static String requestActionItemsPastMeeting(DataInputStream in, DataOutputStream out, int opt) {
-        /*
         boolean aceptSignal;
         String result = "";
         try {
-            out.write(6);
+            out.write(22);
         } catch (Exception e) {
         }
         try {
@@ -755,8 +754,7 @@ public class Client {
             result = in.readUTF(in);
         } catch (IOException e) {
         }
-        return result;*/
-        return "1->AI: Stannis will defend the real\n2-> AI: Davos and meloissandre will get layd";
+        return result;
     }
 
     public static String resquestChatFromItemPastMeeting(DataInputStream in, DataOutputStream out, int opt) {

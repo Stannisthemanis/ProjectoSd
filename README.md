@@ -40,6 +40,8 @@ TODO:
 
 -Fazer menu login: pedir o login , poder registar, em  caso de 3 tent falhadas volta para tras
 
+-relatorio...2
+
 
 
 
@@ -68,3 +70,4 @@ REQUEST CODE:
 19- request current meetings
 20- request resume current meeting
 21-request agenda items from current meeting
+22- request action items from past meetings
