@@ -25,7 +25,7 @@ public class Meeting implements Serializable {
         this.desireOutcome = desireOutcome;
         this.startDate = startDate;
         this.duration = duration;
-        this.endDate = startDate;
+        this.endDate = (Calendar) startDate.clone();
         this.endDate.add(Calendar.MINUTE, duration);
         this.usersAccepted = new ArrayList<User>();
         this.agendaItems = agendaItems;

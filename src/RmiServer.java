@@ -52,13 +52,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String local = tokenizer[2];
         String meetingTitle = tokenizer[3];
         Calendar date = Calendar.getInstance();
-        int dia = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[0]);
-        int ano = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[1]);
-        int mes = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[2]);
-        int hora = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[0]);
-        int minutos = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[1]);
-
-        date.set(ano, mes, dia, hora, minutos);
+        int day = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[0]);
+        int month = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[1]);
+        int year = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[2]);
+        int hour = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[0]);
+        int minutes = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[1]);
+        date.set(year, month, day, hour, minutes);
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         for (String s : tokenizer[6].split(",")) {
             agendaItems.add(new AgendaItem(s));
