@@ -227,16 +227,12 @@ class Connection extends Thread {
                         replyAddActionItem();
                         break;
                     case 16:
-                        break;
-                    case 17:
-                        break;
-                    case 18:
                         replySizeOfTodo();
                         break;
-                    case 19:
+                    case 17:
                         replyActionItemsFromUser();
                         break;
-                    case 20:
+                    case 18:
                         replySetActionAsDone();
                         break;
 
