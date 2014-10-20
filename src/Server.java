@@ -365,7 +365,7 @@ class Connection extends Thread {
             n = in.read();
             out.writeBoolean(true);
             numAgendaItem = in.read();
-            System.out.println("->> Server: Info received removing agenda item now ..");
+            System.out.println("->> Server: Info received, removing agenda item now ..");
             out.writeBoolean(dataBaseServer.removeAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item removed with sucess ..");
         } catch (IOException e) {

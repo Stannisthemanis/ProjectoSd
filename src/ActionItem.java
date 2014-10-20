@@ -6,13 +6,11 @@ import java.io.Serializable;
 public class ActionItem implements Serializable {
     protected String name;
     protected String userResponsible;
-    protected String keyDecision;
     protected boolean completed;
 
-    public ActionItem(String name, String userResponsible, String keyDecision) {
+    public ActionItem(String name, String userResponsible) {
         this.name = name;
         this.userResponsible = userResponsible;
-        this.keyDecision = keyDecision;
         completed = false;
     }
 
@@ -30,14 +28,6 @@ public class ActionItem implements Serializable {
 
     public void setUserResponsible(String userResponsible) {
         this.userResponsible = userResponsible;
-    }
-
-    public String getKeyDecision() {
-        return keyDecision;
-    }
-
-    public void setKeyDecision(String keyDecision) {
-        this.keyDecision = keyDecision;
     }
 
     public boolean isCompleted() {

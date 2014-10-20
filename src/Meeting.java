@@ -14,6 +14,7 @@ public class Meeting implements Serializable {
     protected int duration; //hours
     protected ArrayList<User> usersAccepted;
     protected ArrayList<AgendaItem> agendaItems;
+    protected ArrayList<ActionItem> actionItems;
 
     public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Calendar date, int duration,
                    ArrayList<AgendaItem> agendaItems) {
@@ -25,6 +26,7 @@ public class Meeting implements Serializable {
         this.duration = duration;
         this.usersAccepted = new ArrayList<User>();
         this.agendaItems = agendaItems;
+        this.actionItems = new ArrayList<ActionItem>();
     }
 
     public String getMeetingTitle() {
@@ -92,6 +94,9 @@ public class Meeting implements Serializable {
         this.agendaItems.remove(nAgendaItem);
     }
 
+    public void addActionItem(ActionItem actionItem) {
+        this.actionItems.add(actionItem);
+    }
 
     public void addUser(User userAccepted) {
         this.usersAccepted.add(userAccepted);
@@ -118,7 +123,10 @@ public class Meeting implements Serializable {
     public String printAgendaItems() {
         String outPut = "";
         for (int i = 0; i < this.agendaItems.size(); i++) {
-            outPut += (i + 1) + "- " + this.agendaItems.get(i).getItemToDiscuss() + "\n";
+            outPut += (i + 1) + "- " + this.agendaItems.get(i).getItemToDiscuss();
+            if (this.agendaItems.get(i).getKeyDecision() != null)
+                outPut += "  Decision: " + this.agendaItems.get(i).getKeyDecision();
+            outPut += "\n";
         }
         return outPut;
     }
