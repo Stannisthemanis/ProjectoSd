@@ -1,7 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Ricardo on 15/10/2014.
@@ -11,12 +10,12 @@ public class Meeting implements Serializable {
     protected String local;
     protected User responsibleUser;
     protected String desireOutcome;
-    protected Date date;
+    protected Calendar date;
     protected int duration; //hours
     protected ArrayList<User> usersAccepted;
     protected ArrayList<AgendaItem> agendaItems;
 
-    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Date date, int duration,
+    public Meeting(String meetingTitle, String local, User responsibleUser, String desireOutcome, Calendar date, int duration,
                    ArrayList<AgendaItem> agendaItems) {
         this.meetingTitle = meetingTitle;
         this.local = local;
@@ -44,7 +43,7 @@ public class Meeting implements Serializable {
         return desireOutcome;
     }
 
-    public Date getDate() {
+    public Calendar getDate() {
         return date;
     }
 
@@ -77,7 +76,7 @@ public class Meeting implements Serializable {
         this.desireOutcome = desireOutcome;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Calendar date) {
         this.date = date;
     }
 
@@ -87,6 +86,10 @@ public class Meeting implements Serializable {
 
     public void addAgendaItem(AgendaItem agendaItem) {
         this.agendaItems.add(agendaItem);
+    }
+
+    public void removerAgendaItem(int nAgendaItem) {
+        this.agendaItems.remove(nAgendaItem);
     }
 
 
@@ -121,11 +124,9 @@ public class Meeting implements Serializable {
     }
 
     private String printDate() {
-        Calendar pDate = Calendar.getInstance();
-        pDate.setTime(this.date);
-        return pDate.get(Calendar.DAY_OF_MONTH) + "/" +
-                pDate.get(Calendar.MONTH + 1) + "/" +
-                pDate.get(Calendar.YEAR) + "\n";
+        return date.get(Calendar.DAY_OF_MONTH) + "/" +
+                date.get(Calendar.MONTH) + "/" +
+                date.get(Calendar.YEAR) + "\n";
     }
 
 

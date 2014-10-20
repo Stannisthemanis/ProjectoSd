@@ -7,9 +7,9 @@ Projecto bueda fixe
 TODO:
 
 - melhor reconexao dos clientes.
-- melhor data das reunioes
 - Arranjay toStrings() das restantes classes
-- melhor gravar em ficheiro
+- melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
+- protecçao de dados
 
 
 REQUEST CODE:
@@ -25,3 +25,4 @@ REQUEST CODE:
 9- request resume of message
 10- request Number of messages to read
 11- request add items to agenda
+12- request remove agenda item

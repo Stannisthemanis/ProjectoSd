@@ -113,9 +113,7 @@ public class Server {
         while (true) {
             Socket clientSocket = listenSocket.accept();
             System.out.println("->> Server: Client connected with socket " + clientSocket);
-            synchronized (dataBaseServer) {
-                new Connection(clientSocket, dataBaseServer);
-            }
+            new Connection(clientSocket, dataBaseServer);
         }
     }
 }
@@ -214,8 +212,12 @@ class Connection extends Thread {
                         replyNumberOfMessages();
                         break;
                     case 11:
-                        addAgendaItem();
+                        replyAddAgendaItem();
                         break;
+                    case 12:
+                        replyRemoveAgendaItem();
+                        break;
+
                 }
             }
         } catch (EOFException e) {
@@ -334,20 +336,41 @@ class Connection extends Thread {
         }
     }
 
-    public void addAgendaItem() {
+    public void replyAddAgendaItem() {
         String newItem = "";
         int n;
         try {
-            System.out.println("->> Server: Received ");
+            System.out.println("->> Server: Received request to add a new agenda item ..");
             out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of the new agenda item ..");
             n = in.read();
             out.writeBoolean(true);
             newItem = in.readUTF();
+            System.out.println("->> Server: Info received add agenda item now ..");
             out.writeBoolean(dataBaseServer.addAgendaItem(n, newItem, user));
+            System.out.println("->> Server: New agenda item added with sucess ..");
         } catch (IOException e) {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
         }
 
+    }
+
+    public void replyRemoveAgendaItem() {
+        int numAgendaItem;
+        int n;
+        try {
+            System.out.println("->> Server: Received request to remove aagenda item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda item to remove..");
+            n = in.read();
+            out.writeBoolean(true);
+            numAgendaItem = in.read();
+            System.out.println("->> Server: Info received removing agenda item now ..");
+            out.writeBoolean(dataBaseServer.removeAgendaItem(n, numAgendaItem, user));
+            System.out.println("->> Server: Agenda item removed with sucess ..");
+        } catch (IOException e) {
+            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+        }
     }
 
     public void chat() {
