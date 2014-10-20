@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -12,7 +13,7 @@ public class User implements Serializable {
     protected Date dob;
     protected Number phoneNumber;
     protected String mail;
-
+    protected ArrayList<ActionItem> actionItems;
 
     public User(String userName, String passWord, String address,
                 Date dob, Number phoneNumber, String mail) {
@@ -22,6 +23,7 @@ public class User implements Serializable {
         this.dob = dob;
         this.phoneNumber = phoneNumber;
         this.mail = mail;
+        this.actionItems = new ArrayList<ActionItem>();
     }
 
     public User() {
@@ -103,6 +105,10 @@ public class User implements Serializable {
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public void addActionItem(ActionItem actionItem) {
+        this.actionItems.add(actionItem);
     }
 
     @Override
