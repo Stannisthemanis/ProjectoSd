@@ -40,8 +40,11 @@ public class ActionItem implements Serializable {
 
     @Override
     public String toString() {
-        return "ActionItem: " +
-                "Action item name: " + name + '\n' +
-                "Responsible User: " + userResponsible + '\n';
+        String done;
+        if (completed == false)
+            done = "To be Done";
+        else
+            done = "Allready Done";
+        return this.name + " -> Responsible user: " + userResponsible + " > " + done;
     }
 }

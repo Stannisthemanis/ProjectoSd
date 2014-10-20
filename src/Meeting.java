@@ -125,7 +125,7 @@ public class Meeting implements Serializable {
         for (int i = 0; i < this.agendaItems.size(); i++) {
             outPut += (i + 1) + "- " + this.agendaItems.get(i).getItemToDiscuss();
             if (this.agendaItems.get(i).getKeyDecision() != null)
-                outPut += "  Decision: " + this.agendaItems.get(i).getKeyDecision();
+                outPut += "-> Decision: " + this.agendaItems.get(i).getKeyDecision();
             outPut += "\n";
         }
         return outPut;
@@ -137,6 +137,17 @@ public class Meeting implements Serializable {
                 date.get(Calendar.YEAR) + "\n";
     }
 
+    private String printActionItens() {
+        String outPut = "";
+        int i = 1;
+        if (this.actionItems.size() > 0) {
+            outPut += "ACTION ITENS:\n";
+            for (ActionItem aItem : actionItems) {
+                outPut += (i++) + aItem.toString();
+            }
+        }
+        return outPut;
+    }
 
     @Override
     public String toString() {
