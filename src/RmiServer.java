@@ -52,8 +52,13 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String local = tokenizer[2];
         String meetingTitle = tokenizer[3];
         Calendar date = Calendar.getInstance();
-        date.set(Integer.parseInt(tokenizer[4].split("/")[2]), Integer.parseInt(tokenizer[4].split("/")[1]),
-                Integer.parseInt(tokenizer[4].split("/")[0]));
+        int dia = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[0]);
+        int ano = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[1]);
+        int mes = Integer.parseInt(tokenizer[4].split(",")[0].split("/")[2]);
+        int hora = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[0]);
+        int minutos = Integer.parseInt(tokenizer[4].split(",")[1].split(":")[1]);
+
+        date.set(ano, mes, dia, hora, minutos);
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         for (String s : tokenizer[6].split(",")) {
             agendaItems.add(new AgendaItem(s));
@@ -78,7 +83,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (m.getStartDate().after(today)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     meeting += i + "- " + m.getMeetingTitle() + "\n";
                     i++;
@@ -94,7 +99,24 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().before(today)) {
+            if (m.getStartDate().before(today)) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    meeting += i + "- " + m.getMeetingTitle() + "\n";
+                    i++;
+                }
+            }
+        }
+        System.out.println(meeting);
+        return meeting;
+    }
+
+    public String getCurrentMeetings(String user) throws RemoteException {
+        String meeting = "";
+        int i = 1;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     meeting += i + "- " + m.getMeetingTitle() + "\n";
                     i++;
@@ -106,13 +128,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public String getMeetingInfo(int flag, int nMeeting, String user) throws RemoteException {
-        //flag 1- future meeting 2- passed meeting
+        //flag 1- future meeting 2- passed meeting 3- current meeting
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
         if (flag == 1) {
             for (Meeting m : meetings) {
-                if (m.getDate().after(today)) {
+                if (m.getStartDate().after(now)) {
+                    if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                        i++;
+                        if (i == nMeeting)
+                            return m.toString();
+                    }
+                }
+            }
+        } else if (flag == 2) {
+            for (Meeting m : meetings) {
+                if (m.getStartDate().before(now)) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
                         if (i == nMeeting)
@@ -122,12 +154,12 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         } else {
             for (Meeting m : meetings) {
-                if (m.getDate().before(today)) {
+                if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
-                        if (i == nMeeting)
-                            return m.toString();
                     }
+                    if (i == nMeeting)
+                        return m.toString();
                 }
             }
         }
@@ -135,13 +167,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public String getAgendaItemFromMeeting(int flag, int nMeeting, String user) throws RemoteException {
-        //flag 1- future meeting 2- passed meeting
+        //flag 1- future meeting 2- passed meeting 3- current meeting
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
         if (flag == 1) {
             for (Meeting m : meetings) {
-                if (m.getDate().after(today)) {
+                if (m.getStartDate().after(now)) {
+                    if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                        i++;
+                        if (i == nMeeting)
+                            return m.printAgendaItems();
+                    }
+                }
+            }
+        } else if (flag == 2) {
+            for (Meeting m : meetings) {
+                if (m.getStartDate().before(now)) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
                         if (i == nMeeting)
@@ -151,15 +193,16 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         } else {
             for (Meeting m : meetings) {
-                if (m.getDate().before(today)) {
+                if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                     if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                         i++;
-                        if (i == nMeeting)
-                            return m.printAgendaItems();
                     }
+                    if (i == nMeeting)
+                        return m.printAgendaItems();
                 }
             }
         }
+
         return "Meeting not found.. ";
     }
 
@@ -222,7 +265,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (m.getStartDate().after(today)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -240,7 +283,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (m.getStartDate().after(today)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -258,7 +301,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         Calendar today = Calendar.getInstance();
         today.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (m.getStartDate().after(today)) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -273,10 +316,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     public boolean addKeyDecisionToAgendaItem(int nMeeting, int nAgenda, String keyDecision, String user) throws RemoteException {
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -292,10 +335,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public boolean addActionItem(int nMeeting, String newActionItem, String user) throws RemoteException {
         ActionItem actionItem = new ActionItem(newActionItem.split("-")[0], findUser(newActionItem.split("-")[1]).getUserName());
         int i = 0;
-        Calendar today = Calendar.getInstance();
-        today.setTime(new Date());
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
         for (Meeting m : meetings) {
-            if (m.getDate().after(today)) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -360,10 +403,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-8/2/2010-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-9/2/2011-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-10/2/2015-Stannis Baratheon,Jon Snow-Ai5,Ai6-120");
-        addNewMeeting("manel-talk about Robert-wall-robertthemannis-11/2/2016-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-8/2/2010,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-9/2/2011,16:00-manel,Jon Snow-Ai3,Ai4-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-20/10/2014,20:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about Robert-wall-robertthemannis-11/2/2016,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
     }
 
     public static void main(String[] args) {

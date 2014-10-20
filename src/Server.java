@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class Server {
 
-    public static ArrayList<DataOutputStream> douts = new ArrayList<DataOutputStream>();
+    public static ArrayList<Connection> onlineUsers = new ArrayList<Connection>();
 //    public static boolean mainServer;
 
     public static void main(String[] args) {
@@ -168,9 +168,10 @@ class Connection extends Thread {
             this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
 
             System.out.println("->> Server: " + user + " connected");
-            Server.douts.add(this.out); //
+            Server.onlineUsers.add(this); //
             this.start();
         } catch (IOException e) {
+            Server.onlineUsers.remove(this);
             System.out.println("*** Connection: " + e.getMessage());
         }
     }
@@ -235,7 +236,15 @@ class Connection extends Thread {
                     case 18:
                         replySetActionAsDone();
                         break;
-
+                    case 19:
+                        replyCheckCurrentMeetings();
+                        break;
+                    case 20:
+                        replyInfoMeeting(3);
+                        break;
+                    case 21:
+                        replyAgendaItensFromMeeting(3);
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -285,6 +294,17 @@ class Connection extends Thread {
             System.out.println("*** Replying upcuming meeting: " + e.getMessage());
         }
     }
+
+    public void replyCheckCurrentMeetings() {
+        System.out.println("->> Server: Received request to send all current meeting of " + this.user);
+        try {
+            System.out.println("->> Server: Sending all current meeting of " + this.user);
+            out.writeUTF(dataBaseServer.getCurrentMeetings(user));
+        } catch (IOException e) {
+            System.out.println("*** Replying current meeting: " + e.getMessage());
+        }
+    }
+
 
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyInfoMeeting(int flag) {
@@ -497,6 +517,7 @@ class Connection extends Thread {
     }
 
 
+/*
     public void chat() {
         String name = null;
         String text = "";
@@ -522,4 +543,5 @@ class Connection extends Thread {
             }
         }
     }
+*/
 }
