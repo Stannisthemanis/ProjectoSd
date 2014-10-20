@@ -204,18 +204,19 @@ public class Client {
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-        System.out.println("Resume from meeting " + optUm);
-        System.out.println("\n" + requestResumeUpcumingMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
+            System.out.println("Resume from meeting " + optUm);
+            System.out.println("\n" + requestResumeUpcumingMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions for meeting " + optUm);
             System.out.println("1-> Consult Agenda Items");
             System.out.println("2-> Add items to agenda");
             System.out.println("3-> Modify items in agenda");
             System.out.println("4-> Delete items from agenda");
+            System.out.println("5-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
             optAi = sc.nextInt();
@@ -232,8 +233,7 @@ public class Client {
                 break;
                 case 2: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//                    addItemstoAgenda(in, out, optUm);
-                    subMenuModifyAgendaItem(in, out, optUm);
+                    addItemstoAgenda(in, out, optUm);
                 }
                 break;
                 case 3: {
@@ -246,6 +246,11 @@ public class Client {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Delete items from agenda: ");
                     DeleteItemstFromAgenda(in, out, optUm);
+                }
+                case 5: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Add new Actin Item: ");
+                    addNewActionItem(in, out, optUm);
                 }
                 break;
                 default: {
@@ -389,7 +394,7 @@ public class Client {
 
         int opt;
         do{
-            System.out.println("1-> Modify name: ");
+            System.out.println("1-> Modify name ");
             System.out.println("2-> Add new key decision");
             System.out.println("0-> Back");
             opt=sc.nextInt();
@@ -402,7 +407,7 @@ public class Client {
                     modifyNameFromAgendaItem(in,out,optMeeting,optItemtoModify);
                 }break;
                 case 2: {
-                    addNewKeyDecisionToAgendaitem(in, out, optMeeting,optItemtoModify);
+                    addNewKeyDecisionToAgendaitem(in, out, optMeeting, optItemtoModify);
                 }break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
@@ -670,6 +675,26 @@ public class Client {
         }
     }
 
+    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem, String userResponsile){
+        boolean aceptSignal;
+        try {
+            out.write(15);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(opt);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(newActionItem);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(userResponsile);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
@@ -779,11 +804,21 @@ public class Client {
         System.out.println("New key Decision: ");
         sc.nextLine();
         NewKeyDecision = sc.nextLine();
-        boolean success = requestAddKeyDecisionToAgendaItem(in, out, optMeeting,optItemtoAddKeyDecision, NewKeyDecision);
+        boolean success = requestAddKeyDecisionToAgendaItem(in, out, optMeeting, optItemtoAddKeyDecision, NewKeyDecision);
         if(success)
             System.out.println("Key decision added successfully!!");
         else
             System.out.println("Error ading key decision....");
+    }
+
+    public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting){
+        String newActionItem="", responsableUser="";
+        System.out.println("New ation Item: ");
+        newActionItem = sc.next();
+        System.out.println("Responsable user: ");
+        responsableUser = sc.next();
+        requestAddNewAcionItem(in,out,optMeeting,newActionItem,responsableUser);
+
     }
 
 
