@@ -131,11 +131,11 @@ public class Client {
             }
             System.out.println("Resume from message " + optUm);
             System.out.println(requestResumeMesage(in, out, optUm));
-            System.out.println("Do you accept this invite? (s/n)");
+            System.out.println("Do you accept this invite? (y/n)");
             dec = sc.next();
             dec = dec.toLowerCase();
             //reply
-            if (dec.equals("s")) {
+            if (dec.equals("y")) {
                 aux=replyInvite(in, out, true);
             } else if (dec.equals("n")) {
                 aux=replyInvite(in, out, false);
@@ -238,13 +238,13 @@ public class Client {
                 case 3: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Modify items in agenda: ");
-                    System.out.println("Under construction... sorry :( \n\n");
+                    modifyItemstFromAgenda(in,out,optUm);
                 }
                 break;
                 case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Delete items from agenda: ");
-                    System.out.println("Under construction... sorry :( \n\n");
+                    DeleteItemstFromAgenda(in, out, optUm);
                 }
                 break;
                 default: {
@@ -465,7 +465,7 @@ public class Client {
         }
         try {
             in.readBoolean();
-            out.write(opt-1);
+            out.write(opt);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
@@ -565,6 +565,24 @@ public class Client {
         }
     }
 
+    public static boolean requestDeleteItemToAgenda(DataInputStream in, DataOutputStream out, int optMeetenig, int itemToDelete){
+        boolean aceptSignal;
+        try {
+            out.write(12);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(optMeetenig);
+            aceptSignal = in.readBoolean();
+            out.write(itemToDelete);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -624,6 +642,49 @@ public class Client {
             System.out.println("Agenda item was added successfully!!");
         else
             System.out.println("Error adding Item to Agenda....");
+    }
+
+    public static void DeleteItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting){
+        int optItemtoDelete, size;
+        String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display name of all agenda items
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optItemtoDelete = sc.nextInt();
+            if (optItemtoDelete == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }else if(optItemtoDelete < 0 || optItemtoDelete > size){
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option, try again");
+            }
+        } while (optItemtoDelete < 0 || optItemtoDelete > size);
+
+        boolean success = requestDeleteItemToAgenda(in, out, optMeeting, optItemtoDelete);
+        if(success) {
+            System.out.println("Agenda item was deleted successfully!!");
+        }
+        else {
+            System.out.println("Error deleting Item to Agenda....");
+        }
+
+
+    }
+
+    public static void modifyItemstFromAgenda(DataInputStream in, DataOutputStream out, int opt){
+//        String itemToDiscuss;
+//        System.out.println("Add items to agenda: ");
+//        System.out.println("Item to discuss: ");
+//        sc.nextLine();
+//        itemToDiscuss = sc.nextLine();
+//        boolean success = requestAddItemToAgenda(in,out,opt,itemToDiscuss);
+//        if(success)
+//            System.out.println("Agenda item was added successfully!!");
+//        else
+//            System.out.println("Error adding Item to Agenda....");
     }
 
 
