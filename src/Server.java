@@ -479,13 +479,16 @@ class Connection extends Thread {
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for action number..");
             n = in.read();
+            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for user to decline or accept..");
             reply = in.readBoolean();
             if (reply) {
                 out.writeBoolean(dataBaseServer.setActionAsCompleted(user, n));
                 System.out.println("->> Server: Action set as completed with sucess");
-            } else
+            } else {
+                out.writeBoolean(false);
                 System.out.println("->> Server: Operation canceled by user");
+            }
         } catch (IOException e) {
             System.out.println("*** Replying to message: " + e.getMessage());
         }
