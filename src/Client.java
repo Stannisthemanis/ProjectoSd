@@ -216,6 +216,7 @@ public class Client {
             System.out.println("2-> Add items to agenda");
             System.out.println("3-> Modify items in agenda");
             System.out.println("4-> Delete items from agenda");
+            System.out.println("5-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
             optAi = sc.nextInt();
@@ -238,13 +239,18 @@ public class Client {
                 case 3: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Modify items in agenda: ");
-                    modifyItemstFromAgenda(in, out, optUm);
+                    subMenuModifyAgendaItem(in, out, optUm);
                 }
                 break;
                 case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Delete items from agenda: ");
                     DeleteItemstFromAgenda(in, out, optUm);
+                }
+                case 5: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Add new Actin Item: ");
+                    addNewActionItem(in, out, optUm);
                 }
                 break;
                 default: {
@@ -365,6 +371,51 @@ public class Client {
                 break;
             }
         } while (true);
+    }
+
+    public static void subMenuModifyAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting){
+        int optItemtoModify, size;
+        String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        do {
+            System.out.println(options); //display name of all agenda items
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optItemtoModify = sc.nextInt();
+            if (optItemtoModify == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }else if(optItemtoModify < 0 || optItemtoModify > size){
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option, try again");
+            }
+        } while (optItemtoModify < 0 || optItemtoModify > size);
+
+        int opt;
+        do{
+            System.out.println("1-> Modify name ");
+            System.out.println("2-> Add new key decision");
+            System.out.println("0-> Back");
+            opt=sc.nextInt();
+            if(opt==0){
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            switch (opt){
+                case 1: {
+                    modifyNameFromAgendaItem(in,out,optMeeting,optItemtoModify);
+                }break;
+                case 2: {
+                    addNewKeyDecisionToAgendaitem(in, out, optMeeting, optItemtoModify);
+                }break;
+                default: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+                break;
+            }
+        }while(true);
     }
 
 
@@ -603,6 +654,48 @@ public class Client {
         }
     }
 
+    public static boolean requestAddKeyDecisionToAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting,
+                                                            int optItemToModify, String newKeyDecision){
+        boolean aceptSignal;
+        try {
+            out.write(14);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(optMeeting);
+            aceptSignal = in.readBoolean();
+            out.write(optItemToModify);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(newKeyDecision);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static boolean requestAddNewAcionItem(DataInputStream in, DataOutputStream out, int opt, String newActionItem, String userResponsile){
+        boolean aceptSignal;
+        try {
+            out.write(15);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.write(opt);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(newActionItem);
+            aceptSignal = in.readBoolean();
+            out.writeUTF(userResponsile);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -694,27 +787,9 @@ public class Client {
 
     }
 
-    public static void modifyItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting){
-        int optItemtoModify, size;
-        String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
-        String[] countOptions = options.split("\n");
-        size = countOptions.length;
-        do {
-            System.out.println(options); //display name of all agenda items
-            System.out.println("0-> Back");
-            System.out.print("Choose an option: ");
-            optItemtoModify = sc.nextInt();
-            if (optItemtoModify == 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
-            }else if(optItemtoModify < 0 || optItemtoModify > size){
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                System.out.println("Wrong option, try again");
-            }
-        } while (optItemtoModify < 0 || optItemtoModify > size);
-
+    public static void modifyNameFromAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoModify){
         String NewItemToDiscuss;
-        System.out.println("Item to discuss: ");
+        System.out.println("New item to discuss: ");
         sc.nextLine();
         NewItemToDiscuss = sc.nextLine();
         boolean success = requestMofifyItemToAgenda(in, out, optMeeting,optItemtoModify, NewItemToDiscuss);
@@ -722,6 +797,28 @@ public class Client {
             System.out.println("Agenda item was modified successfully!!");
         else
             System.out.println("Error changing Item fom Agenda....");
+    }
+
+    public static void addNewKeyDecisionToAgendaitem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoAddKeyDecision){
+        String NewKeyDecision;
+        System.out.println("New key Decision: ");
+        sc.nextLine();
+        NewKeyDecision = sc.nextLine();
+        boolean success = requestAddKeyDecisionToAgendaItem(in, out, optMeeting, optItemtoAddKeyDecision, NewKeyDecision);
+        if(success)
+            System.out.println("Key decision added successfully!!");
+        else
+            System.out.println("Error ading key decision....");
+    }
+
+    public static void addNewActionItem(DataInputStream in, DataOutputStream out, int optMeeting){
+        String newActionItem="", responsableUser="";
+        System.out.println("New ation Item: ");
+        newActionItem = sc.next();
+        System.out.println("Responsable user: ");
+        responsableUser = sc.next();
+        requestAddNewAcionItem(in,out,optMeeting,newActionItem,responsableUser);
+
     }
 
 

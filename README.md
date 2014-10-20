@@ -13,6 +13,7 @@ TODO:
 
 -menu login, register (3 tent, volta atras)
 -nov registro
+-novo action item + responsavel
 
 
 REQUEST CODE:
