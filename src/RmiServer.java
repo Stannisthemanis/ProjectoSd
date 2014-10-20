@@ -337,7 +337,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return todoSize;
     }
 
-    public boolean setActionAsCompleted(User user, int n) {
+    public boolean setActionAsCompleted(User user, int n) throws RemoteException {
         int i = 0;
         for (ActionItem aItem : user.getActionItems()) {
             if (!aItem.isCompleted())

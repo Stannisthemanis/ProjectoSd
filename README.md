@@ -15,6 +15,7 @@ TODO:
 -nov registro
 - main menu todo-> (lista de action items minhas, mark as done ou GFO)
 - testes se users existe ou nao
+- y/n acept meetings
 
 
 REQUEST CODE:
@@ -36,3 +37,4 @@ REQUEST CODE:
 15- request add action item
 16- request Size ToDo
 17- reques list of action items of user
+18- request action as done

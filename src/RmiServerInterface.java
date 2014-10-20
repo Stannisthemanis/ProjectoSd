@@ -42,6 +42,6 @@ public interface RmiServerInterface extends Remote {
 
     public int getSizeOfTodo(User user) throws RemoteException;
 
-    public boolean setActionAsCompleted(User user, int n);
+    public boolean setActionAsCompleted(User user, int n) throws RemoteException;
 
 }
