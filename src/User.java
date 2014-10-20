@@ -1,7 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Scanner;
 
 /**
  * Created by Ricardo on 15/10/2014.
@@ -26,30 +25,6 @@ public class User implements Serializable {
         this.actionItems = new ArrayList<ActionItem>();
     }
 
-    public User() {
-        Scanner sc = new Scanner(System.in);
-        System.out.println("*** Register new user ***");
-        System.out.println("Insert new userName: ");
-        this.userName = sc.nextLine();
-        System.out.println("Insert password: ");
-        this.passWord = sc.nextLine();
-        System.out.println("Insert address: ");
-        this.address = sc.nextLine();
-        do {
-            System.out.println("Insert date of birthday (dd/mm/yyyy): ");
-            String auxDate = sc.nextLine();
-            try {
-                this.dob = new Date(auxDate);
-                break;
-            } catch (Exception e) {
-                System.out.println("Wrong date");
-            }
-        } while (true);
-        System.out.println("Insert phone number: ");
-        this.phoneNumber = sc.nextInt();
-        System.out.println("Insert mail address: ");
-        this.mail = sc.next();
-    }
 
     public boolean testUserName(String un) { // test if UserName already exists
         return (this.userName == un);
