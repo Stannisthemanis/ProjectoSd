@@ -1020,11 +1020,15 @@ public class Client {
         System.out.println("Register new user\n");
         do {
             System.out.println("User Name: ");
-            sc.next();
+            sc.nextLine();
             userName = sc.nextLine();
             System.out.println("Username: "+userName);
             System.out.println("testing name");
-            testName = testIfUserNamesExists(in, out, userName);
+            try {
+                out.writeUTF(userName);
+                testName = in.readBoolean();
+            } catch (IOException e) {
+            }
             System.out.println("end test name");
             if (testName) {
                 System.out.println("Name already exists, try again\n");
@@ -1309,9 +1313,7 @@ public class Client {
     }
 
     public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests) {
-        System.out.println("gests0-> "+guests);
         guests = guests.replaceAll(", ", ",");
-        System.out.println("gests1-> "+guests);
         String[] listOfGuests = guests.split(",");
         sc.next();
         for (String g : listOfGuests) {

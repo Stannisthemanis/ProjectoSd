@@ -17,6 +17,7 @@ TODO:
 - impar cmentarios desnecessarios / codigo antigo
 
 - serv secundario nao se conecta aos clientes
+- mudar GFO's para Leaves... so nakela
 
 -new meeting:       -titlo para cima  **DONE
                     -na data pedir hora e construir bem a data com , **DONE
