@@ -444,6 +444,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return "There are no messages for this agenda item";
     }
 
+    public String getMessagesHistoryFromAgendaItem(int nMeeting, int nAgenda, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.after(m.getEndDate())) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
+                if (i == nMeeting)
+                    return m.getAgendaItems().get(nAgenda - 1).getMessages();
+            }
+        }
+        return "There are no messages for this agenda item";
+    }
+
     public boolean addMessage(int nMeeting, int nAgenda, String user, String message) throws RemoteException {
         int i = 0;
         Calendar now = Calendar.getInstance();
