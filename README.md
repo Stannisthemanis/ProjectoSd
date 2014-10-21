@@ -21,28 +21,28 @@ TODO:
                     -na data pedir hora e construir bem a data com , **DONE
                     -verificar data anterior **DONE
                     -testar data valida **DONE
-                    -ver se os clientes existem
+                    -ver se os clientes existem **DONE
                     -so posso criar meeting para o futuro, com minimo de 0h:30m **DONE
                     
 -upcomming meeting: -consult agenda item, mudar para any key voltar atras **DONE
                     -no resumo da meeting meter so 1 \n depois de imprimir **DONE
-                    -any other businness sempre no fim da lista
+                    -any other businness sempre no fim da lista **DONE
                     -get back no delete da merda **DONE
                     - no modify, tirar menu e alterar logo **DONE
                     - no eliminar impredir de eliminar o any other bs.... **DONE
                     - no elimnar por certeza que pretende eliminar o (nome, get do aray) **DONE
                     - no display dos titlos dos meetings, meter so 1 \n **DONE
                     - no key dicision, mudar add para add/modify e tirar
-                        o 'New' do addkey decision, ERRO ortografico
+                        o 'New' do addkey decision, ERRO ortografico **DONE
 
--past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa
+-past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa **DONE
                     -request para pedir essa conversa
-                    -consult agenda items, press key to continue
-                    -request de pedir os actions items
+                    -consult agenda items, press key to continue **DONE
+                    -request de pedir os actions items **DONE
 
--Todo list          - \n's pa separar em condicoes
-                    - opcao errado, meterwrong option
-                    - y/n do mark as done
+-Todo list          - \n's pa separar em condicoes **DONE
+                    - opcao errado, meterwrong option **DONE
+                    - y/n do mark as done **DONE
 
 -Fazer menu login: pedir o login , poder registar, em  caso de 3 tent falhadas volta para tras
 
