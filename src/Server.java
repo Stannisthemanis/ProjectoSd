@@ -306,44 +306,44 @@ class Connection extends Thread {
     }
 
     public void replyCheckPassedMeetings() {
-        System.out.println("->> Server: Received request to send all passed meeting of " + this.user);
+        System.out.println("\n->> Server: Received request to send all passed meeting of " + this.user);
         try {
             System.out.println("->> Server: Sending all passed meeting of " + this.user);
             out.writeUTF(dataBaseServer.getPassedMeetings(user));
         } catch (IOException e) {
-            System.out.println("\n*** Replying upcuming meeting: " + e.getMessage());
+            System.out.println("\n*** Replying passed Meeting: " + e.getMessage());
         }
     }
 
     public void replyCheckCurrentMeetings() {
-        System.out.println("->> Server: Received request to send all current meeting of " + this.user);
+        System.out.println("\n->> Server: Received request to send all current meeting of " + this.user);
         try {
             System.out.println("->> Server: Sending all current meeting of " + this.user);
             out.writeUTF(dataBaseServer.getCurrentMeetings(user));
         } catch (IOException e) {
-            System.out.println("\n*** Replying current meeting: " + e.getMessage());
+            System.out.println("\n*** Replying current meeting by " + user + ": " + e.getMessage());
         }
     }
 
-
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyInfoMeeting(int flag) {
-        System.out.println("->> Server: Received request to send meeting information from " + this.user);
+        System.out.println("\n->> Server: Received request to send meeting information from " + this.user);
         int meeting;
         try {
             out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for info of requested meeting...");
+            System.out.println("->> Server: Waiting for info of requested meeting by " + this.user);
             meeting = in.read();
+            System.out.println("->> Server: Sending meeting info to " + this.user);
             out.writeUTF(dataBaseServer.getMeetingInfo(flag, meeting, this.user));
         } catch (IOException e) {
-            System.out.println("\n*** Replying to send info of meeting");
+            System.out.println("\n*** Replying to send info of meeting to " + user + ": " + e.getMessage());
         }
 
     }
 
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyAgendaItensFromMeeting(int flag) {
-        System.out.println("->> Server: Received request to send agenda itens from a meeting by " + user);
+        System.out.println("\n->> Server: Received request to send agenda itens from a meeting by " + user);
         int n;
         try {
             out.writeBoolean(true);
@@ -358,7 +358,7 @@ class Connection extends Thread {
     }
 
     public void replyUnreadMessages() {
-        System.out.println("->> Server: Received request to send messages of user: " + user);
+        System.out.println("\n->> Server: Received request to send messages of user: " + user);
         try {
             System.out.println("->> Server: Sending messages of " + user);
             out.writeUTF(dataBaseServer.getMessagesByUser(user));
@@ -369,7 +369,7 @@ class Connection extends Thread {
     }
 
     public void replyMessage() {
-        System.out.println("->> Server: Received request of " + user + " to respond to a message..");
+        System.out.println("\n->> Server: Received request of " + user + " to respond to a message..");
         int n;
         boolean reply;
         try {
@@ -389,12 +389,11 @@ class Connection extends Thread {
     }
 
     public void replyNumberOfMessages() {
-        System.out.println("->> Server: Received request to send number of messages of user " + user);
-        System.out.println("->> Server: Received request to send number of messages of user " + user);
+        System.out.println("\n->> Server: Received request to send number of messages of user " + user);
         try {
             out.write(dataBaseServer.getNumberOfMessages(user));
         } catch (IOException e) {
-            System.out.println("->> Server: Sending number of messages of user " + user);
+            System.out.println("\n*** Server: Sending number of messages of user " + user);
         }
     }
 
@@ -402,7 +401,7 @@ class Connection extends Thread {
         String newItem = "";
         int n;
         try {
-            System.out.println("->> Server: Received request to add a new agenda item ..");
+            System.out.println("\n->> Server: Received request to add a new agenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of the new agenda item ..");
             n = in.read();
@@ -421,7 +420,7 @@ class Connection extends Thread {
         int numAgendaItem;
         int n;
         try {
-            System.out.println("->> Server: Received request to remove aagenda item ..");
+            System.out.println("\n->> Server: Received request to remove aagenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda item to remove..");
             n = in.read();
@@ -439,7 +438,7 @@ class Connection extends Thread {
         int numAgendaItem;
         int n;
         try {
-            System.out.println("->> Server: Received request to modify agenda item ..");
+            System.out.println("\n->> Server: Received request to modify agenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda item to modify..");
             n = in.read();
@@ -458,7 +457,7 @@ class Connection extends Thread {
         int numAgendaItem;
         int n;
         try {
-            System.out.println("->> Server: Received request to add key decision to agenda item ..");
+            System.out.println("\n->> Server: Received request to add key decision to agenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda item to modify..");
             n = in.read();
@@ -477,7 +476,7 @@ class Connection extends Thread {
         String newItem = "";
         int n;
         try {
-            System.out.println("->> Server: Received request to add action item ..");
+            System.out.println("\n->> Server: Received request to add action item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of the new action item ..");
             n = in.read();
@@ -493,16 +492,16 @@ class Connection extends Thread {
     }
 
     public void replySizeOfTodo() {
-        System.out.println("->> Server: Received request to send number of action itens of user " + user);
+        System.out.println("\n->> Server: Received request to send number of action itens of user " + user);
         try {
             out.write(dataBaseServer.getSizeOfTodo(user));
         } catch (IOException e) {
-            System.out.println("->> Server: Sending number of action itens of user " + user);
+            System.out.println("*** Server: Sending number of action itens of user " + user);
         }
     }
 
     public void replyActionItemsFromUser() {
-        System.out.println("->> Server: Received request to send action of user: " + user);
+        System.out.println("\n->> Server: Received request to send action of user: " + user);
         try {
             System.out.println("->> Server: Sending actions of " + user);
             out.writeUTF(dataBaseServer.getActionItemFromUser(user));
@@ -513,7 +512,7 @@ class Connection extends Thread {
     }
 
     public void replySetActionAsDone() {
-        System.out.println("->> Server: Received request of " + user + " to complete a action..");
+        System.out.println("\n->> Server: Received request of " + user + " to complete a action..");
         int n;
         boolean reply;
         try {
@@ -538,7 +537,7 @@ class Connection extends Thread {
     }
 
     public void replyActionItensFromMeeting() {
-        System.out.println("->> Server: Received request to send action itens from a meeting by " + user);
+        System.out.println("\n->> Server: Received request to send action itens from a meeting by " + user);
         int n;
         try {
             out.writeBoolean(true);
@@ -556,7 +555,7 @@ class Connection extends Thread {
         int numAgendaItem;
         int n;
         try {
-            System.out.println("->> Server: Received request send messages from agenda item ..");
+            System.out.println("\n->> Server: Received request send messages from agenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
             n = in.read();
@@ -593,7 +592,7 @@ class Connection extends Thread {
                 " -> " + user + ": ";
         ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
         try {
-            System.out.println("->> Server: Received request add messages to agenda item ..");
+            System.out.println("\n->> Server: Received request add messages to agenda item ..");
             System.out.println("->> Server: Waiting for the info of meeting to add message..");
             n = in.read();
             System.out.println("->> Server: Waiting for the info of agenda to add message..");
@@ -623,7 +622,7 @@ class Connection extends Thread {
         int n, numAgendaItem;
         try {
             out.writeUTF("");
-            System.out.println("->> Server: leaving chat ..");
+            System.out.println("\n->> Server: leaving chat ..");
             out.writeBoolean(true);
             System.out.println("->> Server: leaving chat n meeting..");
             n = in.read();
@@ -642,7 +641,7 @@ class Connection extends Thread {
         int numAgendaItem;
         int n;
         try {
-            System.out.println("->> Server: Received request send history of messages from agenda item ..");
+            System.out.println("\n->> Server: Received request send history of messages from agenda item ..");
             out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
             n = in.read();
