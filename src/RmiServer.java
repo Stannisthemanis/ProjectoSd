@@ -461,26 +461,51 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
-    public boolean testIfUserInMeeting(String userOn, int nMeeting, String user) throws RemoteException {
+    public void addClientToChat(int nMeeting, int nAgenda, String user) throws RemoteException {
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
-            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
-                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
-                    i++;
-                }
-                if (i == nMeeting) {
-                    if (m.getResponsibleUser().getUserName().equals(userOn) || m.isInvited(userOn)) {
-                        return true;
-                    }
-                }
+            if (m.getStartDate().before(now) && m.getEndDate().after(now))
+                i++;
+            if (i == nMeeting) {
+                m.getAgendaItems().get(nAgenda - 1).addClientToChat(user);
+                return;
+            }
+        }
+    }
+
+    public void removeClientFromChat(int nMeeting, int nAgenda, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (m.getStartDate().before(now) && m.getEndDate().after(now))
+                i++;
+            if (i == nMeeting) {
+                m.getAgendaItems().get(nAgenda - 1).removeClientFromChat(user);
+                return;
+            }
+        }
+    }
+
+    public boolean userOnChat(int nMeeting, int nAgenda, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (m.getStartDate().before(now) && m.getEndDate().after(now))
+                i++;
+            if (i == nMeeting) {
+                return m.getAgendaItems().get(nAgenda - 1).isOnChat(user);
+
             }
         }
         return false;
     }
-
 
     public void firstUse() throws RemoteException {
 
@@ -494,7 +519,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
         addNewMeeting("manel-talk about stannis-wall-stannisthemannis-8/2/2010,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
         addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-9/2/2011,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-20/10/2014,20:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-21/10/2014,13:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-11/2/2016,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);

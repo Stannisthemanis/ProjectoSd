@@ -7,12 +7,14 @@ import java.util.ArrayList;
 public class AgendaItem implements Serializable {
     protected String ItemToDiscuss;
     protected ArrayList<String> chat;
+    protected ArrayList<String> clientsOnChat;
     protected String keyDecision;
 
     public AgendaItem(String itemToDiscuss) {
         ItemToDiscuss = itemToDiscuss;
         chat = new ArrayList<String>();
         keyDecision = null;
+        clientsOnChat = new ArrayList<String>();
     }
 
     public String getItemToDiscuss() {
@@ -49,6 +51,22 @@ public class AgendaItem implements Serializable {
 
     public void addMessage(String message) {
         this.chat.add(message);
+    }
+
+    public boolean isOnChat(String user) {
+        for (String s : clientsOnChat) {
+            if (user.equals(s))
+                return true;
+        }
+        return false;
+    }
+
+    public void addClientToChat(String newClient) {
+        this.clientsOnChat.add(newClient);
+    }
+
+    public void removeClientFromChat(String newClient) {
+        this.clientsOnChat.remove(newClient);
     }
 
     @Override

@@ -256,6 +256,11 @@ class Connection extends Thread {
                     case 24:
                         replyAddMessageToAgendaItem();
                         break;
+                    case 25:
+                        replyIfUserExists();
+                        break;
+                    case 26:
+                        //removeUserFromChat
                 }
             }
         } catch (EOFException e) {
@@ -555,6 +560,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Info received sending messages now ..");
             out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item messages sended with sucess ..");
+            dataBaseServer.addClientToChat(n, numAgendaItem, user);
         } catch (IOException e) {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
         }
@@ -569,8 +575,7 @@ class Connection extends Thread {
         now.add(Calendar.MONTH, 1);
         String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
                 " -> " + user + ": ";
-        ArrayList<DataOutputStream> onlineUsers = new ArrayList<DataOutputStream>();
-
+        ArrayList<DataOutputStream> clientsOnChat = new ArrayList<DataOutputStream>();
         try {
             System.out.println("->> Server: Received request add messages to agenda item ..");
             out.writeBoolean(true);
@@ -582,16 +587,14 @@ class Connection extends Thread {
             System.out.println("->> Server: Info of agenda item received waiting for message now ..");
             out.writeBoolean(true);
             messageReaded = in.readUTF();
-            messageAdded+=messageReaded;
-            for (Connection usersOn : Server.onlineUsers) {
-                if (dataBaseServer.testIfUserInMeeting(usersOn.getName(), n, user))
-                    onlineUsers.add(usersOn.out);
-            }
-            System.out.println("XXX: "+messageAdded);
+            messageAdded += messageReaded;
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
                 out.writeBoolean(true);
-                for (DataOutputStream outUser : onlineUsers) {
-                    out.writeUTF(messageAdded.concat("\n"));
+                for (Connection userOn : Server.onlineUsers) {
+                    if (dataBaseServer.userOnChat(n, numAgendaItem, user)) {
+                        clientsOnChat.add(userOn.out);
+                        System.out.println(userOn.user);
+                    }
                 }
             } else
                 out.writeBoolean(false);
@@ -601,4 +604,15 @@ class Connection extends Thread {
         }
     }
 
+    public void replyIfUserExists() {
+        String name = "";
+        try {
+            out.writeBoolean(true);
+            name = in.readUTF();
+            out.writeBoolean(dataBaseServer.findUser(name) != null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }
