@@ -1029,7 +1029,7 @@ public class Client {
                 testName = in.readBoolean();
             } catch (IOException e) {
             }
-            System.out.println("end test name");
+            System.out.println("end test  name");
             if (testName) {
                 System.out.println("Name already exists, try again\n");
             }
