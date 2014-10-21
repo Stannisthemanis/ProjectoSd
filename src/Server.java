@@ -260,7 +260,8 @@ class Connection extends Thread {
                         replyIfUserExists();
                         break;
                     case 26:
-                        //removeUserFromChat
+                        replyRemoveFromChat();
+                        break;
                 }
             }
         } catch (EOFException e) {
@@ -562,6 +563,17 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item messages sended with sucess ..");
             dataBaseServer.addClientToChat(n, numAgendaItem, user);
+            ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
+            for (Connection userOn : Server.onlineUsers) {
+                if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                    clientsOnChat.add(userOn);
+                }
+            }
+            for (Connection outs : clientsOnChat) {
+                System.out.println("->> Server: Broadcasting message to " + outs.user);
+                outs.out.writeUTF("\n>>: *** " + user + " as entered the chat ***");
+            }
+
         } catch (IOException e) {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
         }
@@ -576,35 +588,55 @@ class Connection extends Thread {
         now.add(Calendar.MONTH, 1);
         String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
                 " -> " + user + ": ";
-        ArrayList<DataOutputStream> clientsOnChat = new ArrayList<DataOutputStream>();
+        ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
         try {
             System.out.println("->> Server: Received request add messages to agenda item ..");
-            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of meeting to add message..");
             n = in.read();
-            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda to add message..");
             numAgendaItem = in.read();
             System.out.println("->> Server: Info of agenda item received waiting for message now ..");
-            out.writeBoolean(true);
             messageReaded = in.readUTF();
+            System.out.println("->> Server: Message received, adding message now..");
             messageAdded += messageReaded;
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
-                out.writeBoolean(true);
                 for (Connection userOn : Server.onlineUsers) {
-                    if (dataBaseServer.userOnChat(n, numAgendaItem, user)) {
-                        clientsOnChat.add(userOn.out);
-                        System.out.println(userOn.user);
+                    if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                        clientsOnChat.add(userOn);
                     }
                 }
+                for (Connection outs : clientsOnChat) {
+                    System.out.println("->> Server: Broadcasting message to " + outs.user);
+                    outs.out.writeUTF(messageAdded.concat("\n"));
+                }
             } else
-                out.writeBoolean(false);
-            System.out.println("->> Server: Message sended with sucess ..");
+                System.out.println("->> Server: Message sended with sucess ..");
         } catch (IOException e) {
             System.out.println("*** Server: Adding new message " + e.getMessage());
         }
     }
 
+    public void replyRemoveFromChat() {
+        int n, numAgendaItem;
+        try {
+            out.writeUTF("");
+            System.out.println("->> Server: leaving chat ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: leaving chat n meeting..");
+            n = in.read();
+            out.writeBoolean(true);
+            System.out.println("->> Server: leaving chat n Agenda..");
+            numAgendaItem = in.read();
+            System.out.println("->> Server: leaving chat 2..");
+            out.writeBoolean(dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    //TODO put sout's
     public void replyIfUserExists() {
         String name = "";
         try {

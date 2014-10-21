@@ -938,7 +938,7 @@ public class Client {
     public static void chat(DataInputStream in, DataOutputStream out, int optMeeting, int optagendaItem) throws IOException {
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
-        //ReadingThread rt = new ReadingThread(in);
+        ReadingThread rt = new ReadingThread(in);
         String textRecived = "";
         System.out.println("Type '.quit' to leave");
         while (true) {
@@ -947,18 +947,17 @@ public class Client {
                 textRecived = bfr.readLine();
             } catch (Exception e) {
             }
-            if (textRecived.equalsIgnoreCase(".quit")) {
-                //      rt.stop();
-                return;
-            }
+            if(textRecived.equalsIgnoreCase(".quit")){
+                rt.kill();
+           
             out.write(24);
-            in.readBoolean();
+//            in.readBoolean();
             out.write(optMeeting);
-            in.readBoolean();
+//            in.readBoolean();
             out.write(optagendaItem);
-            in.readBoolean();
+//            in.readBoolean();
             out.writeUTF(textRecived);
-            in.readBoolean();
+//            in.readBoolean();
         }
     }
 
@@ -1189,6 +1188,8 @@ public class Client {
     public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests) {
         guests=guests.replaceAll(", ",",");
         String[] listOfGuests = guests.split(",");
+        System.out.println("gests-> "+guests+" size-> "+listOfGuests.length);
+        sc.next();
         for (String g : listOfGuests) {
             if (!requestIfClientExists(in, out, g)) {
                 return false;
@@ -1200,19 +1201,25 @@ public class Client {
 
 class ReadingThread extends Thread {
     protected DataInputStream din;
+    boolean isRunning;
 
     public ReadingThread(DataInputStream in) {
         this.din = in;
+        isRunning = true;
         this.start();
     }
 
     public void run() {
         try {
-            while (true) {
-                System.out.println("Server says: " + din.readUTF());
+            while (isRunning) {
+                System.out.println(din.readUTF());
                 System.out.print(">>: ");
             }
         } catch (IOException e) {
         }
+    }
+
+    public void kill() {
+        isRunning = false;
     }
 }

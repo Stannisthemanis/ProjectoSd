@@ -44,7 +44,7 @@ public class AgendaItem implements Serializable {
     public String getMessages() {
         String chatHistory = "";
         for (String s : this.chat) {
-            chatHistory += s;
+            chatHistory += s + "\n";
         }
         return chatHistory;
     }
