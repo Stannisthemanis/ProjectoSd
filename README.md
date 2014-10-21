@@ -15,9 +15,9 @@ TODO:
 -nov registro
 - testes se users existe ou nao
 
--new meeting:       -titlo para cima
-                    -na data pedir hora e construir bem a data com ,
-                    -testar data valida
+-new meeting:       -titlo para cima  DONE
+                    -na data pedir hora e construir bem a data com , DONE
+                    -testar data valida DONE
                     -er se os clientes existem
                     -so posso criar meeting para o futuro, com minimo de 1h
                     
@@ -28,7 +28,8 @@ TODO:
                     - no eliminar impredir de eliminar o any other bs....
                     - no elimnar por certeza que pretende eliminar o (nome, get do aray)
                     - no display dos titlos dos meetings, meter so 1 \n
-                    - no key dicision, mudar add para add/modify e tirar o 'New' do addkey decision, ERRO ortografico
+                    - no key dicision, mudar add para add/modify e tirar
+                        o 'New' do addkey decision, ERRO ortografico
 
 -past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa
                     -request para pedir essa conversa
@@ -72,3 +73,5 @@ REQUEST CODE:
 20- request resume current meeting
 21-request agenda items from current meeting
 22- request action items from past meetings
+23- request messeges from agenda items
+24 - add messeges to agenda items

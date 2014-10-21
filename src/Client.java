@@ -375,7 +375,7 @@ public class Client {
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
-            System.out.println(options); //display name of all agenda items
+            System.out.println(options); //display name of all agen1da items
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
@@ -754,6 +754,7 @@ public class Client {
             result = in.readUTF(in);
         } catch (IOException e) {
         }
+        System.out.println("->ugijrfh... " + result);
         return result;
     }
 
@@ -959,19 +960,28 @@ public class Client {
     }
 
     public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date, guests, agendaItems, request;
+        String responsible, desireOutCome, local, title, date = "", guests, agendaItems, request;
         int duration;
         responsible = admin.getUserName();
-        System.out.print("Desire outcome: ");
         sc.nextLine();
+        System.out.print("Title: ");
+        title = sc.nextLine();
+        System.out.print("Desire outcome: ");
         desireOutCome = sc.nextLine();
         System.out.print("Local: ");
         local = sc.nextLine();
-        System.out.print("Title: ");
-        title = sc.nextLine();
-        System.out.print("Date (dd/mm/yy): ");
-        date = sc.next();
-        sc.nextLine();
+        boolean dateTest=false;
+        do {
+            System.out.print("Date (dd/mm/yy hh:mm): ");
+            date = sc.nextLine();
+            System.out.println("Date: "+date);
+            dateTest=myDateTest(date);
+            if(!dateTest){
+                System.out.println("Wrong format, try again");
+            }
+        } while (!dateTest);
+        date=date.replaceAll(" ", ",");
+        System.out.println("date sent: "+date);
         System.out.print("Guests (g1,g2,...): ");
         guests = sc.nextLine();
         System.out.print("agendaItems (ai1,ai2,...): ");
@@ -1074,22 +1084,40 @@ public class Client {
 
 
     //-------------------------------------- TEST DATA INPUT
-    public static boolean myDateTest(int dia, int mes, int ano) {
+    public static boolean myDateTest(String date) { // receives "dd/mm/yyyy hh:mm"
+        String localDate = date;
+        localDate=localDate.replaceAll("/", ",");
+        localDate=localDate.replaceAll(":", ",");
+        localDate=localDate.replaceAll(" ", ",");
+        System.out.println("-> "+localDate);
+        String[] data = localDate.split(",");
+        if(data.length!=5)
+            return false;
+        int day = Integer.parseInt(data[0]);
+        int month = Integer.parseInt(data[1]);
+        int year = Integer.parseInt(data[2]);
+        int hours = Integer.parseInt(data[3]);
+        int minuts = Integer.parseInt(data[4]);
+
         Date actualDate = new Date();
-        int ano2 = actualDate.getYear() + 1900;
-        if (ano < (ano2 - 100) || ano > ano2) {
+        int yearAux = actualDate.getYear() + 1900;
+        if (hours < 0 || hours > 24)
+            return false;
+        else if (minuts < 0 || minuts > 59)
+            return false;
+        if (year < (yearAux - 100) || year > yearAux) {
             return false;
         } else {
-            if (mes < 1 || mes > 12) {
+            if (month < 1 || month > 12) {
                 return false;
             } else {
-                if (dia < 1 || dia > 31) {
+                if (day < 1 || day > 31) {
                     return false;
-                } else if (dia > 28 && mes == 2 && isLeapYear(ano) == false) {
+                } else if (day > 28 && month == 2 && isLeapYear(year) == false) {
                     return false;
-                } else if (dia > 29 && mes == 2 && isLeapYear(ano) == true) {
+                } else if (day > 29 && month == 2 && isLeapYear(year) == true) {
                     return false;
-                } else if (dia > 30 && (mes == 4 || mes == 6 || mes == 9 || mes == 11)) {
+                } else if (day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
                     return false;
                 }
             }
