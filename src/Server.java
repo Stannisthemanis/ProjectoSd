@@ -167,6 +167,9 @@ class Connection extends Thread {
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
+            while (!dataBaseServer.checkLogin(in.readUTF(), in.readUTF()))
+                out.writeBoolean(false);
+            out.writeBoolean(true);
             this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
 
             System.out.println("->> Server: " + user + " connected");
