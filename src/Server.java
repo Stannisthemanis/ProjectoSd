@@ -574,9 +574,10 @@ class Connection extends Thread {
         try {
             System.out.println("->> Server: Received request add messages to agenda item ..");
             out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to add message..");
+            System.out.println("->> Server: Waiting for the info of meeting to add message..");
             n = in.read();
             out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda to add message..");
             numAgendaItem = in.read();
             System.out.println("->> Server: Info of agenda item received waiting for message now ..");
             out.writeBoolean(true);
