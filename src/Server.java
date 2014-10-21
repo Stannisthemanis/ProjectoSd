@@ -568,7 +568,7 @@ class Connection extends Thread {
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
-                " -> " + user + " ";
+                " -> " + user + ": ";
         ArrayList<DataOutputStream> onlineUsers = new ArrayList<DataOutputStream>();
 
         try {
@@ -582,11 +582,12 @@ class Connection extends Thread {
             System.out.println("->> Server: Info of agenda item received waiting for message now ..");
             out.writeBoolean(true);
             messageReaded = in.readUTF();
-            messageAdded.concat(messageReaded);
+            messageAdded+=messageReaded;
             for (Connection usersOn : Server.onlineUsers) {
                 if (dataBaseServer.testIfUserInMeeting(usersOn.getName(), n, user))
                     onlineUsers.add(usersOn.out);
             }
+            System.out.println("XXX: "+messageAdded);
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
                 out.writeBoolean(true);
                 for (DataOutputStream outUser : onlineUsers) {

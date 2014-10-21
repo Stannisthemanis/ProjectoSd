@@ -413,7 +413,7 @@ public class Client {
             switch (opt2) {
                 case 1: {
                     System.out.println("\n\n\n");
-                    requestMessagesFromAgendaItem(in,out,optMeeting,optItem);
+                    System.out.println(requestMessagesFromAgendaItem(in, out, optMeeting, optItem));
                     try {
                         chat(in,out,optMeeting,optItem);
                     } catch (IOException e) {
@@ -964,19 +964,19 @@ public class Client {
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
     public static void chat(DataInputStream in, DataOutputStream out, int optMeeting, int optagendaItem) throws IOException {
-        System.out.print("\n>>: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
-        ReadingThread rt = new ReadingThread(in);
+        //ReadingThread rt = new ReadingThread(in);
         String textRecived = "";
         System.out.println("Type '.quit' to leave");
         while (true) {
+            System.out.print("\n>>: ");
             try {
                 textRecived = bfr.readLine();
             } catch (Exception e) {
             }
             if(textRecived.equalsIgnoreCase(".quit")){
-                rt.stop();
+          //      rt.stop();
                 return;
             }
             out.write(24);
