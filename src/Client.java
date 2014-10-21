@@ -11,16 +11,16 @@ import java.util.Scanner;
 public class Client {
     public static Scanner sc = new Scanner(System.in);
 
-    public static User admin;
+    public static User user;
 
     public static void main(String[] args) {
-        String username = "", password;
+//        String username = "", password;
 
 
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+//        user = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -32,7 +32,7 @@ public class Client {
 //            }
 //        }
         //System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-        System.out.println("Welcome " + admin.getUserName());
+//        System.out.println("Welcome " + user.getUserName());
 
 
         while (true) {
@@ -41,10 +41,10 @@ public class Client {
 
                 DataOutputStream out = new DataOutputStream(socket.getOutputStream());
                 DataInputStream in = new DataInputStream(socket.getInputStream());
-                out.writeUTF(admin.getUserName());
+//                out.writeUTF(user.getUserName());
                 // chat(in, out);
-
-                mainMenu(in, out);
+                loginMenu(in, out);
+                //mainMenu(in, out);
                 //chat(in, out);
             } catch (UnknownHostException e) {
             } catch (EOFException e) {
@@ -59,25 +59,69 @@ public class Client {
         }
     }
 
-    private static String login() {
-        User teste = new User("Zeih", "root", "Rua da Guinola", new Date("10/10/1990"), 912345678, "zeih@guinola.pt");
-
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Username: ");
-        String username = sc.next();
-        System.out.print("Password: ");
-        String password = sc.next();
-
-        if (username.equals(teste.getUserName()) && password.equals(teste.getPassWord())) {
-            return username;
-
-        } else {
-            return null;
-        }
-    }
+//    private static String login() {
+//        User teste = new User("Zeih", "root", "Rua da Guinola", new Date("10/10/1990"), 912345678, "zeih@guinola.pt");
+//
+//        Scanner sc = new Scanner(System.in);
+//        System.out.print("Username: ");
+//        String username = sc.next();
+//        System.out.print("Password: ");
+//        String password = sc.next();
+//
+//        if (username.equals(teste.getUserName()) && password.equals(teste.getPassWord())) {
+//            return username;
+//
+//        } else {
+//            return null;
+//        }
+//    }
 
 
     //-------------------------------------- MENUS
+
+    public static void loginMenu(DataInputStream in, DataOutputStream out) {
+        int option;
+        String name, password;
+        boolean logIn = false;
+
+        do {
+            System.out.println("\n\n\n\n\n");
+            System.out.println("1-> Login");
+            System.out.println("2-> Register");
+            System.out.println("0-> GFO");
+            System.out.println("choose an option: ");
+            option = sc.nextInt();
+            if (option == 0) {
+                System.exit(0);
+            }
+            switch (option) {
+                case 1: {
+                    do {
+                        System.out.println("User name: ");
+                        sc.next();
+                        name = sc.nextLine();
+                        System.out.println("PassWord: ");
+                        password = sc.nextLine();
+                        logIn = requestIfClientExists(in, out, name);
+                        if (!logIn) {
+                            System.out.println("Logn failed, please try again");
+                            System.out.println("\n\n\n");
+                        }
+                    } while (!logIn);
+                }
+                break;
+                case 2: {
+                    registerNewClient(in, out);
+                }
+                break;
+                default: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+                break;
+            }
+        } while (true);
+    }
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
         int option;
@@ -342,7 +386,7 @@ public class Client {
             System.out.print("Choose an item to open chat: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-        System.out.println(resquestChatFromItemPastMeeting(in, out, opt,optUm));
+        System.out.println(resquestChatFromItemPastMeeting(in, out, opt, optUm));
         System.out.println("Press any key to continue...");
         sc.next();
         sc.nextLine();
@@ -939,8 +983,67 @@ public class Client {
         }
     }
 
+    public static boolean requestAddNewUser(DataInputStream in, DataOutputStream out, String request) {
+        boolean aceptSignal;
+        try {
+            out.write(27);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.writeUTF(request);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
+
+    public static void registerNewClient(DataInputStream in, DataOutputStream out) {
+        String userName, passWord, address, dob, phoneNumer, mail, finalInfo = "";
+        boolean testName = false, testDob = false;
+        System.out.println("Register new user\n");
+        do {
+            System.out.println("User Name: ");
+            sc.next();
+            userName = sc.nextLine();
+            System.out.println("Username: "+userName);
+            System.out.println("testing name");
+            testName = testIfUserNamesExists(in, out, userName);
+            System.out.println("end test name");
+            if (testName) {
+                System.out.println("Name already exists, try again\n");
+            }
+        } while (testName);
+        System.out.println("PassWord: ");
+        passWord = sc.nextLine();
+        System.out.println("Address: ");
+        address = sc.nextLine();
+        do {
+
+            System.out.println("Date of birthday (dd/mm/yyyy): ");
+            dob = sc.nextLine();
+            testDob = testDateOfBirthDay(dob);
+            if (!testDob) {
+                System.out.println("Wrong format, try again\n");
+            }
+        } while (!testDob);
+        System.out.println("Phone number: ");
+        phoneNumer = sc.nextLine();
+        System.out.println("Email: ");
+        mail = sc.nextLine();
+
+        finalInfo = userName + "-" + passWord + "-" + address + "-" + dob + "-" + phoneNumer + "-" + mail;
+        boolean success = requestAddNewUser(in, out, finalInfo);
+        if (success) {
+            System.out.println("Inserted wit success! ");
+        } else {
+            System.out.println("Not inserted with success...");
+        }
+    }
 
     public static void chat(DataInputStream in, DataOutputStream out, int optMeeting, int optagendaItem) throws IOException {
         InputStreamReader isr = new InputStreamReader(System.in);
@@ -970,9 +1073,9 @@ public class Client {
     }
 
     public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date = "", guests=null, agendaItems, request;
+        String responsible, desireOutCome, local, title, date = "", guests = null, agendaItems, request;
         int duration;
-        responsible = admin.getUserName();
+        responsible = user.getUserName();
         sc.nextLine();
         System.out.print("Title: ");
         title = sc.nextLine();
@@ -1005,8 +1108,8 @@ public class Client {
                 System.out.println("One or more user names do not exist, try again");
             }
         } while (!userTest);
-        if(guests==null)
-            guests="none";
+        if (guests == null)
+            guests = "none";
 
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = sc.nextLine();
@@ -1040,9 +1143,9 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        options=options.replaceAll("Any other businness","");
+        options = options.replaceAll("Any other businness", "");
         do {
-            for(int i=0; i<size-1; i++){
+            for (int i = 0; i < size - 1; i++) {
                 System.out.println(countOptions[i]);
             }
             System.out.println();
@@ -1059,13 +1162,13 @@ public class Client {
 
         } while (optItemtoDelete < 0 || optItemtoDelete > size);
 
-        String deleteConfirm="";
-        do{
+        String deleteConfirm = "";
+        do {
             System.out.println("Delete this item? (y/n)");
-            deleteConfirm=sc.next();
-        }while(!deleteConfirm.equals("y") && !deleteConfirm.equals("n"));
+            deleteConfirm = sc.next();
+        } while (!deleteConfirm.equals("y") && !deleteConfirm.equals("n"));
         System.out.println("------------------");
-        if(deleteConfirm.equals("y")){
+        if (deleteConfirm.equals("y")) {
             boolean success = requestDeleteItemToAgenda(in, out, optMeeting, optItemtoDelete);
             if (success) {
                 System.out.println("Agenda item was deleted successfully!!");
@@ -1194,13 +1297,50 @@ public class Client {
     }
 
     public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests) {
-        guests=guests.replaceAll(", ",",");
+        System.out.println("gests0-> "+guests);
+        guests = guests.replaceAll(", ", ",");
+        System.out.println("gests1-> "+guests);
         String[] listOfGuests = guests.split(",");
-        System.out.println("gests-> "+guests+" size-> "+listOfGuests.length);
         sc.next();
         for (String g : listOfGuests) {
+            System.out.println("testing-> "+g);
             if (!requestIfClientExists(in, out, g)) {
+                System.out.println("true");
                 return false;
+            }
+        }
+        System.out.println("false");
+        return true;
+    }
+
+    public static boolean testDateOfBirthDay(String dob) {
+        String localDate = dob;
+        localDate = localDate.replaceAll("/", ",");
+        String[] data = localDate.split(",");
+        if (data.length != 3)
+            return false;
+        int day = Integer.parseInt(data[0]);
+        int month = Integer.parseInt(data[1]);
+        int year = Integer.parseInt(data[2]);
+
+        Date actualDate = new Date();
+        int yearAux = actualDate.getYear() + 1902;
+
+        if (year < (yearAux - 100) || year > yearAux) {
+            return false;
+        } else {
+            if (month < 1 || month > 12) {
+                return false;
+            } else {
+                if (day < 1 || day > 31) {
+                    return false;
+                } else if (day > 28 && month == 2 && isLeapYear(year) == false) {
+                    return false;
+                } else if (day > 29 && month == 2 && isLeapYear(year) == true) {
+                    return false;
+                } else if (day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
+                    return false;
+                }
             }
         }
         return true;

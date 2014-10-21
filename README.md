@@ -14,6 +14,7 @@ TODO:
 -menu login, register (3 tent, volta atras)
 -nov registro
 - testes se users existe ou nao
+- impar cmentarios desnecessarios / codigo antigo
 
 - serv secundario nao se conecta aos clientes
 
@@ -81,3 +82,4 @@ REQUEST CODE:
 24 - add messeges to agenda items
 25- request if name of client exists
 26 - request leave chat
+27 - request add new user
