@@ -15,7 +15,7 @@ TODO:
 -nov registro
 - testes se users existe ou nao
 
--cliente breka-se quando sai e volta a entrar
+- serv secundario nao se conecta aos clientes
 
 -new meeting:       -titlo para cima  **DONE
                     -na data pedir hora e construir bem a data com , **DONE

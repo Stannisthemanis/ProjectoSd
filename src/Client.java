@@ -20,7 +20,7 @@ public class Client {
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("manel", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -81,7 +81,7 @@ public class Client {
 
     public static void mainMenu(DataInputStream in, DataOutputStream out) {
         int option;
-        System.out.println("\n\n\n\n\n\n\n\n\n");
+        System.out.println("\n\n\n\n\n");
         do {
 
             System.out.println("Main Menu");
@@ -149,10 +149,10 @@ public class Client {
             }
             //response
             if (aux) {
-                System.out.println("Invite accept with success!");
+                System.out.println("Invite accept with success!\n");
                 break;
             } else {
-                System.out.println("Invite not accepted...");
+                System.out.println("Invite not accepted...\n");
                 break;
             }
         } while (true);
@@ -342,7 +342,7 @@ public class Client {
             System.out.print("Choose an item to open chat: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
-        System.out.println(resquestChatFromItemPastMeeting(in, out, optUm));
+        System.out.println(resquestChatFromItemPastMeeting(in, out, opt,optUm));
         System.out.println("Press any key to continue...");
         sc.next();
         sc.nextLine();
@@ -707,7 +707,7 @@ public class Client {
         return result;
     }
 
-    public static String resquestChatFromItemPastMeeting(DataInputStream in, DataOutputStream out, int opt) {
+    public static String resquestChatFromItemPastMeeting(DataInputStream in, DataOutputStream out, int optMeeting, int optItem) {
         boolean aceptSignal;
         String result = "";
         try {
@@ -716,7 +716,9 @@ public class Client {
         }
         try {
             aceptSignal = in.readBoolean();
-            out.write(opt);
+            out.write(optMeeting);
+            aceptSignal = in.readBoolean();
+            out.write(optItem);
             result = in.readUTF(in);
         } catch (IOException e) {
         }
