@@ -20,7 +20,7 @@ public class Client {
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+        admin = new User("manel", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -103,6 +103,7 @@ public class Client {
                 }
                 break;
                 case 3: {
+                    System.out.println();
                     subMenuTodo(in, out);
                 }
                 break;
@@ -164,7 +165,7 @@ public class Client {
             System.out.println("Menu Meetings");
             System.out.println("1-> Create new meeting");
             System.out.println("2-> Check upcoming meetings");
-            System.out.println("3-> Current Meetings");
+            System.out.println("3-> Check current Meetings");
             System.out.println("4-> Check past meetings");
             System.out.println("0-> Back");
             System.out.print("Choose option: ");
@@ -287,7 +288,7 @@ public class Client {
             System.out.println("Resume from meeting " + optMeeting);
             System.out.println("\n" + requestResumeCurrentMeetings(in, out, optMeeting) + "\n"); // resume of chosen meeting
             System.out.println("\nOptions for meeting " + optMeeting);
-            System.out.println("1-> Consult/modify Agenda Items");
+            System.out.println("1-> Consult/modify/discuss Agenda Items");
             System.out.println("2-> Add new action Item");
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
@@ -338,10 +339,13 @@ public class Client {
         do {
             System.out.println(options); //display name of all agen1da items
             System.out.println("0-> Back");
-            System.out.print("Choose an option: ");
+            System.out.print("Choose an item to open chat: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
         System.out.println(resquestChatFromItemPastMeeting(in, out, optUm));
+        System.out.println("Press any key to continue...");
+        sc.next();
+        sc.nextLine();
     }
 
     public static void SubMenuConsultAgendaItemsCM(DataInputStream in, DataOutputStream out, int optMeeting) {
@@ -383,7 +387,7 @@ public class Client {
                 }
                 break;
                 case 2: {
-                    System.out.println("Adding new ket decision");
+                    System.out.println("Add/modify key decision");
                     addNewKeyDecisionToAgendaitem(in, out, optMeeting, optItem);
                 }
                 break;
@@ -438,6 +442,9 @@ public class Client {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Consult Action Items: ");
                     System.out.println(requestActionItemsPastMeeting(in, out, optUm));
+                    System.out.println("Press any key to continue...");
+                    sc.next();
+                    sc.nextLine();
                 }
                 break;
                 default: {
@@ -506,7 +513,7 @@ public class Client {
                         dec = sc.next();
                         dec = dec.toLowerCase();
                         //reply
-                    } while (dec != "y" && dec != "n");
+                    } while (!dec.equals("y") && !dec.equals("n"));
                     if (dec.equals("y")) {
                         aux = requestMarkActionAsDone(in, out, optActionItem, true);
                     } else if (dec.equals("n")) {
@@ -516,11 +523,11 @@ public class Client {
 
                     //response
                     if (aux) {
-                        System.out.println("Invite accept with success!");
-                        break;
+                        System.out.println("Invite accept with success!\n");
+                        return;
                     } else {
-                        System.out.println("Invite not accepted...");
-                        break;
+                        System.out.println("Invite not accepted...\n");
+                        return;
                     }
                 }
                 default: {
@@ -697,16 +704,14 @@ public class Client {
             result = in.readUTF(in);
         } catch (IOException e) {
         }
-        System.out.println("->ugijrfh... " + result);
         return result;
     }
 
     public static String resquestChatFromItemPastMeeting(DataInputStream in, DataOutputStream out, int opt) {
-        /*
         boolean aceptSignal;
         String result = "";
         try {
-            out.write(6);
+            out.write(27);
         } catch (Exception e) {
         }
         try {
@@ -715,8 +720,8 @@ public class Client {
             result = in.readUTF(in);
         } catch (IOException e) {
         }
-        return result;*/
-        return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
+        return result;
+//        return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
     }
 
     public static boolean replyInvite(DataInputStream in, DataOutputStream out, boolean decision) {
@@ -947,9 +952,10 @@ public class Client {
                 textRecived = bfr.readLine();
             } catch (Exception e) {
             }
-            if(textRecived.equalsIgnoreCase(".quit")){
+            if (textRecived.equalsIgnoreCase(".quit")) {
                 rt.kill();
-           
+                return;
+            }
             out.write(24);
 //            in.readBoolean();
             out.write(optMeeting);
