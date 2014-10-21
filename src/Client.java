@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
@@ -19,7 +20,7 @@ public class Client {
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+        admin = new User("manel", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -329,44 +330,6 @@ public class Client {
                 break;
             }
         } while (optBack != 0);
-//        String[] countOptions = options.split("\n");
-//        size = countOptions.length;
-//        do {
-//            System.out.println("0-> Back");
-//            System.out.print("Choose an option: ");
-//            optUm = sc.nextInt();
-//        } while (optUm < 0 || optUm > size);
-//        do {
-//            if (optUm == 0) {
-//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//                break;
-//            }
-//            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//            System.out.println("Options for Agenda item " + optUm);
-//            System.out.println("1-> Open chat");
-//            System.out.println("0-> Back");
-//            System.out.println("Choose an option: ");
-//            opt2 = sc.nextInt();
-//            if (opt2 == 0) {
-//                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//                break;
-//            }
-//            switch (opt2) {
-//                case 1: {
-//                    System.out.println("\n\n\n");
-//                    System.out.println("Opening Chat... ");
-//                    System.out.println("You will address Stannis the mannis by 'Your grace' or GFO!");
-//                    System.out.println("Under construction... sorry :( \n\n");
-//                    sc.next();
-//                }
-//                break;
-//                default: {
-//                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-//                    System.out.println("Wrong option");
-//                }
-//                break;
-//            }
-//        } while (true);
     }
 
     public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
@@ -418,6 +381,7 @@ public class Client {
                         chat(in,out,optMeeting,optItem);
                     } catch (IOException e) {
                     }
+                    requestLeaveChat(in, out, optMeeting, optItem);
                 }
                 break;
                 case 2: {
@@ -959,6 +923,36 @@ public class Client {
         return result;
     }
 
+    public static boolean requestIfClientExists(DataInputStream in, DataOutputStream out, String userName) {
+        boolean aceptSignal;
+        try {
+            out.write(25);
+        } catch (Exception e) {
+            return false;
+        }
+        try {
+            aceptSignal = in.readBoolean();
+            out.writeUTF(userName);
+            return in.readBoolean();
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
+    public static void requestLeaveChat(DataInputStream in, DataOutputStream out, int optCurrentMeeting, int optItem) {
+        try {
+            out.write(26);
+        } catch (Exception e) {
+        }
+        try {
+            in.readBoolean();
+            out.write(optCurrentMeeting);
+            in.readBoolean();
+            out.write(optItem);
+            in.readBoolean();
+        } catch (IOException e) {
+        }
+    }
 
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
@@ -1002,19 +996,30 @@ public class Client {
         System.out.print("Local: ");
         local = sc.nextLine();
         boolean dateTest=false;
+        boolean pastDate=false;
         do {
             System.out.print("Date (dd/mm/yy hh:mm): ");
             date = sc.nextLine();
-            System.out.println("Date: "+date);
             dateTest=myDateTest(date);
+            pastDate=checkPastDate(date);
+            System.out.println("dateTest: "+dateTest+" pastDate: "+pastDate);
             if(!dateTest){
                 System.out.println("Wrong format, try again");
+            }else if(!pastDate){
+                System.out.println("Can't creat a meeting in the past (30 minuts from now minimum), try again");
             }
-        } while (!dateTest);
+        } while (!dateTest || !pastDate);
         date=date.replaceAll(" ", ",");
-        System.out.println("date sent: "+date);
-        System.out.print("Guests (g1,g2,...): ");
-        guests = sc.nextLine();
+        boolean userTest=false;
+        do{
+
+            System.out.print("Guests (g1,g2,...): ");
+            guests = sc.nextLine();
+            userTest = testIfUserNamesExists(in,out,guests);
+            if(userTest==false){
+                System.out.println("One or more user names do no exist, try agai");
+            }
+        }while(!userTest);
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = sc.nextLine();
         System.out.print("Duration in minutes: ");
@@ -1120,7 +1125,6 @@ public class Client {
         localDate=localDate.replaceAll("/", ",");
         localDate=localDate.replaceAll(":", ",");
         localDate=localDate.replaceAll(" ", ",");
-        System.out.println("-> "+localDate);
         String[] data = localDate.split(",");
         if(data.length!=5)
             return false;
@@ -1158,6 +1162,45 @@ public class Client {
 
     public static boolean isLeapYear(int ano) {
         return (ano % 4 == 0);
+    }
+
+    public static boolean checkPastDate(String date){
+        String localDate = date;
+        localDate=localDate.replaceAll("/", ",");
+        localDate=localDate.replaceAll(":", ",");
+        localDate=localDate.replaceAll(" ", ",");
+        String[] data = localDate.split(",");
+        if(data.length!=5)
+            return false;
+        Calendar datetoTest = Calendar.getInstance();
+        int day = Integer.parseInt(data[0]);
+        int month = Integer.parseInt(data[1]);
+        int year = Integer.parseInt(data[2]);
+        int hours = Integer.parseInt(data[3]);
+        int minuts = Integer.parseInt(data[4]);
+        datetoTest.set(year, month, day, hours, minuts);
+
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+
+        datetoTest.add(Calendar.MINUTE, -29);
+
+        if(datetoTest.before(now)){
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests){
+        String[] listOfGuests = guests.split(",");
+        System.out.println("gests-> "+guests+" size-> "+listOfGuests.length);
+        sc.next();
+        for (String g : listOfGuests) {
+            if(!requestIfClientExists(in,out,g))
+                return false;
+        }
+        return true;
     }
 }
 

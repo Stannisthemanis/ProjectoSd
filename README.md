@@ -15,11 +15,14 @@ TODO:
 -nov registro
 - testes se users existe ou nao
 
+-cliente breka-se quando sai e volta a entrar
+
 -new meeting:       -titlo para cima  DONE
                     -na data pedir hora e construir bem a data com , DONE
+                    -verificar data anterior DONE
                     -testar data valida DONE
-                    -er se os clientes existem
-                    -so posso criar meeting para o futuro, com minimo de 1h
+                    -ver se os clientes existem
+                    -so posso criar meeting para o futuro, com minimo de 0h:30m DONE
                     
 -upcomming meeting: -consult agenda item, mudar para any key voltar atras
                     -no resumo da meeting meter so 1 \n depois de imprimir
@@ -75,3 +78,5 @@ REQUEST CODE:
 22- request action items from past meetings
 23- request messeges from agenda items
 24 - add messeges to agenda items
+25- request if name of client exists
+26 - request leave chat
