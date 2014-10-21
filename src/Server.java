@@ -562,6 +562,17 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item messages sended with sucess ..");
             dataBaseServer.addClientToChat(n, numAgendaItem, user);
+            ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
+            for (Connection userOn : Server.onlineUsers) {
+                if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                    clientsOnChat.add(userOn);
+                }
+            }
+            for (Connection outs : clientsOnChat) {
+                System.out.println("->> Server: Broadcasting message to " + outs.user);
+                outs.out.writeUTF("\n>>: *** " + user + " as entered the chat ***");
+            }
+
         } catch (IOException e) {
             System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
         }
@@ -579,19 +590,15 @@ class Connection extends Thread {
         ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
         try {
             System.out.println("->> Server: Received request add messages to agenda item ..");
-//            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of meeting to add message..");
             n = in.read();
-//            out.writeBoolean(true);
             System.out.println("->> Server: Waiting for the info of agenda to add message..");
             numAgendaItem = in.read();
             System.out.println("->> Server: Info of agenda item received waiting for message now ..");
-//            out.writeBoolean(true);
             messageReaded = in.readUTF();
             System.out.println("->> Server: Message received, adding message now..");
             messageAdded += messageReaded;
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
-//                out.writeBoolean(true);
                 for (Connection userOn : Server.onlineUsers) {
                     if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
                         clientsOnChat.add(userOn);
@@ -602,7 +609,6 @@ class Connection extends Thread {
                     outs.out.writeUTF(messageAdded.concat("\n"));
                 }
             } else
-//                out.writeBoolean(false);
                 System.out.println("->> Server: Message sended with sucess ..");
         } catch (IOException e) {
             System.out.println("*** Server: Adding new message " + e.getMessage());
