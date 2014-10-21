@@ -7,6 +7,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Diogo on 14/10/2014.
@@ -541,38 +543,60 @@ class Connection extends Thread {
     }
 
     public void replyMessagesFromAgendaItem() {
-
+        int numAgendaItem;
+        int n;
+        try {
+            System.out.println("->> Server: Received request send messages from agenda item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
+            n = in.read();
+            out.writeBoolean(true);
+            numAgendaItem = in.read();
+            System.out.println("->> Server: Info received sending messages now ..");
+            out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
+            System.out.println("->> Server: Agenda item messages sended with sucess ..");
+        } catch (IOException e) {
+            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+        }
     }
 
     public void replyAddMessageToAgendaItem() {
+        int numAgendaItem;
+        int n;
+        String messageReaded;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
+                " -> " + user + " ";
+        ArrayList<DataOutputStream> onlineUsers = new ArrayList<DataOutputStream>();
 
-    }
-
-/*
-    public void chat() {
-        String name = null;
-        String text = "";
         try {
-            //saying hello!
-            name = in.readUTF();
-            System.out.println("-> " + name + " connected");
-            out.writeUTF("Ola " + name);
-            //
-            while (true) {
-                text = in.readUTF();
-                for (DataOutputStream dout : Server.douts) { //
-                    dout.writeUTF(text.toUpperCase());
-                    System.out.println("sending... tam: " + Server.douts.size());
+            System.out.println("->> Server: Received request add messages to agenda item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda item to add message..");
+            n = in.read();
+            out.writeBoolean(true);
+            numAgendaItem = in.read();
+            System.out.println("->> Server: Info of agenda item received waiting for message now ..");
+            out.writeBoolean(true);
+            messageReaded = in.readUTF();
+            messageAdded.concat(messageReaded);
+            for (Connection usersOn : Server.onlineUsers) {
+                if (dataBaseServer.testIfUserInMeeting(usersOn.getName(), n, user))
+                    onlineUsers.add(usersOn.out);
+            }
+            if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
+                out.writeBoolean(true);
+                for (DataOutputStream outUser : onlineUsers) {
+                    out.writeUTF(messageAdded.concat("\n"));
                 }
-            }
+            } else
+                out.writeBoolean(false);
+            System.out.println("->> Server: Message sended with sucess ..");
         } catch (IOException e) {
-            System.out.println("Receiving name: " + e.getMessage());
-        } finally {
-            Server.douts.remove(this.out); //
-            if (name != null) {
-                System.out.println("-> " + name + " disconnected");
-            }
+            System.out.println("*** Server: Adding new message " + e.getMessage());
         }
     }
-*/
+
 }

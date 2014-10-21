@@ -126,7 +126,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                 }
             }
         }
-        System.out.println(meeting);
         return meeting;
     }
 
@@ -415,7 +414,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (m.getStartDate().before(now) && m.getEndDate().before(now)) {
-                System.out.println(m.getMeetingTitle());
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -426,6 +424,63 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         }
         return "This meeting dont have any action itens";
     }
+
+    public String getMessagesFromAgendaItem(int nMeeting, int nAgenda, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
+                if (i == nMeeting)
+                    return m.getAgendaItems().get(nAgenda - 1).getMessages();
+            }
+        }
+        return "There are no messages for this agenda item";
+    }
+
+    public boolean addMessage(int nMeeting, int nAgenda, String user, String message) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    m.getAgendaItems().get(nAgenda - 1).addMessage(message);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean testIfUserInMeeting(String userOn, int nMeeting, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
+                if (i == nMeeting) {
+                    if (m.getResponsibleUser().getUserName().equals(userOn) || m.isInvited(userOn)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     public void firstUse() throws RemoteException {
 
