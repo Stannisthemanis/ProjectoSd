@@ -179,6 +179,10 @@ class Connection extends Thread {
                         this.user = dataBaseServer.findUser(read.split(",")[0]).getUserName();
                 } else if (read.split(",").length == 6) {
                     this.user = dataBaseServer.addNewUser(read).getUserName();
+                    if (this.user == null)
+                        out.writeBoolean(false);
+                    else
+                        out.writeBoolean(true);
                 } else {
                     out.writeBoolean(false);
                     System.out.println("\n*** Sintax incorrect for login/register..");

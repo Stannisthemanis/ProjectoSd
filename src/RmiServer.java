@@ -48,6 +48,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public User addNewUser(String newUser) throws RemoteException {
         String[] tokenizer = newUser.split("-");
         String username = tokenizer[0];
+        if (findUser(username) != null)
+            return null;
         String password = tokenizer[1];
         String address = tokenizer[2];
         Date dob = new Date(tokenizer[3]);
@@ -292,7 +294,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting) {
-                    m.addAgendaItem(newItem,true);
+                    m.addAgendaItem(newItem, true);
                     return true;
                 }
             }
