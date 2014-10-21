@@ -18,6 +18,8 @@ TODO:
 
 - serv secundario nao se conecta aos clientes
 - mudar GFO's para Leaves... so nakela
+-testar numero de tlm new user e outros tipos de dados
+-por o welcom uuuser
 
 -new meeting:       -titlo para cima  **DONE
                     -na data pedir hora e construir bem a data com , **DONE
@@ -83,4 +85,4 @@ REQUEST CODE:
 24 - add messeges to agenda items
 25- request if name of client exists
 26 - request leave chat
-27 - request add new user
+27 - request message history past meeting agenda item

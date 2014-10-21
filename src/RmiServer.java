@@ -10,6 +10,7 @@ import java.util.Date;
  * Created by Diogo on 16/10/2014.
  */
 public class RmiServer extends UnicastRemoteObject implements RmiServerInterface {
+
     public static ArrayList<Meeting> meetings = new ArrayList<Meeting>();
     public static ArrayList<User> users = new ArrayList<User>();
     public static ArrayList<Invite> invitations = new ArrayList<Invite>();
@@ -57,6 +58,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String mail = tokenizer[5];
         User nUser = new User(username, password, address, dob, phoneNumber, mail);
         this.users.add(nUser);
+        System.out.println("nuser-> "+nUser);
         return this.findUser(username);
     }
 
@@ -404,8 +406,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         int todoSize = 0;
         if (findUser(user).getActionItems().size() > 0) {
             for (ActionItem aItem : findUser(user).getActionItems()) {
-                if (aItem.completed == false)
-                    todoSize++;
+                if(aItem!=null){
+                    if (aItem.completed == false) {
+                        todoSize++;
+                    }
+                }
             }
         }
         return todoSize;

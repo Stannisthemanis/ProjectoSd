@@ -124,6 +124,7 @@ public class Client {
                 break;
                 case 2: {
                     registerNewClient(in, out);
+                    mainMenu(in,out);
                 }
                 break;
                 default: {
@@ -995,22 +996,6 @@ public class Client {
         }
     }
 
-    public static boolean requestAddNewUser(DataInputStream in, DataOutputStream out, String request) {
-        boolean aceptSignal;
-        try {
-            out.write(27);
-        } catch (Exception e) {
-            return false;
-        }
-        try {
-            aceptSignal = in.readBoolean();
-            out.writeUTF(request);
-            return in.readBoolean();
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -1018,18 +1003,15 @@ public class Client {
         String userName, passWord, address, dob, phoneNumer, mail, finalInfo = "";
         boolean testName = false, testDob = false;
         System.out.println("Register new user\n");
+        sc.nextLine();
         do {
-            System.out.println("User Name: ");
-            sc.nextLine();
+            System.out.println("Insert user name:");
             userName = sc.nextLine();
-            System.out.println("Username: "+userName);
-            System.out.println("testing name");
             try {
                 out.writeUTF(userName);
                 testName = in.readBoolean();
             } catch (IOException e) {
             }
-            System.out.println("end test  name");
             if (testName) {
                 System.out.println("Name already exists, try again\n");
             }
@@ -1052,8 +1034,13 @@ public class Client {
         System.out.println("Email: ");
         mail = sc.nextLine();
 
-        finalInfo = userName + "-" + passWord + "-" + address + "-" + dob + "-" + phoneNumer + "-" + mail;
-        boolean success = requestAddNewUser(in, out, finalInfo);
+        finalInfo = userName + "," + passWord + "," + address + "," + dob + "," + phoneNumer + "," + mail;
+        boolean success = false;
+        try {
+            out.writeUTF(finalInfo);
+            success = in.readBoolean();
+        } catch (IOException e) {
+        }
         if (success) {
             System.out.println("Inserted wit success! ");
         } else {

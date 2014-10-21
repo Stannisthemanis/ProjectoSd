@@ -180,7 +180,7 @@ class Connection extends Thread {
                     if (login)
                         this.user = dataBaseServer.findUser(read.split(",")[0]).getUserName();
                 } else if (read.split(",").length == 6) {
-                    this.user = dataBaseServer.addNewUser(read).getUserName();
+                    this.user = dataBaseServer.addNewUser(read.replaceAll(",","-")).getUserName();
                     if (this.user == null)
                         out.writeBoolean(false);
                     else
