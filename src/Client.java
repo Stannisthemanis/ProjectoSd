@@ -81,7 +81,7 @@ public class Client {
 
     public static void loginMenu(DataInputStream in, DataOutputStream out) {
         int option;
-        String name, password;
+        String name, password, getback;
         boolean logIn = false;
 
         do {
@@ -98,15 +98,27 @@ public class Client {
                 case 1: {
                     do {
                         System.out.println("User name: ");
-                        sc.next();
+                        sc.nextLine();
                         name = sc.nextLine();
                         System.out.println("PassWord: ");
                         password = sc.nextLine();
-                        logIn = requestIfClientExists(in, out, name);
-                        if (!logIn) {
-                            System.out.println("Logn failed, please try again");
-                            System.out.println("\n\n\n");
+                        try {
+                            out.writeUTF(name+","+password);
+                            logIn=in.readBoolean();
+                        } catch (IOException e) {
                         }
+                        if (!logIn) {
+                            do{
+
+                                System.out.println("Logn failed, please try again? (y/n)\n");
+                                getback=sc.nextLine();
+                            }while(!getback.equalsIgnoreCase("y") && !getback.equalsIgnoreCase("n"));
+
+                            if(getback.equalsIgnoreCase("n")){
+                                break;
+                            }
+                        }
+                        mainMenu(in,out);
                     } while (!logIn);
                 }
                 break;

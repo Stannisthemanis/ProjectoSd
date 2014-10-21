@@ -176,7 +176,7 @@ class Connection extends Thread {
                     login = dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
                     out.writeBoolean(login);
                     if (login)
-                        this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
+                        this.user = dataBaseServer.findUser(read.split(",")[0]).getUserName();
                 } else if (read.split(",").length == 6) {
                     this.user = dataBaseServer.addNewUser(read).getUserName();
                 } else {
