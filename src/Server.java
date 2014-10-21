@@ -386,6 +386,7 @@ class Connection extends Thread {
 
     public void replyNumberOfMessages() {
         System.out.println("->> Server: Received request to send number of messages of user " + user);
+        System.out.println("->> Server: Received request to send number of messages of user " + user);
         try {
             out.write(dataBaseServer.getNumberOfMessages(user));
         } catch (IOException e) {
@@ -611,7 +612,6 @@ class Connection extends Thread {
             name = in.readUTF();
             out.writeBoolean(dataBaseServer.findUser(name) != null);
         } catch (IOException e) {
-            e.printStackTrace();
         }
 
     }

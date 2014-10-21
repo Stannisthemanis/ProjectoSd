@@ -93,6 +93,10 @@ public class Meeting implements Serializable {
         this.agendaItems.add(agendaItem);
     }
 
+    public void addAgendaItem(AgendaItem agendaItem, boolean flag) {
+        this.agendaItems.add(this.agendaItems.size()-1,agendaItem);
+    }
+
     public void removerAgendaItem(int nAgendaItem) {
         this.agendaItems.remove(nAgendaItem);
     }

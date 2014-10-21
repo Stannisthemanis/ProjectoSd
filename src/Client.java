@@ -20,7 +20,7 @@ public class Client {
         Socket socket = null;
         int ServerSocket = 6000;
         String hostname = "localhost";
-        admin = new User("manel", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
+        admin = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
 //        int tries = 0;
 //        //Login
 //        while ((username = login()) == null) {
@@ -212,7 +212,7 @@ public class Client {
         size = countOptions.length;
         do {
             System.out.println(options); //display name of all upcoming meetings
-            System.out.println("\n0-> Back");
+            System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optUm = sc.nextInt();
         } while (optUm < 0 || optUm > size);
@@ -222,8 +222,8 @@ public class Client {
                 break;
             }
             System.out.println("Resume from meeting " + optUm);
-            System.out.println("\n" + requestResumeUpcumingMeeting(in, out, optUm) + "\n"); // resume of chosen meeting
-            System.out.println("\nOptions for meeting " + optUm);
+            System.out.println("\n" + requestResumeUpcumingMeeting(in, out, optUm)); // resume of chosen meeting
+            System.out.println("Options for meeting " + optUm);
             System.out.println("1-> Consult Agenda Items");
             System.out.println("2-> Add items to agenda");
             System.out.println("3-> Modify items in agenda");
@@ -256,7 +256,7 @@ public class Client {
                 case 4: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Delete items from agenda: ");
-                    DeleteItemstFromAgenda(in, out, optUm);
+                    subMenuDeleteItemstFromAgenda(in, out, optUm);
                 }
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
@@ -319,17 +319,15 @@ public class Client {
     }
 
     public static void SubMenuConsultAgendaItemsUM(DataInputStream in, DataOutputStream out, int opt) {
-        int optBack;
         String options = requestAgendaItemsFromUpComingMeeting(in, out, opt);
         do {
             System.out.println(options); //display name of all agenda items
-            System.out.println("0-> Back");
-            optBack = sc.nextInt();
-            if (optBack != 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
-            }
-        } while (optBack != 0);
+            System.out.println("Press any key to return!");
+            sc.next();
+            sc.nextLine();
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+            break;
+        } while (true);
     }
 
     public static void SubMenuConsultAgendaItemsPM(DataInputStream in, DataOutputStream out, int opt) {
@@ -378,7 +376,7 @@ public class Client {
                     System.out.println("\n\n\n");
                     System.out.println(requestMessagesFromAgendaItem(in, out, optMeeting, optItem));
                     try {
-                        chat(in,out,optMeeting,optItem);
+                        chat(in, out, optMeeting, optItem);
                     } catch (IOException e) {
                     }
                     requestLeaveChat(in, out, optMeeting, optItem);
@@ -463,34 +461,14 @@ public class Client {
             optItemtoModify = sc.nextInt();
             if (optItemtoModify == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
+                return;
             } else if (optItemtoModify < 0 || optItemtoModify > size) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option, try again");
             }
         } while (optItemtoModify < 0 || optItemtoModify > size);
 
-        int opt;
-        do {
-            System.out.println("1-> Modify name ");
-            System.out.println("0-> Back");
-            opt = sc.nextInt();
-            if (opt == 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
-            }
-            switch (opt) {
-                case 1: {
-                    modifyNameFromAgendaItem(in, out, optMeeting, optItemtoModify);
-                }
-                break;
-                default: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Wrong option");
-                }
-                break;
-            }
-        } while (true);
+        modifyNameFromAgendaItem(in, out, optMeeting, optItemtoModify);
     }
 
     public static void subMenuTodo(DataInputStream in, DataOutputStream out) {
@@ -969,8 +947,8 @@ public class Client {
                 textRecived = bfr.readLine();
             } catch (Exception e) {
             }
-            if(textRecived.equalsIgnoreCase(".quit")){
-          //      rt.stop();
+            if (textRecived.equalsIgnoreCase(".quit")) {
+                //      rt.stop();
                 return;
             }
             out.write(24);
@@ -985,7 +963,7 @@ public class Client {
     }
 
     public static void creatNewMeeting(DataInputStream in, DataOutputStream out) {
-        String responsible, desireOutCome, local, title, date = "", guests, agendaItems, request;
+        String responsible, desireOutCome, local, title, date = "", guests=null, agendaItems, request;
         int duration;
         responsible = admin.getUserName();
         sc.nextLine();
@@ -995,31 +973,34 @@ public class Client {
         desireOutCome = sc.nextLine();
         System.out.print("Local: ");
         local = sc.nextLine();
-        boolean dateTest=false;
-        boolean pastDate=false;
+
+        boolean dateTest = false;
+        boolean pastDate = false;
         do {
             System.out.print("Date (dd/mm/yy hh:mm): ");
             date = sc.nextLine();
-            dateTest=myDateTest(date);
-            pastDate=checkPastDate(date);
-            System.out.println("dateTest: "+dateTest+" pastDate: "+pastDate);
-            if(!dateTest){
-                System.out.println("Wrong format, try again");
-            }else if(!pastDate){
-                System.out.println("Can't creat a meeting in the past (30 minuts from now minimum), try again");
+            dateTest = myDateTest(date);
+            pastDate = checkPastDate(date);
+            if (!dateTest) {
+                System.out.println("Wrong format, try again (min 0h:30m / max 2 years)");
+            } else if (!pastDate) {
+                System.out.println("Can't creat a meeting in the past, try again");
             }
         } while (!dateTest || !pastDate);
-        date=date.replaceAll(" ", ",");
-        boolean userTest=false;
-        do{
+        date = date.replaceAll(" ", ",");
 
+        boolean userTest = false;
+        do {
             System.out.print("Guests (g1,g2,...): ");
             guests = sc.nextLine();
-            userTest = testIfUserNamesExists(in,out,guests);
-            if(userTest==false){
-                System.out.println("One or more user names do no exist, try agai");
+            userTest = testIfUserNamesExists(in, out, guests);
+            if (userTest == false) {
+                System.out.println("One or more user names do not exist, try again");
             }
-        }while(!userTest);
+        } while (!userTest);
+        if(guests==null)
+            guests="none";
+
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = sc.nextLine();
         System.out.print("Duration in minutes: ");
@@ -1047,33 +1028,46 @@ public class Client {
             System.out.println("Error adding Item to Agenda....");
     }
 
-    public static void DeleteItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting) {
+    public static void subMenuDeleteItemstFromAgenda(DataInputStream in, DataOutputStream out, int optMeeting) {
         int optItemtoDelete, size;
         String options = requestAgendaItemsFromUpComingMeeting(in, out, optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        options=options.replaceAll("Any other businness","");
         do {
-            System.out.println(options); //display name of all agenda items
+            for(int i=0; i<size-1; i++){
+                System.out.println(countOptions[i]);
+            }
+            System.out.println();
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optItemtoDelete = sc.nextInt();
             if (optItemtoDelete == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
+                return;
             } else if (optItemtoDelete < 0 || optItemtoDelete > size) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option, try again");
             }
+
         } while (optItemtoDelete < 0 || optItemtoDelete > size);
 
-        boolean success = requestDeleteItemToAgenda(in, out, optMeeting, optItemtoDelete);
-        if (success) {
-            System.out.println("Agenda item was deleted successfully!!");
-        } else {
-            System.out.println("Error deleting Item from Agenda....");
+        String deleteConfirm="";
+        do{
+            System.out.println("Delete this item? (y/n)");
+            deleteConfirm=sc.next();
+        }while(!deleteConfirm.equals("y") && !deleteConfirm.equals("n"));
+        System.out.println("------------------");
+        if(deleteConfirm.equals("y")){
+            boolean success = requestDeleteItemToAgenda(in, out, optMeeting, optItemtoDelete);
+            if (success) {
+                System.out.println("Agenda item was deleted successfully!!");
+            } else {
+                System.out.println("Error deleting Item from Agenda....");
+            }
+            System.out.println("Press any key to return ");
+            sc.next();
         }
-
-
     }
 
     public static void modifyNameFromAgendaItem(DataInputStream in, DataOutputStream out, int optMeeting, int optItemtoModify) {
@@ -1122,11 +1116,11 @@ public class Client {
     //-------------------------------------- TEST DATA INPUT
     public static boolean myDateTest(String date) { // receives "dd/mm/yyyy hh:mm"
         String localDate = date;
-        localDate=localDate.replaceAll("/", ",");
-        localDate=localDate.replaceAll(":", ",");
-        localDate=localDate.replaceAll(" ", ",");
+        localDate = localDate.replaceAll("/", ",");
+        localDate = localDate.replaceAll(":", ",");
+        localDate = localDate.replaceAll(" ", ",");
         String[] data = localDate.split(",");
-        if(data.length!=5)
+        if (data.length != 5)
             return false;
         int day = Integer.parseInt(data[0]);
         int month = Integer.parseInt(data[1]);
@@ -1135,7 +1129,7 @@ public class Client {
         int minuts = Integer.parseInt(data[4]);
 
         Date actualDate = new Date();
-        int yearAux = actualDate.getYear() + 1900;
+        int yearAux = actualDate.getYear() + 1902;
         if (hours < 0 || hours > 24)
             return false;
         else if (minuts < 0 || minuts > 59)
@@ -1164,13 +1158,13 @@ public class Client {
         return (ano % 4 == 0);
     }
 
-    public static boolean checkPastDate(String date){
+    public static boolean checkPastDate(String date) {
         String localDate = date;
-        localDate=localDate.replaceAll("/", ",");
-        localDate=localDate.replaceAll(":", ",");
-        localDate=localDate.replaceAll(" ", ",");
+        localDate = localDate.replaceAll("/", ",");
+        localDate = localDate.replaceAll(":", ",");
+        localDate = localDate.replaceAll(" ", ",");
         String[] data = localDate.split(",");
-        if(data.length!=5)
+        if (data.length != 5)
             return false;
         Calendar datetoTest = Calendar.getInstance();
         int day = Integer.parseInt(data[0]);
@@ -1186,19 +1180,19 @@ public class Client {
 
         datetoTest.add(Calendar.MINUTE, -29);
 
-        if(datetoTest.before(now)){
+        if (datetoTest.before(now)) {
             return false;
         }
         return true;
     }
 
-    public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests){
+    public static boolean testIfUserNamesExists(DataInputStream in, DataOutputStream out, String guests) {
+        guests=guests.replaceAll(", ",",");
         String[] listOfGuests = guests.split(",");
-        System.out.println("gests-> "+guests+" size-> "+listOfGuests.length);
-        sc.next();
         for (String g : listOfGuests) {
-            if(!requestIfClientExists(in,out,g))
+            if (!requestIfClientExists(in, out, g)) {
                 return false;
+            }
         }
         return true;
     }

@@ -17,20 +17,21 @@ TODO:
 
 -cliente breka-se quando sai e volta a entrar
 
--new meeting:       -titlo para cima  DONE
-                    -na data pedir hora e construir bem a data com , DONE
-                    -verificar data anterior DONE
-                    -testar data valida DONE
+-new meeting:       -titlo para cima  **DONE
+                    -na data pedir hora e construir bem a data com , **DONE
+                    -verificar data anterior **DONE
+                    -testar data valida **DONE
                     -ver se os clientes existem
-                    -so posso criar meeting para o futuro, com minimo de 0h:30m DONE
+                    -so posso criar meeting para o futuro, com minimo de 0h:30m **DONE
                     
--upcomming meeting: -consult agenda item, mudar para any key voltar atras
-                    -no resumo da meeting meter so 1 \n depois de imprimir
+-upcomming meeting: -consult agenda item, mudar para any key voltar atras **DONE
+                    -no resumo da meeting meter so 1 \n depois de imprimir **DONE
                     -any other businness sempre no fim da lista
-                    - no modify, tirar menu e alterar logo
-                    - no eliminar impredir de eliminar o any other bs....
-                    - no elimnar por certeza que pretende eliminar o (nome, get do aray)
-                    - no display dos titlos dos meetings, meter so 1 \n
+                    -get back no delete da merda **DONE
+                    - no modify, tirar menu e alterar logo **DONE
+                    - no eliminar impredir de eliminar o any other bs.... **DONE
+                    - no elimnar por certeza que pretende eliminar o (nome, get do aray) **DONE
+                    - no display dos titlos dos meetings, meter so 1 \n **DONE
                     - no key dicision, mudar add para add/modify e tirar
                         o 'New' do addkey decision, ERRO ortografico
 
