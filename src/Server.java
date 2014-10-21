@@ -162,13 +162,29 @@ class Connection extends Thread {
     RmiServerInterface dataBaseServer;
 
     Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
+        String read;
+        boolean login;
         try {
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
-            this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
+            this.user = null;
+            while (user == null) {
+                read = in.readUTF();
+                if (read.split(",").length == 2) {
+                    login = dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
+                    out.writeBoolean(login);
+                    if (login)
+                        this.user = dataBaseServer.findUser(in.readUTF()).getUserName();
+                } else if (read.split(",").length == 6) {
+                    this.user = dataBaseServer.addNewUser(read).getUserName();
+                } else {
+                    out.writeBoolean(false);
+                    System.out.println("\n*** Sintax incorrect for login/register..");
+                }
 
+            }
             System.out.println("->> Server: " + user + " connected");
             Server.onlineUsers.add(this); //
             this.start();

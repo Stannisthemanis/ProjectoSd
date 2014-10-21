@@ -10,6 +10,8 @@ public interface RmiServerInterface extends Remote {
 
     public User findUser(String username) throws RemoteException;
 
+    public User addNewUser(String newUser) throws RemoteException;
+
     public boolean checkLogin(String username, String password) throws RemoteException;
 
     public String getUpcumingMeetings(String user) throws RemoteException;
