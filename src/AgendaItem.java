@@ -39,6 +39,18 @@ public class AgendaItem implements Serializable {
         this.keyDecision = keyDecision;
     }
 
+    public String getMessages() {
+        String chatHistory = "";
+        for (String s : this.chat) {
+            chatHistory += s;
+        }
+        return chatHistory;
+    }
+
+    public void addMessage(String message) {
+        this.chat.add(message);
+    }
+
     @Override
     public String toString() {
         return "AgendaItem: " + '\n' +
