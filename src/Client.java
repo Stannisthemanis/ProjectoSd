@@ -413,10 +413,11 @@ public class Client {
             switch (opt2) {
                 case 1: {
                     System.out.println("\n\n\n");
-                    System.out.println("Opening Chat... ");
-                    System.out.println("You will address Stannis the mannis by 'Your grace' or GFO!");
-                    System.out.println("Under construction... sorry :( \n\n");
-                    sc.next();
+                    requestMessagesFromAgendaItem(in,out,optMeeting,optItem);
+                    try {
+                        chat(in,out,optMeeting,optItem);
+                    } catch (IOException e) {
+                    }
                 }
                 break;
                 case 2: {
@@ -941,21 +942,51 @@ public class Client {
         return result;
     }
 
+    public static String requestMessagesFromAgendaItem(DataInputStream in, DataOutputStream out, int optCurrentMeeting, int optItem) {
+        String result = "";
+        try {
+            out.write(23);
+        } catch (Exception e) {
+        }
+        try {
+            in.readBoolean();
+            out.write(optCurrentMeeting);
+            in.readBoolean();
+            out.write(optItem);
+            result = in.readUTF(in);
+        } catch (IOException e) {
+        }
+        return result;
+    }
+
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
-    public static void chat(DataInputStream in, DataOutputStream out) throws IOException {
-        System.out.print("\nPlease introduce some text: \n >> ");
+    public static void chat(DataInputStream in, DataOutputStream out, int optMeeting, int optagendaItem) throws IOException {
+        System.out.print("\n>>: ");
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
-        new readingThread(in);
+        ReadingThread rt = new ReadingThread(in);
         String textRecived = "";
+        System.out.println("Type '.quit' to leave");
         while (true) {
             try {
                 textRecived = bfr.readLine();
             } catch (Exception e) {
             }
-            out.writeUTF(textRecived); //writing in the socket
+            if(textRecived.equalsIgnoreCase(".quit")){
+                rt.stop();
+                return;
+            }
+            out.write(24);
+            in.readBoolean();
+            out.write(optMeeting);
+            in.readBoolean();
+            out.write(optagendaItem);
+            in.readBoolean();
+            out.writeUTF(textRecived);
+            in.readBoolean();
         }
     }
 
@@ -1130,10 +1161,10 @@ public class Client {
     }
 }
 
-class readingThread extends Thread {
+class ReadingThread extends Thread {
     protected DataInputStream din;
 
-    public readingThread(DataInputStream in) {
+    public ReadingThread(DataInputStream in) {
         this.din = in;
         this.start();
     }
@@ -1142,10 +1173,9 @@ class readingThread extends Thread {
         try {
             while (true) {
                 System.out.println("Server says: " + din.readUTF());
-                System.out.println(">> ");
+                System.out.print(">>: ");
             }
         } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }
