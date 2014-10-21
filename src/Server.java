@@ -172,7 +172,9 @@ class Connection extends Thread {
             this.user = null;
             while (user == null) {
                 read = in.readUTF();
-                if (read.split(",").length == 2) {
+                if (read.split(",").length == 1) {
+                    out.writeBoolean(dataBaseServer.findUser(read) != null);
+                } else if (read.split(",").length == 2) {
                     login = dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
                     out.writeBoolean(login);
                     if (login)
