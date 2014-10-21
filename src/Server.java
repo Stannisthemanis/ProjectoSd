@@ -23,8 +23,8 @@ public class Server {
             createServer();
         } catch (IOException e) {
 //            mainServer = false;
-            System.out.println("*** Creating Server: " + e.getMessage());
-            System.out.println("->> Server2: Secundary Server ok...");
+            System.out.println("\n*** Creating Server: " + e.getMessage());
+            System.out.println("\n->> Server2: Secundary Server ok...");
             checkMainServer();
         }
 
@@ -46,7 +46,7 @@ public class Server {
             while (true) {
                 if (((((System.currentTimeMillis() / 1000) % 10) == 0) || (((System.currentTimeMillis() / 1000) % 10) == 5)) && flag == true) {
                     DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-                    System.out.println("->> Server2: Sending request to Main...");
+                    System.out.println("\n->> Server2: Sending request to Main...");
                     dataSocket.send(request);
                     byte[] buffer = new byte[1000];
                     DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
@@ -58,14 +58,14 @@ public class Server {
                 }
             }
         } catch (SocketException e) {
-            System.out.println("*** Socket: " + e.getMessage());
+            System.out.println("\n*** Socket on Server2: " + e.getMessage());
         } catch (EOFException e) {
-            System.out.println("*** EOF: " + e.getMessage());
+            System.out.println("\n*** EOF on Server2: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("*** IO: " + e.getMessage());
+            System.out.println("\n*** IO on Server2: " + e.getMessage());
         } finally {
             if (dataSocket != null) dataSocket.close();
-            System.out.println("->> Server2: Main Server Timeout...");
+            System.out.println("\n->> Server2: Main Server Timeout...");
             System.out.println("->> Becoming Main Server...");
             try {
                 createServer();
@@ -114,7 +114,7 @@ public class Server {
         //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
             Socket clientSocket = listenSocket.accept();
-            System.out.println("->> Server: Client connected with socket " + clientSocket);
+            System.out.println("\n->> Server: Client connected with socket " + clientSocket);
             new Connection(clientSocket, dataBaseServer);
         }
     }
@@ -138,15 +138,15 @@ class respondToSecundary extends Thread {
                 byte[] buffer = new byte[1000];
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
                 dataSocket.receive(request);
-                System.out.println("->> Server: Received request from Secundary...");
+                System.out.println("\n->> Server: Received request from Secundary...");
                 DatagramPacket reply = new DatagramPacket(request.getData(), request.getLength(), request.getAddress(), request.getPort());
                 System.out.println("->> Server: Responding to Secundary...");
                 dataSocket.send(reply);
             }
         } catch (SocketException e) {
-            System.out.println("*** DatagramSocket: " + e.getMessage());
+            System.out.println("\n*** DatagramSocket on comunication to secundary: " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("*** Comunication to Secundary: " + e.getMessage());
+            System.out.println("\n*** Comunication to Secundary: " + e.getMessage());
         } finally {
             if (dataSocket != null) dataSocket.close();
         }
@@ -174,7 +174,7 @@ class Connection extends Thread {
             this.start();
         } catch (IOException e) {
             Server.onlineUsers.remove(this);
-            System.out.println("*** Connection: " + e.getMessage());
+            System.out.println("\n*** Connection of  " + user + ": " + e.getMessage());
         }
     }
 
@@ -262,12 +262,15 @@ class Connection extends Thread {
                     case 26:
                         replyRemoveFromChat();
                         break;
+                    case 27:
+                        replyMessageHistoryFromAgendaItem();
+                        break;
                 }
             }
         } catch (EOFException e) {
-            System.out.println("*** Receiving request from client: " + e.getMessage());
+            System.out.println("\n*** Receiving request from " + user + ": " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("*** Receiving request from client: " + e.getMessage());
+            System.out.println("\n*** Receiving request from " + user + ": " + e.getMessage());
         }
 
     }
@@ -275,7 +278,7 @@ class Connection extends Thread {
     public void replyNewMeeting() {
         String newMeeting = null;
         try {
-            System.out.println("->> Server: Received request from " + this.user + " to create new meeting");
+            System.out.println("\n->> Server: Received request from " + this.user + " to create new meeting");
             out.writeBoolean(true);
             System.out.println("->>Server: Waiting for meeting information");
             newMeeting = in.readUTF();
@@ -288,17 +291,17 @@ class Connection extends Thread {
                 System.out.println("->> Server: Failed to create new meeting");
             }
         } catch (IOException e) {
-            System.out.println("*** Reply new Meeting: " + e.getMessage());
+            System.out.println("\n*** Reply new meeting creating by " + user + ": " + e.getMessage());
         }
     }
 
     public void replyCheckUpcumingMeetings() {
-        System.out.println("->> Server: Received request to send all upcuming meeting of " + this.user);
+        System.out.println("\n->> Server: Received request to send all upcuming meeting of " + this.user);
         try {
             System.out.println("->> Server: Sending all upcuming meeting of " + this.user);
             out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
         } catch (IOException e) {
-            System.out.println("*** Replying upcuming meeting: " + e.getMessage());
+            System.out.println("\n*** Replying upcuming meeting by " + user + ": " + e.getMessage());
         }
     }
 
@@ -308,7 +311,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Sending all passed meeting of " + this.user);
             out.writeUTF(dataBaseServer.getPassedMeetings(user));
         } catch (IOException e) {
-            System.out.println("*** Replying upcuming meeting: " + e.getMessage());
+            System.out.println("\n*** Replying upcuming meeting: " + e.getMessage());
         }
     }
 
@@ -318,7 +321,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Sending all current meeting of " + this.user);
             out.writeUTF(dataBaseServer.getCurrentMeetings(user));
         } catch (IOException e) {
-            System.out.println("*** Replying current meeting: " + e.getMessage());
+            System.out.println("\n*** Replying current meeting: " + e.getMessage());
         }
     }
 
@@ -333,7 +336,7 @@ class Connection extends Thread {
             meeting = in.read();
             out.writeUTF(dataBaseServer.getMeetingInfo(flag, meeting, this.user));
         } catch (IOException e) {
-            System.out.println("*** Replying to send info of meeting");
+            System.out.println("\n*** Replying to send info of meeting");
         }
 
     }
@@ -350,7 +353,7 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getAgendaItemFromMeeting(flag, n, user));
             System.out.println("->> Server Info send with sucess..");
         } catch (IOException e) {
-            System.out.println("*** Receiving meeting number for agenda item... " + e.getMessage());
+            System.out.println("\n*** Receiving meeting number for agenda item... " + e.getMessage());
         }
     }
 
@@ -361,7 +364,7 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getMessagesByUser(user));
             System.out.println("->> Server: Messages send with sucess ");
         } catch (IOException e) {
-            System.out.println("*** Sending messages: " + e.getMessage());
+            System.out.println("\n*** Sending messages: " + e.getMessage());
         }
     }
 
@@ -380,7 +383,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.setReplyOfInvite(user, n, reply));
             System.out.println("->> Server: Answer received with sucess");
         } catch (IOException e) {
-            System.out.println("*** Replying to message: " + e.getMessage());
+            System.out.println("\n*** Replying to message: " + e.getMessage());
         }
 
     }
@@ -409,7 +412,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.addAgendaItem(n, newItem, user));
             System.out.println("->> Server: New agenda item added with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
         }
 
     }
@@ -428,7 +431,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.removeAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item removed with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
         }
     }
 
@@ -447,7 +450,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.modifyTitleAgendaItem(n, numAgendaItem, in.readUTF(), user));
             System.out.println("->> Server: Agenda item changed with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
         }
     }
 
@@ -466,7 +469,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.addKeyDecisionToAgendaItem(n, numAgendaItem, in.readUTF(), user));
             System.out.println("->> Server: Agenda item changed with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
         }
     }
 
@@ -484,7 +487,7 @@ class Connection extends Thread {
             out.writeBoolean(dataBaseServer.addActionItem(n, newItem, user));
             System.out.println("->> Server: New action item added with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new actionItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new actionItem " + e.getMessage());
         }
 
     }
@@ -505,7 +508,7 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getActionItemFromUser(user));
             System.out.println("->> Server: actions send with sucess ");
         } catch (IOException e) {
-            System.out.println("*** Sending actionItens of user: " + e.getMessage());
+            System.out.println("\n*** Sending actionItens of user: " + e.getMessage());
         }
     }
 
@@ -528,7 +531,7 @@ class Connection extends Thread {
                 System.out.println("->> Server: Operation canceled by user");
             }
         } catch (IOException e) {
-            System.out.println("*** Replying to message: " + e.getMessage());
+            System.out.println("\n*** Replying to message: " + e.getMessage());
         }
 
 
@@ -545,7 +548,7 @@ class Connection extends Thread {
             out.writeUTF(dataBaseServer.getActionItensFromMeeting(n, user));
             System.out.println("->> Server Info send with sucess..");
         } catch (IOException e) {
-            System.out.println("*** Receiving meeting number for action item... " + e.getMessage());
+            System.out.println("\n*** Receiving meeting number for action item... " + e.getMessage());
         }
     }
 
@@ -571,11 +574,11 @@ class Connection extends Thread {
             }
             for (Connection outs : clientsOnChat) {
                 System.out.println("->> Server: Broadcasting message to " + outs.user);
-                outs.out.writeUTF("\n>>: *** " + user + " as entered the chat ***");
+                outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
             }
 
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new agendaItem " + e.getMessage());
+            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
         }
     }
 
@@ -612,7 +615,7 @@ class Connection extends Thread {
             } else
                 System.out.println("->> Server: Message sended with sucess ..");
         } catch (IOException e) {
-            System.out.println("*** Server: Adding new message " + e.getMessage());
+            System.out.println("\n*** Server: Adding new message " + e.getMessage());
         }
     }
 
@@ -635,6 +638,23 @@ class Connection extends Thread {
 
     }
 
+    public void replyMessageHistoryFromAgendaItem() {
+        int numAgendaItem;
+        int n;
+        try {
+            System.out.println("->> Server: Received request send history of messages from agenda item ..");
+            out.writeBoolean(true);
+            System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
+            n = in.read();
+            out.writeBoolean(true);
+            numAgendaItem = in.read();
+            System.out.println("->> Server: Info received,sending messages now ..");
+            out.writeUTF(dataBaseServer.getMessagesHistoryFromAgendaItem(n, numAgendaItem, user));
+            System.out.println("->> Server: Agenda item messages sended with sucess ..");
+        } catch (IOException e) {
+            System.out.println("\n*** Sending pass Meeting history chat " + e.getMessage());
+        }
+    }
 
     //TODO put sout's
     public void replyIfUserExists() {
