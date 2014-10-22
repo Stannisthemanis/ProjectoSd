@@ -81,7 +81,7 @@ public class Server {
         int serverPort = 6000;
         ServerSocket listenSocket = new ServerSocket(serverPort);
         System.out.println("->> Server: Main Server ok...");
-        System.out.println("->> Server: Main server listening in port: " + serverPort);
+        System.out.println("->> Server: Main server listening IN port: " + serverPort);
         System.out.println("->> Server: LISTEN SOCKET= " + listenSocket);
 
 //        System.getProperties().put("java.security.policy", "policy.all");
@@ -114,7 +114,7 @@ public class Server {
         //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
             Socket clientSocket = listenSocket.accept();
-            System.out.println("\n->> Server: Client connected with socket " + clientSocket);
+            System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
             new Connection(clientSocket, dataBaseServer);
         }
     }
@@ -133,7 +133,7 @@ class respondToSecundary extends Thread {
     public void run() {
         try {
             dataSocket = new DatagramSocket(dataSocketPort);
-            System.out.println("->> Server: Socket to Secundary ready in port " + dataSocketPort);
+            System.out.println("->> Server: Socket to Secundary ready IN port " + dataSocketPort);
             while (true) {
                 byte[] buffer = new byte[1000];
                 DatagramPacket request = new DatagramPacket(buffer, buffer.length);
@@ -380,7 +380,7 @@ class Connection extends Thread {
     }
 
     public void replyUnreadMessages() {
-        System.out.println("\n->> Server: Received request to send messages of user: " + user);
+        System.out.println("\n->> Server: Received request to send messages of USER: " + user);
         try {
             System.out.println("->> Server: Sending messages of " + user);
             out.writeUTF(dataBaseServer.getMessagesByUser(user));
@@ -400,7 +400,7 @@ class Connection extends Thread {
             n = in.read();
             System.out.println("->> Server: Sending message resume..");
             out.writeUTF(dataBaseServer.getResumeOfMessage(user, n));
-            System.out.println("->> Server: Waiting for user to decline or accept..");
+            System.out.println("->> Server: Waiting for USER to decline or accept..");
             reply = in.readBoolean();
             out.writeBoolean(dataBaseServer.setReplyOfInvite(user, n, reply));
             System.out.println("->> Server: Answer received with sucess");
@@ -411,11 +411,11 @@ class Connection extends Thread {
     }
 
     public void replyNumberOfMessages() {
-        System.out.println("\n->> Server: Received request to send number of messages of user " + user);
+        System.out.println("\n->> Server: Received request to send number of messages of USER " + user);
         try {
             out.write(dataBaseServer.getNumberOfMessages(user));
         } catch (IOException e) {
-            System.out.println("\n*** Server: Sending number of messages of user " + user);
+            System.out.println("\n*** Server: Sending number of messages of USER " + user);
         }
     }
 
@@ -514,22 +514,22 @@ class Connection extends Thread {
     }
 
     public void replySizeOfTodo() {
-        System.out.println("\n->> Server: Received request to send number of action itens of user " + user);
+        System.out.println("\n->> Server: Received request to send number of action itens of USER " + user);
         try {
             out.write(dataBaseServer.getSizeOfTodo(user));
         } catch (IOException e) {
-            System.out.println("*** Server: Sending number of action itens of user " + user);
+            System.out.println("*** Server: Sending number of action itens of USER " + user);
         }
     }
 
     public void replyActionItemsFromUser() {
-        System.out.println("\n->> Server: Received request to send action of user: " + user);
+        System.out.println("\n->> Server: Received request to send action of USER: " + user);
         try {
             System.out.println("->> Server: Sending actions of " + user);
             out.writeUTF(dataBaseServer.getActionItemFromUser(user));
             System.out.println("->> Server: actions send with sucess ");
         } catch (IOException e) {
-            System.out.println("\n*** Sending actionItens of user: " + e.getMessage());
+            System.out.println("\n*** Sending actionItens of USER: " + e.getMessage());
         }
     }
 
@@ -542,14 +542,14 @@ class Connection extends Thread {
             System.out.println("->> Server: Waiting for action number..");
             n = in.read();
             out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for user to decline or accept..");
+            System.out.println("->> Server: Waiting for USER to decline or accept..");
             reply = in.readBoolean();
             if (reply) {
                 out.writeBoolean(dataBaseServer.setActionAsCompleted(user, n));
                 System.out.println("->> Server: Action set as completed with sucess");
             } else {
                 out.writeBoolean(false);
-                System.out.println("->> Server: Operation canceled by user");
+                System.out.println("->> Server: Operation canceled by USER");
             }
         } catch (IOException e) {
             System.out.println("\n*** Replying to message: " + e.getMessage());

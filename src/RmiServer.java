@@ -25,7 +25,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 //        }
         try {
             this.firstUse();
-            displayAllAL(); // all info in the files
+            displayAllAL(); // all info IN the files
         } catch (RemoteException e) {
         }
     }
@@ -58,7 +58,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         String mail = tokenizer[5];
         User nUser = new User(username, password, address, dob, phoneNumber, mail);
         this.users.add(nUser);
-        System.out.println("nuser-> "+nUser);
+        System.out.println("nuser-> " + nUser);
         return this.findUser(username);
     }
 
@@ -575,7 +575,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             System.out.println("*** RmiServer: " + e.getMessage());
         }
 
-        try { //store in files
+        try { //store IN files
             Save.storeInFiles();
         } catch (IOException e) {
             e.printStackTrace();
