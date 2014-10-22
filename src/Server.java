@@ -165,11 +165,13 @@ class Connection extends Thread {
         String read;
         boolean login;
         try {
+
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
             this.user = null;
+
             while (user == null) {
                 read = in.readUTF();
                 if (read.split(",").length == 1) {
@@ -290,9 +292,9 @@ class Connection extends Thread {
                 }
             }
         } catch (EOFException e) {
-            System.out.println("\n*** Receiving request from " + user + ": " + e.getMessage());
+            System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
         } catch (IOException e) {
-            System.out.println("\n*** Receiving request from " + user + ": " + e.getMessage());
+            System.out.println("\n*** IO Receiving request from " + user + ": " + e.getMessage());
         }
 
     }

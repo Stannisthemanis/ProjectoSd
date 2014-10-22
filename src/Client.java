@@ -1,6 +1,5 @@
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
@@ -10,7 +9,7 @@ import java.util.Scanner;
  */
 public class Client {
     public static Scanner SC = new Scanner(System.in);
-    public static User USER;
+    public static String USERNAME, PASSWORD;
     public static Socket SOCKET;
     public static int SERVERSOCKET;
     public static String HOSTNAME;
@@ -20,8 +19,8 @@ public class Client {
     public static void main(String[] args) {
 //        String username = "", password;
 
-        USER = null;
-
+        USERNAME = null;
+        PASSWORD = null;
         SOCKET = null;
         SERVERSOCKET = 6000;
         HOSTNAME = "localhost";
@@ -40,14 +39,21 @@ public class Client {
 //        System.OUT.println("Welcome " + USER.getUserName());
 
 
+        connect();
+
+        //mainMenu();
+        //chat();
+
+    }
+
+    public static void connect() {
         try {
-            connect();
+            SOCKET = new Socket(HOSTNAME, SERVERSOCKET);
+            IN = new DataInputStream(SOCKET.getInputStream());
+            OUT = new DataOutputStream(SOCKET.getOutputStream());
             loginMenu();
-            //mainMenu();
-            //chat();
-        } catch (UnknownHostException e) {
-        } catch (EOFException e) {
         } catch (IOException e) {
+            connect();
         } finally {
             if (SOCKET != null)
                 try {
@@ -55,12 +61,6 @@ public class Client {
                 } catch (IOException e) {
                 }
         }
-    }
-
-    public static void connect() throws UnknownHostException, IOException {
-        SOCKET = new Socket(HOSTNAME, SERVERSOCKET);
-        IN = new DataInputStream(SOCKET.getInputStream());
-        OUT = new DataOutputStream(SOCKET.getOutputStream());
 
     }
 
@@ -88,57 +88,69 @@ public class Client {
         int option;
         String name, password, getback;
         boolean logIn = false;
+        if (USERNAME == null) {
+            do {
+                System.out.println("\n\n\n\n\n");
+                System.out.println("1-> Login");
+                System.out.println("2-> Register");
+                System.out.println("0-> GFO");
+                System.out.println("choose an option: ");
+                option = SC.nextInt();
+                SC.nextLine();
+                if (option == 0) {
+                    System.exit(0);
+                }
+                switch (option) {
+                    case 1: {
+                        do {
+                            System.out.println("User name: ");
 
-        do {
-            System.out.println("\n\n\n\n\n");
-            System.out.println("1-> Login");
-            System.out.println("2-> Register");
-            System.out.println("0-> GFO");
-            System.out.println("choose an option: ");
-            option = SC.nextInt();
-            if (option == 0) {
-                System.exit(0);
-            }
-            switch (option) {
-                case 1: {
-                    do {
-                        System.out.println("User name: ");
-                        SC.nextLine();
-                        name = SC.nextLine();
-                        System.out.println("PassWord: ");
-                        password = SC.nextLine();
-                        try {
-                            OUT.writeUTF(name + "," + password);
-                            logIn = IN.readBoolean();
-                        } catch (IOException e) {
-                        }
-                        if (!logIn) {
-                            do {
-
-                                System.out.println("Logn failed, please try again? (y/n)\n");
-                                getback = SC.nextLine();
-                            } while (!getback.equalsIgnoreCase("y") && !getback.equalsIgnoreCase("n"));
-
-                            if (getback.equalsIgnoreCase("n")) {
-                                break;
+                            name = SC.nextLine();
+                            System.out.println("PassWord: ");
+                            password = SC.nextLine();
+                            try {
+                                OUT.writeUTF(name + "," + password);
+                                logIn = IN.readBoolean();
+                            } catch (IOException e) {
+                                connect();
                             }
-                        }
+                            if (!logIn) {
+                                do {
+
+                                    System.out.println("Logn failed, please try again? (y/n)\n");
+                                    getback = SC.nextLine();
+                                } while (!getback.equalsIgnoreCase("y") && !getback.equalsIgnoreCase("n"));
+
+                                if (getback.equalsIgnoreCase("n")) {
+                                    break;
+                                }
+                            }
+                        } while (!logIn);
+                        USERNAME = name;
+                        PASSWORD = password;
                         mainMenu();
-                    } while (!logIn);
+
+                    }
+                    break;
+                    case 2: {
+                        registerNewClient();
+
+                    }
+                    break;
+                    default: {
+                        System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                        System.out.println("Wrong option");
+                    }
+                    break;
                 }
-                break;
-                case 2: {
-                    registerNewClient();
-                    mainMenu();
-                }
-                break;
-                default: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Wrong option");
-                }
-                break;
+            } while (true);
+        } else {
+            try {
+                OUT.writeUTF(USERNAME + "," + PASSWORD);
+            } catch (IOException e) {
+                connect();
             }
-        } while (true);
+        }
     }
 
     public static void mainMenu() {
@@ -444,6 +456,7 @@ public class Client {
                     try {
                         chat(optMeeting, optItem);
                     } catch (IOException e) {
+                        connect();
                     }
                     requestLeaveChat(optMeeting, optItem);
                 }
@@ -610,6 +623,7 @@ public class Client {
             OUT.write(10);
             return IN.read();
         } catch (IOException e) {
+            connect();
             return -1;
         }
     }
@@ -619,6 +633,7 @@ public class Client {
         try {
             OUT.write(1);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -626,6 +641,7 @@ public class Client {
             OUT.writeUTF(request);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -636,6 +652,7 @@ public class Client {
             OUT.write(2);
             result = IN.readUTF();
         } catch (Exception e) {
+            connect();
         }
         return result;
     }
@@ -646,6 +663,7 @@ public class Client {
             OUT.write(3);
             result = IN.readUTF();
         } catch (Exception e) {
+            connect();
         }
         return result;
     }
@@ -656,6 +674,7 @@ public class Client {
             OUT.write(8);
             result = IN.readUTF();
         } catch (Exception e) {
+            connect();
         }
         return result;
     }
@@ -666,12 +685,14 @@ public class Client {
         try {
             OUT.write(6);
         } catch (Exception e) {
+            connect();
         }
         try {
             aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -682,12 +703,14 @@ public class Client {
         try {
             OUT.write(7);
         } catch (Exception e) {
+            connect();
         }
         try {
             aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -698,12 +721,14 @@ public class Client {
         try {
             OUT.write(21);
         } catch (Exception e) {
+            connect();
         }
         try {
             aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -713,12 +738,14 @@ public class Client {
         try {
             OUT.write(4);
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -727,13 +754,16 @@ public class Client {
         String result = "";
         try {
             OUT.write(5);
+
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -743,12 +773,14 @@ public class Client {
         try {
             OUT.write(9);
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -759,12 +791,14 @@ public class Client {
         try {
             OUT.write(22);
         } catch (Exception e) {
+            connect();
         }
         try {
             aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -775,6 +809,7 @@ public class Client {
         try {
             OUT.write(27);
         } catch (Exception e) {
+            connect();
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -783,6 +818,7 @@ public class Client {
             OUT.write(optItem);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
 //        return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
@@ -793,6 +829,7 @@ public class Client {
             OUT.writeBoolean(decision);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -802,6 +839,7 @@ public class Client {
         try {
             OUT.write(11);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -811,6 +849,7 @@ public class Client {
             OUT.writeUTF(itemToadd);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -820,6 +859,7 @@ public class Client {
         try {
             OUT.write(12);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -829,6 +869,7 @@ public class Client {
             OUT.write(itemToDelete);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -838,6 +879,7 @@ public class Client {
         try {
             OUT.write(13);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -849,6 +891,7 @@ public class Client {
             OUT.writeUTF(newAgendaItem);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -858,6 +901,7 @@ public class Client {
         try {
             OUT.write(14);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -869,6 +913,7 @@ public class Client {
             OUT.writeUTF(newKeyDecision);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -878,6 +923,7 @@ public class Client {
         try {
             OUT.write(15);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -887,6 +933,7 @@ public class Client {
             OUT.writeUTF(newActionItem);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -896,6 +943,7 @@ public class Client {
             OUT.write(16);
             return IN.read();
         } catch (IOException e) {
+            connect();
             return -1;
         }
     }
@@ -905,10 +953,12 @@ public class Client {
         try {
             OUT.write(17);
         } catch (Exception e) {
+            connect();
         }
         try {
             result = IN.readUTF();
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -923,16 +973,18 @@ public class Client {
             OUT.writeBoolean(decision);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
 
     public static String requestCurrentMeetings() {
-        String result = "";
+        String result = "merda";
         try {
             OUT.write(19);
             result = IN.readUTF();
         } catch (Exception e) {
+            connect();
         }
         return result;
     }
@@ -942,12 +994,14 @@ public class Client {
         try {
             OUT.write(20);
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
             OUT.write(optCurrentMeeting);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -957,6 +1011,7 @@ public class Client {
         try {
             OUT.write(23);
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
@@ -965,6 +1020,7 @@ public class Client {
             OUT.write(optItem);
             result = IN.readUTF(IN);
         } catch (IOException e) {
+            connect();
         }
         return result;
     }
@@ -974,6 +1030,7 @@ public class Client {
         try {
             OUT.write(25);
         } catch (Exception e) {
+            connect();
             return false;
         }
         try {
@@ -981,6 +1038,7 @@ public class Client {
             OUT.writeUTF(userName);
             return IN.readBoolean();
         } catch (IOException e) {
+            connect();
             return false;
         }
     }
@@ -989,6 +1047,7 @@ public class Client {
         try {
             OUT.write(26);
         } catch (Exception e) {
+            connect();
         }
         try {
             IN.readBoolean();
@@ -997,6 +1056,7 @@ public class Client {
             OUT.write(optItem);
             IN.readBoolean();
         } catch (IOException e) {
+            connect();
         }
     }
 
@@ -1015,6 +1075,7 @@ public class Client {
                 OUT.writeUTF(userName);
                 testName = IN.readBoolean();
             } catch (IOException e) {
+                connect();
             }
             if (testName) {
                 System.out.println("Name already exists, try again\n");
@@ -1044,8 +1105,12 @@ public class Client {
             OUT.writeUTF(finalInfo);
             success = IN.readBoolean();
         } catch (IOException e) {
+            connect();
         }
         if (success) {
+            USERNAME = userName;
+            PASSWORD = passWord;
+            mainMenu();
             System.out.println("Inserted wit success! ");
         } else {
             System.out.println("Not inserted with success...");
@@ -1082,7 +1147,7 @@ public class Client {
     public static void creatNewMeeting() {
         String responsible, desireOutCome, local, title, date = "", guests = null, agendaItems, request;
         int duration;
-        responsible = USER.getUserName();
+        responsible = USERNAME;
         SC.nextLine();
         System.out.print("Title: ");
         title = SC.nextLine();
@@ -1369,6 +1434,7 @@ class ReadingThread extends Thread {
                 System.out.print(">>: ");
             }
         } catch (IOException e) {
+            Client.connect();
         }
     }
 

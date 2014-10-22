@@ -18,8 +18,9 @@ TODO:
 
 - serv secundario nao se conecta aos clientes
 - mudar GFO's para Leaves... so nakela
--testar numero de tlm new user e outros tipos de dados
--por o welcom uuuser
+- testar numero de tlm new user e outros tipos de dados
+- por o welcom uuuser
+- invitar alguem para entrar na reuniao depois de criada
 
 -new meeting:       -titlo para cima  **DONE
                     -na data pedir hora e construir bem a data com , **DONE
