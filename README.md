@@ -6,19 +6,21 @@ Projecto bueda fixe
 
 TODO:
 
-- melhor reconexao dos clientes.
-- Arranjay toStrings() das restantes classes
+- cliente a connectar ao mesmo tempo, problema
+- chat que nao é chat...
+-proteger opcoes de indserir texto
+
+- melhor reconexao dos clientes. **DONE
+- Arranjay toStrings() das restantes classes **DONE
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
 
 -menu login, register (3 tent, volta atras)
--nov registro
-- testes se users existe ou nao
+-nov registro   **DONE
 - impar cmentarios desnecessarios / codigo antigo
 
-- serv secundario nao se conecta aos clientes
-- mudar GFO's para Leaves... so nakela
-- testar numero de tlm new user e outros tipos de dados
+- serv secundario nao se conecta aos clientes **DONE
+- mudar GFO's para Leaves... so nakela **DONE
 - por o welcom uuuser
 - invitar alguem para entrar na reuniao depois de criada
 
@@ -41,7 +43,7 @@ TODO:
                         o 'New' do addkey decision, ERRO ortografico **DONE
 
 -past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa **DONE
-                    -request para pedir essa conversa
+                    -request para pedir essa conversa **DONE
                     -consult agenda items, press key to continue **DONE
                     -request de pedir os actions items **DONE
 
@@ -49,9 +51,9 @@ TODO:
                     - opcao errado, meterwrong option **DONE
                     - y/n do mark as done **DONE
 
--Fazer menu login: pedir o login , poder registar, em  caso de 3 tent falhadas volta para tras
+-Fazer menu login: pedir o login , poder registar **DONE
 
--relatorio...2
+-relatorio...
 
 
 

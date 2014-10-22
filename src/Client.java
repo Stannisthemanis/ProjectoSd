@@ -17,33 +17,11 @@ public class Client {
     public static DataOutputStream OUT;
 
     public static void main(String[] args) {
-//        String username = "", password;
-
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
         SERVERSOCKET = 6000;
-        HOSTNAME = "localhost";
-//        USER = new User("Jon Snow", "root", "dragonstone", new Date("12/1/2110"), 212233, "stannisthemannis@kingoftheandals.wes");
-//        int tries = 0;
-//        //Login
-//        while ((username = login()) == null) {
-//            System.OUT.println("Invalid username/password please try again (" + (2 - tries) + " left)");
-//            tries++;
-//            if (tries == 3) {
-//                System.OUT.println("You execeded maximum number of tries(3)");
-//                System.exit(0);
-//            }
-//        }
-        //System.OUT.println("\n\n\n\n\n\n\n\n\n\n\n");
-//        System.OUT.println("Welcome " + USER.getUserName());
-
-
         connect();
-
-        //mainMenu();
-        //chat();
-
     }
 
     public static void connect() {
@@ -61,33 +39,7 @@ public class Client {
         } catch (IOException e) {
             connect();
         }
-//        finally {
-//            if (SOCKET != null)
-//                try {
-//                    SOCKET.close();
-//                } catch (IOException e) {
-//                }
-//        }
-
     }
-
-//    private static String login() {
-//        User teste = new User("Zeih", "root", "Rua da Guinola", new Date("10/10/1990"), 912345678, "zeih@guinola.pt");
-//
-//        Scanner SC = new Scanner(System.IN);
-//        System.OUT.print("Username: ");
-//        String username = SC.next();
-//        System.OUT.print("Password: ");
-//        String password = SC.next();
-//
-//        if (username.equals(teste.getUserName()) && password.equals(teste.getPassWord())) {
-//            return username;
-//
-//        } else {
-//            return null;
-//        }
-//    }
-
 
     //-------------------------------------- MENUS
 
@@ -100,7 +52,7 @@ public class Client {
                 System.out.println("\n\n\n\n\n");
                 System.out.println("1-> Login");
                 System.out.println("2-> Register");
-                System.out.println("0-> GFO");
+                System.out.println("0-> Leave");
                 System.out.println("choose an option: ");
                 option = SC.nextInt();
                 SC.nextLine();
@@ -170,7 +122,7 @@ public class Client {
             System.out.println("1-> Meetings");
             System.out.println("2-> Messages (" + requestNumberOfMessegesToRead() + " new messages)");
             System.out.println("3-> TODO list (" + requestSizeToDo() + " actions to be done)");
-            System.out.println("0-> GFO!");
+            System.out.println("0-> Leave");
             System.out.print("Choose option: ");
             option = SC.nextInt();
             switch (option) {
@@ -1176,7 +1128,6 @@ public class Client {
         while (true) {
             System.out.print("\n>>: ");
             if(textRecived==null){
-
                 try {
                     textRecived = bfr.readLine();
                 } catch (Exception e) {
