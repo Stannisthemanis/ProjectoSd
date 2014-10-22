@@ -48,19 +48,26 @@ public class Client {
 
     public static void connect() {
         try {
+            if (SOCKET != null)
+                try {
+                    SOCKET.close();
+                } catch (IOException e) {
+                }
+
             SOCKET = new Socket(HOSTNAME, SERVERSOCKET);
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
             loginMenu();
         } catch (IOException e) {
             connect();
-        } finally {
-            if (SOCKET != null)
-                try {
-                    SOCKET.close();
-                } catch (IOException e) {
-                }
         }
+//        finally {
+//            if (SOCKET != null)
+//                try {
+//                    SOCKET.close();
+//                } catch (IOException e) {
+//                }
+//        }
 
     }
 
@@ -147,6 +154,7 @@ public class Client {
         } else {
             try {
                 OUT.writeUTF(USERNAME + "," + PASSWORD);
+                IN.readBoolean();
             } catch (IOException e) {
                 connect();
             }
@@ -453,11 +461,7 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n");
                     System.out.println(requestMessagesFromAgendaItem(optMeeting, optItem));
-                    try {
-                        chat(optMeeting, optItem);
-                    } catch (IOException e) {
-                        connect();
-                    }
+                    chat(optMeeting, optItem);
                     requestLeaveChat(optMeeting, optItem);
                 }
                 break;
@@ -624,7 +628,7 @@ public class Client {
             return IN.read();
         } catch (IOException e) {
             connect();
-            return -1;
+            return requestNumberOfMessegesToRead();
         }
     }
 
@@ -634,7 +638,7 @@ public class Client {
             OUT.write(1);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestServerNewMeeting(request);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -642,7 +646,7 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestServerNewMeeting(request);
         }
     }
 
@@ -653,6 +657,7 @@ public class Client {
             result = IN.readUTF();
         } catch (Exception e) {
             connect();
+            return requestUpcomingMeetings();
         }
         return result;
     }
@@ -664,6 +669,7 @@ public class Client {
             result = IN.readUTF();
         } catch (Exception e) {
             connect();
+            return requestPastMeetings();
         }
         return result;
     }
@@ -675,6 +681,8 @@ public class Client {
             result = IN.readUTF();
         } catch (Exception e) {
             connect();
+            return requestMessages();
+
         }
         return result;
     }
@@ -686,6 +694,7 @@ public class Client {
             OUT.write(6);
         } catch (Exception e) {
             connect();
+            return requestAgendaItemsFromUpComingMeeting(opt);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -693,6 +702,8 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestAgendaItemsFromUpComingMeeting(opt);
+
         }
         return result;
     }
@@ -704,6 +715,7 @@ public class Client {
             OUT.write(7);
         } catch (Exception e) {
             connect();
+            return requestAgendaItemsFromPastMeeting(opt);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -711,6 +723,7 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestAgendaItemsFromPastMeeting(opt);
         }
         return result;
     }
@@ -722,6 +735,7 @@ public class Client {
             OUT.write(21);
         } catch (Exception e) {
             connect();
+            return requestAgendaItemsFromCurrentMeetings(opt);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -729,6 +743,7 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestAgendaItemsFromCurrentMeetings(opt);
         }
         return result;
     }
@@ -739,6 +754,7 @@ public class Client {
             OUT.write(4);
         } catch (Exception e) {
             connect();
+            return requestResumeUpcumingMeeting(opt);
         }
         try {
             IN.readBoolean();
@@ -746,6 +762,7 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestResumeUpcumingMeeting(opt);
         }
         return result;
     }
@@ -757,6 +774,8 @@ public class Client {
 
         } catch (Exception e) {
             connect();
+            return requestResumePastMeeting(opt);
+
         }
         try {
             IN.readBoolean();
@@ -764,6 +783,8 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestResumePastMeeting(opt);
+
         }
         return result;
     }
@@ -774,6 +795,8 @@ public class Client {
             OUT.write(9);
         } catch (Exception e) {
             connect();
+            return requestResumeMesage(opt);
+
         }
         try {
             IN.readBoolean();
@@ -781,6 +804,8 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestResumeMesage(opt);
+
         }
         return result;
     }
@@ -792,6 +817,8 @@ public class Client {
             OUT.write(22);
         } catch (Exception e) {
             connect();
+            return requestActionItemsPastMeeting(opt);
+
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -799,6 +826,8 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestActionItemsPastMeeting(opt);
+
         }
         return result;
     }
@@ -810,6 +839,8 @@ public class Client {
             OUT.write(27);
         } catch (Exception e) {
             connect();
+            return resquestChatFromItemPastMeeting(optMeeting, optItem);
+
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -819,6 +850,8 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return resquestChatFromItemPastMeeting(optMeeting, optItem);
+
         }
         return result;
 //        return "Conversation: \n Stannis-> Davos give me my magic sword! \n2-> Davos-> here yougo you're grace... melessiandre as bee excpteing you yoy're grace";
@@ -830,7 +863,7 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return replyInvite(decision);
         }
     }
 
@@ -840,7 +873,7 @@ public class Client {
             OUT.write(11);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestAddItemToAgenda(opt, itemToadd);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -850,7 +883,8 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestAddItemToAgenda(opt, itemToadd);
+
         }
     }
 
@@ -860,7 +894,7 @@ public class Client {
             OUT.write(12);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestDeleteItemToAgenda(optMeetenig, itemToDelete);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -870,7 +904,7 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestDeleteItemToAgenda(optMeetenig, itemToDelete);
         }
     }
 
@@ -880,7 +914,7 @@ public class Client {
             OUT.write(13);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestMofifyItemToAgenda(optMeeting, optItemToModify, newAgendaItem);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -892,7 +926,8 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestMofifyItemToAgenda(optMeeting, optItemToModify, newAgendaItem);
+
         }
     }
 
@@ -902,7 +937,7 @@ public class Client {
             OUT.write(14);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestAddKeyDecisionToAgendaItem(optMeeting, optItemToModify, newKeyDecision);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -914,7 +949,8 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestAddKeyDecisionToAgendaItem(optMeeting, optItemToModify, newKeyDecision);
+
         }
     }
 
@@ -924,7 +960,7 @@ public class Client {
             OUT.write(15);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestAddNewAcionItem(opt, newActionItem);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -934,7 +970,8 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestAddNewAcionItem(opt, newActionItem);
+
         }
     }
 
@@ -944,7 +981,7 @@ public class Client {
             return IN.read();
         } catch (IOException e) {
             connect();
-            return -1;
+            return requestSizeToDo();
         }
     }
 
@@ -954,11 +991,14 @@ public class Client {
             OUT.write(17);
         } catch (Exception e) {
             connect();
+            return requestActionItemsFromUser();
         }
         try {
             result = IN.readUTF();
         } catch (IOException e) {
             connect();
+            return requestActionItemsFromUser();
+
         }
         return result;
     }
@@ -974,17 +1014,18 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestMarkActionAsDone(optAction, decision);
         }
     }
 
     public static String requestCurrentMeetings() {
-        String result = "merda";
+        String result = "";
         try {
             OUT.write(19);
             result = IN.readUTF();
         } catch (Exception e) {
             connect();
+            return requestCurrentMeetings();
         }
         return result;
     }
@@ -995,6 +1036,8 @@ public class Client {
             OUT.write(20);
         } catch (Exception e) {
             connect();
+            return requestResumeCurrentMeetings(optCurrentMeeting);
+
         }
         try {
             IN.readBoolean();
@@ -1002,6 +1045,7 @@ public class Client {
             result = IN.readUTF(IN);
         } catch (IOException e) {
             connect();
+            return requestResumeCurrentMeetings(optCurrentMeeting);
         }
         return result;
     }
@@ -1012,6 +1056,7 @@ public class Client {
             OUT.write(23);
         } catch (Exception e) {
             connect();
+            return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
         }
         try {
             IN.readBoolean();
@@ -1020,7 +1065,8 @@ public class Client {
             OUT.write(optItem);
             result = IN.readUTF(IN);
         } catch (IOException e) {
-            connect();
+            return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
+
         }
         return result;
     }
@@ -1031,7 +1077,7 @@ public class Client {
             OUT.write(25);
         } catch (Exception e) {
             connect();
-            return false;
+            return requestIfClientExists(userName);
         }
         try {
             aceptSignal = IN.readBoolean();
@@ -1039,7 +1085,8 @@ public class Client {
             return IN.readBoolean();
         } catch (IOException e) {
             connect();
-            return false;
+            return requestIfClientExists(userName);
+
         }
     }
 
@@ -1048,6 +1095,7 @@ public class Client {
             OUT.write(26);
         } catch (Exception e) {
             connect();
+            requestLeaveChat(optCurrentMeeting, optItem);
         }
         try {
             IN.readBoolean();
@@ -1057,6 +1105,8 @@ public class Client {
             IN.readBoolean();
         } catch (IOException e) {
             connect();
+            requestLeaveChat(optCurrentMeeting, optItem);
+
         }
     }
 
@@ -1117,30 +1167,41 @@ public class Client {
         }
     }
 
-    public static void chat(int optMeeting, int optagendaItem) throws IOException {
+    public static void chat(int optMeeting, int optagendaItem) {
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader bfr = new BufferedReader(isr);
         ReadingThread rt = new ReadingThread();
-        String textRecived = "";
+        String textRecived = null;
         System.out.println("Type '.quit' to leave");
         while (true) {
             System.out.print("\n>>: ");
-            try {
-                textRecived = bfr.readLine();
-            } catch (Exception e) {
+            if(textRecived==null){
+
+                try {
+                    textRecived = bfr.readLine();
+                } catch (Exception e) {
+                }
             }
             if (textRecived.equalsIgnoreCase(".quit")) {
                 rt.kill();
                 return;
             }
-            OUT.write(24);
+
+            try {
+                OUT.write(24);
 //            IN.readBoolean();
-            OUT.write(optMeeting);
+                OUT.write(optMeeting);
 //            IN.readBoolean();
-            OUT.write(optagendaItem);
+                OUT.write(optagendaItem);
 //            IN.readBoolean();
-            OUT.writeUTF(textRecived);
+                OUT.writeUTF(textRecived);
 //            IN.readBoolean();
+                textRecived=null;
+            } catch (IOException e) {
+                connect();
+                requestLeaveChat(optMeeting,optagendaItem);
+                requestMessagesFromAgendaItem(optMeeting, optagendaItem);
+            }
         }
     }
 

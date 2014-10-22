@@ -62,5 +62,7 @@ public interface RmiServerInterface extends Remote {
 
     public String getMessagesHistoryFromAgendaItem(int nMeeting, int nAgenda, String user) throws RemoteException;
 
+    public String getUsersOnChat(int n, int numAgendaItem, String user) throws RemoteException;
+
 
 }

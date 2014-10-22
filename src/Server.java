@@ -324,6 +324,7 @@ class Connection extends Thread {
         try {
             System.out.println("->> Server: Sending all upcuming meeting of " + this.user);
             out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
+            System.out.println("-> sended.....");
         } catch (IOException e) {
             System.out.println("\n*** Replying upcuming meeting by " + user + ": " + e.getMessage());
         }
@@ -626,6 +627,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Message received, adding message now..");
             messageAdded += messageReaded;
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
+                System.out.println("->>>> "+dataBaseServer.getUsersOnChat(n,numAgendaItem,user));
                 for (Connection userOn : Server.onlineUsers) {
                     if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
                         clientsOnChat.add(userOn);

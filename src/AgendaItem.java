@@ -21,6 +21,14 @@ public class AgendaItem implements Serializable {
         return ItemToDiscuss;
     }
 
+    public String getUsersOnChat(){
+        String aux="";
+        for (String s : chat) {
+            aux+=s+"\n";
+        }
+        return aux;
+    }
+
     public void setItemToDiscuss(String itemToDiscuss) {
         ItemToDiscuss = itemToDiscuss;
     }

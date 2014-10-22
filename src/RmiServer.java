@@ -481,6 +481,23 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return "There are no messages for this agenda item";
     }
 
+    public String getUsersOnChat(int n, int numAgendaItem, String user) throws RemoteException{
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (now.after(m.getStartDate()) && now.after(m.getEndDate())) {
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
+                if (i == n)
+                    return m.getAgendaItems().get(numAgendaItem - 1).getUsersOnChat();
+            }
+        }
+        return "rgr";
+    }
+
     public boolean addMessage(int nMeeting, int nAgenda, String user, String message) throws RemoteException {
         int i = 0;
         Calendar now = Calendar.getInstance();
@@ -557,10 +574,10 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-8/2/2010,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-9/2/2011,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-21/10/2014,19:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
-        addNewMeeting("manel-talk about Robert-wall-robertthemannis-11/2/2016,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2014,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2014,16:00-manel,Jon Snow-Ai3,Ai4-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-22/10/2014,16:40-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);
         findUser("Jon Snow").addActionItem(teste);
