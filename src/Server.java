@@ -20,6 +20,7 @@ public class Server {
 
     public static void main(String[] args) {
         try {
+//            System.out.println("iet: "+ InetAddress.getByName());
             createServer();
         } catch (IOException e) {
 //            mainServer = false;
@@ -162,8 +163,6 @@ class Connection extends Thread {
     RmiServerInterface dataBaseServer;
 
     Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
-        String read;
-        boolean login;
         try {
 
             this.clientSocket = cSocket;
@@ -171,7 +170,19 @@ class Connection extends Thread {
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
             this.user = null;
+            Server.onlineUsers.add(this); //
+            this.start();
+        } catch (IOException e) {
+            Server.onlineUsers.remove(this);
+            System.out.println("\n*** Connection of  " + user + ": " + e.getMessage());
+        }
+    }
 
+    public void run() {
+        int request;
+        String read;
+        boolean login;
+        try {
             while (user == null) {
                 read = in.readUTF();
                 if (read.split(",").length == 1) {
@@ -193,17 +204,10 @@ class Connection extends Thread {
                 }
 
             }
-            System.out.println("->> Server: " + user + " connected");
-            Server.onlineUsers.add(this); //
-            this.start();
         } catch (IOException e) {
-            Server.onlineUsers.remove(this);
-            System.out.println("\n*** Connection of  " + user + ": " + e.getMessage());
         }
-    }
+        System.out.println("->> Server: " + user + " connected");
 
-    public void run() {
-        int request;
         try {
             while (true) {
                 request = in.read();

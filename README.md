@@ -15,6 +15,7 @@ TODO fixe:
 - por o welcom uuuser
 - invitar alguem para entrar na reuniao depois de criada
 - sincronizacao
+- mandar quando nao existe mensagens
 - relatorio...
 
 

@@ -576,9 +576,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2014,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-24/10/2014,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
         addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2014,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-23/10/2014,00:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-23/10/2014,13:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);
