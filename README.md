@@ -3,57 +3,19 @@ ProjectoSd
 
 Projecto bueda fixe
 
-
-TODO:
-
-- cliente a connectar ao mesmo tempo, problema
-- chat que nao é chat...
--proteger opcoes de indserir texto
-
-- melhor reconexao dos clientes. **DONE
-- Arranjay toStrings() das restantes classes **DONE
+TODO fixe:
+- ver qd o rmi vai abaixo
+-serve 2 substituir 1 em pcsdiferentes
+- mensagem ao fim de muito tempo sem server
+- erros de sc.next...
+- melhor reconeccao do chat -> marquisse
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
-- chat client fazer reconnect mesmo sem tentar escrever
-
--menu login, register (3 tent, volta atras)
--nov registro   **DONE
 - impar cmentarios desnecessarios / codigo antigo
-
-- serv secundario nao se conecta aos clientes **DONE
-- mudar GFO's para Leaves... so nakela **DONE
 - por o welcom uuuser
 - invitar alguem para entrar na reuniao depois de criada
-
--new meeting:       -titlo para cima  **DONE
-                    -na data pedir hora e construir bem a data com , **DONE
-                    -verificar data anterior **DONE
-                    -testar data valida **DONE
-                    -ver se os clientes existem **DONE
-                    -so posso criar meeting para o futuro, com minimo de 0h:30m **DONE
-                    
--upcomming meeting: -consult agenda item, mudar para any key voltar atras **DONE
-                    -no resumo da meeting meter so 1 \n depois de imprimir **DONE
-                    -any other businness sempre no fim da lista **DONE
-                    -get back no delete da merda **DONE
-                    - no modify, tirar menu e alterar logo **DONE
-                    - no eliminar impredir de eliminar o any other bs.... **DONE
-                    - no elimnar por certeza que pretende eliminar o (nome, get do aray) **DONE
-                    - no display dos titlos dos meetings, meter so 1 \n **DONE
-                    - no key dicision, mudar add para add/modify e tirar o 'New' do addkey decision, ERRO ortografico **DONE
-
--past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa **DONE
-                    -request para pedir essa conversa **DONE
-                    -consult agenda items, press key to continue **DONE
-                    -request de pedir os actions items **DONE
-
--Todo list          - \n's pa separar em condicoes **DONE
-                    - opcao errado, meterwrong option **DONE
-                    - y/n do mark as done **DONE
-
--Fazer menu login: pedir o login , poder registar **DONE
-
--relatorio...
+- sincronizacao
+- relatorio...
 
 
 

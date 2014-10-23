@@ -21,6 +21,7 @@ public class Client {
         PASSWORD = null;
         SOCKET = null;
         SERVERSOCKET = 6000;
+        HOSTNAME = "localhost";
         connect();
     }
 
@@ -32,11 +33,14 @@ public class Client {
                 } catch (IOException e) {
                 }
 
+//            SOCKET = new Socket("Roxkax", SERVERSOCKET);
             SOCKET = new Socket(HOSTNAME, SERVERSOCKET);
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
+//            System.out.println("socket: " + SOCKET);
             loginMenu();
         } catch (IOException e) {
+            System.out.println("-> " + e.getMessage());
             connect();
         }
     }
@@ -45,7 +49,7 @@ public class Client {
 
     public static void loginMenu() {
         int option;
-        String name, password, getback;
+        String name, password, tryagain = "y";
         boolean logIn = false;
         if (USERNAME == null) {
             do {
@@ -63,7 +67,6 @@ public class Client {
                     case 1: {
                         do {
                             System.out.println("User name: ");
-
                             name = SC.nextLine();
                             System.out.println("PassWord: ");
                             password = SC.nextLine();
@@ -76,24 +79,32 @@ public class Client {
                             if (!logIn) {
                                 do {
 
-                                    System.out.println("Logn failed, please try again? (y/n)\n");
-                                    getback = SC.nextLine();
-                                } while (!getback.equalsIgnoreCase("y") && !getback.equalsIgnoreCase("n"));
+                                    System.out.println("Login failed, please try again? (y/n)\n");
+                                    tryagain = SC.nextLine();
+                                } while (!tryagain.equalsIgnoreCase("y") && !tryagain.equalsIgnoreCase("n"));
 
-                                if (getback.equalsIgnoreCase("n")) {
-                                    break;
+                                System.out.println("try again: " + tryagain);
+                                if (tryagain.equalsIgnoreCase("n")) {
+                                  System.exit(0);
+//                                    break;
                                 }
+//                                else{
+//                                    logIn=true;
+//                                }
                             }
                         } while (!logIn);
+                        if (tryagain.equalsIgnoreCase("y")) {
+//                            break;
                         USERNAME = name;
                         PASSWORD = password;
+                        System.out.println("\n\nWelcome " + name);
                         mainMenu();
+                        }
 
                     }
                     break;
                     case 2: {
                         registerNewClient();
-
                     }
                     break;
                     default: {
@@ -115,7 +126,7 @@ public class Client {
 
     public static void mainMenu() {
         int option;
-        System.out.println("\n\n\n\n\n");
+        System.out.println("\n\n");
         do {
 
             System.out.println("Main Menu");
@@ -124,7 +135,11 @@ public class Client {
             System.out.println("3-> TODO list (" + requestSizeToDo() + " actions to be done)");
             System.out.println("0-> Leave");
             System.out.print("Choose option: ");
-            option = SC.nextInt();
+            try {
+                option = SC.nextInt();
+            } catch (Exception e) {
+                option = -1;
+            }
             switch (option) {
                 case 0:
                     System.exit(0);
@@ -1127,7 +1142,7 @@ public class Client {
         System.out.println("Type '.quit' to leave");
         System.out.print("\n>>: ");
         while (true) {
-            if(textRecived==null){
+            if (textRecived == null) {
                 try {
                     textRecived = bfr.readLine();
                 } catch (Exception e) {
@@ -1147,7 +1162,7 @@ public class Client {
 //            IN.readBoolean();
                 OUT.writeUTF(textRecived);
 //            IN.readBoolean();
-                textRecived=null;
+                textRecived = null;
             } catch (IOException e) {
                 connect();
 //                requestLeaveChat(optMeeting,optagendaItem);
