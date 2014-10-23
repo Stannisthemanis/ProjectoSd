@@ -16,7 +16,7 @@ import java.util.Date;
 public class Server {
 
     public static ArrayList<Connection> onlineUsers = new ArrayList<Connection>();
-//    public static boolean mainServer;
+    public static RmiServerInterface dataBaseServer;
 
     public static void main(String[] args) {
         String hostname = null;
@@ -86,32 +86,11 @@ public class Server {
         System.out.println("->> Server: Main server listening IN port: " + serverPort);
         System.out.println("->> Server: LISTEN SOCKET= " + listenSocket);
 
-//        System.getProperties().put("java.security.policy", "policy.all");
-//        System.setSecurityManager(new RMISecurityManager());
-
         //Thread para responder ao 2o servidor que este ainda esta up
         new respondToSecundary();
 
-        RmiServerInterface dataBaseServer = null;
 
-        //Acesso ao servidor rmi
-        boolean connected = false;
-        while (connected == false) {
-            try {
-                dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
-                connected = true;
-            } catch (MalformedURLException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
-                connected = false;
-            } catch (NotBoundException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
-                connected = false;
-            } catch (RemoteException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
-                connected = false;
-            }
-        }
-        System.out.println("->> Server: Connection to RmiServer ok...");
+        connectToRmi();
 
         //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
@@ -120,6 +99,31 @@ public class Server {
             System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
             new Connection(clientSocket, dataBaseServer);
         }
+    }
+
+    private static void connectToRmi() throws IOException {
+        //Acesso ao servidor rmi
+        String rmiHost[] = {"Roxkax", "192.168.1.89"};
+        boolean connected = false;
+        int i = 0;
+        while (connected == false) {
+            i++;
+            System.out.println(i);
+            try {
+                dataBaseServer = (RmiServerInterface) Naming.lookup("rmi://" + rmiHost[i % 2] + ":1099/DataBase");
+                connected = true;
+            } catch (MalformedURLException e) {
+                System.out.println("->> URL Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            } catch (NotBoundException e) {
+                System.out.println("->> BOUND Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            } catch (RemoteException e) {
+                System.out.println("->> REMOTE Server: Registing to rmiServer " + e.getMessage());
+                connected = false;
+            }
+        }
+        System.out.println("->> Server: Connection to RmiServer ok...");
     }
 
     private static String mainIsRunning() throws UnknownHostException {
