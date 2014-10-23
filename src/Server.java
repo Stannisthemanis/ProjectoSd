@@ -16,46 +16,47 @@ import java.util.Date;
 public class Server {
 
     public static ArrayList<Connection> onlineUsers = new ArrayList<Connection>();
-//    public static boolean mainServer;
+    public static RmiServerInterface dataBaseServer;
 
     public static void main(String[] args) {
+        String hostname = null;
         try {
-//            System.out.println("iet: "+ InetAddress.getByName());
-            createServer();
+            hostname = mainIsRunning();
+            System.out.println(hostname);
+            if (hostname == null)
+                createServer();
+            else
+                checkMainServer(hostname);
         } catch (IOException e) {
-//            mainServer = false;
             System.out.println("\n*** Creating Server: " + e.getMessage());
-            System.out.println("\n->> Server2: Secundary Server ok...");
-            checkMainServer();
         }
 
 
     }
 
-    private static void checkMainServer() {
+    private static void checkMainServer(String hostname) {
         DatagramSocket dataSocket = null;
-        String host = "localhost";
+        String host = hostname;
         int serverPort = 6666;
         byte[] m = new byte[1000];
-        boolean flag = false;
 
         try {
             InetAddress aHost = InetAddress.getByName(host);
             dataSocket = new DatagramSocket();
             dataSocket.setSoTimeout(10000);
-
+            System.out.println("\n->> Server2: Secundary Server ok...");
             while (true) {
-                if (((((System.currentTimeMillis() / 1000) % 10) == 0) || (((System.currentTimeMillis() / 1000) % 10) == 5)) && flag == true) {
-                    DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
-                    System.out.println("\n->> Server2: Sending request to Main...");
-                    dataSocket.send(request);
-                    byte[] buffer = new byte[1000];
-                    DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
-                    dataSocket.receive(reply);
-                    System.out.println("->> Server2: Received reply from Main...");
-                    flag = false;
-                } else if ((((System.currentTimeMillis() / 1000) % 10) != 0) && (((System.currentTimeMillis() / 1000) % 10) != 5)) {
-                    flag = true;
+                DatagramPacket request = new DatagramPacket(m, m.length, aHost, serverPort);
+                System.out.println("\n->> Server2: Sending request to Main...");
+                dataSocket.send(request);
+                byte[] buffer = new byte[1000];
+                DatagramPacket reply = new DatagramPacket(buffer, buffer.length);
+                dataSocket.receive(reply);
+                System.out.println("->> Server2: Received reply from Main...");
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    System.out.println("*** Server2: Sleeping..");
                 }
             }
         } catch (SocketException e) {
@@ -85,38 +86,78 @@ public class Server {
         System.out.println("->> Server: Main server listening IN port: " + serverPort);
         System.out.println("->> Server: LISTEN SOCKET= " + listenSocket);
 
-//        System.getProperties().put("java.security.policy", "policy.all");
-//        System.setSecurityManager(new RMISecurityManager());
-
         //Thread para responder ao 2o servidor que este ainda esta up
         new respondToSecundary();
 
-        RmiServerInterface dataBaseServer = null;
 
+        connectToRmi();
+
+        //Aceitar novas connecçoes de cliente e ligar com elas
+        while (true) {
+            System.out.println("Aqui");
+            Socket clientSocket = listenSocket.accept();
+            System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
+            new Connection(clientSocket, dataBaseServer);
+        }
+    }
+
+    private static void connectToRmi() throws IOException {
         //Acesso ao servidor rmi
+        String rmiHost[] = {"Roxkax", "192.168.1.89"};
         boolean connected = false;
+        int i = 0;
         while (connected == false) {
+            i++;
+            System.out.println(i);
             try {
-                dataBaseServer = (RmiServerInterface) Naming.lookup("DataBase");
+                dataBaseServer = (RmiServerInterface) Naming.lookup("rmi://" + rmiHost[i % 2] + ":1099/DataBase");
                 connected = true;
             } catch (MalformedURLException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                System.out.println("->> URL Server: Registing to rmiServer " + e.getMessage());
                 connected = false;
             } catch (NotBoundException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                System.out.println("->> BOUND Server: Registing to rmiServer " + e.getMessage());
                 connected = false;
             } catch (RemoteException e) {
-                System.out.println("->> Server: Registing to rmiServer " + e.getMessage());
+                System.out.println("->> REMOTE Server: Registing to rmiServer " + e.getMessage());
                 connected = false;
             }
         }
         System.out.println("->> Server: Connection to RmiServer ok...");
+    }
 
-        //Aceitar novas connecçoes de cliente e ligar com elas
-        while (true) {
-            Socket clientSocket = listenSocket.accept();
-            System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
-            new Connection(clientSocket, dataBaseServer);
+    private static String mainIsRunning() throws UnknownHostException {
+        int serverPort = 6000;
+        Socket test;
+        if (InetAddress.getByName("Roxkax").equals(InetAddress.getLocalHost())) {
+            try {
+                test = new Socket("localhost", serverPort);
+                return "localhost";
+            } catch (IOException e) {
+                System.out.println("1-" + e.getMessage());
+                try {
+                    test = new Socket("PC_Ricardo", serverPort);
+                    return "PC_Ricardo";
+                } catch (IOException e1) {
+                    System.out.println("2-" + e.getMessage());
+                    return null;
+                }
+            }
+
+        } else {
+            try {
+                test = new Socket("localhost", serverPort);
+                return "localhost";
+            } catch (IOException e) {
+                System.out.println("1-" + e.getMessage());
+                try {
+                    test = new Socket("Roxkax", serverPort);
+                    return "Roxkax";
+                } catch (IOException e1) {
+                    System.out.println("2-" + e.getMessage());
+                    return null;
+                }
+            }
         }
     }
 }
@@ -163,6 +204,7 @@ class Connection extends Thread {
     RmiServerInterface dataBaseServer;
 
     Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
+
         try {
 
             this.clientSocket = cSocket;
@@ -170,6 +212,7 @@ class Connection extends Thread {
             this.in = new DataInputStream(clientSocket.getInputStream());
             this.dataBaseServer = dataBaseServer;
             this.user = null;
+
             Server.onlineUsers.add(this); //
             this.start();
         } catch (IOException e) {
@@ -179,11 +222,10 @@ class Connection extends Thread {
     }
 
     public void run() {
-        int request;
         String read;
         boolean login;
-        try {
-            while (user == null) {
+        while (user == null) {
+            try {
                 read = in.readUTF();
                 if (read.split(",").length == 1) {
                     out.writeBoolean(dataBaseServer.findUser(read) != null);
@@ -193,7 +235,7 @@ class Connection extends Thread {
                     if (login)
                         this.user = dataBaseServer.findUser(read.split(",")[0]).getUserName();
                 } else if (read.split(",").length == 6) {
-                    this.user = dataBaseServer.addNewUser(read.replaceAll(",","-")).getUserName();
+                    this.user = dataBaseServer.addNewUser(read.replaceAll(",", "-")).getUserName();
                     if (this.user == null)
                         out.writeBoolean(false);
                     else
@@ -203,11 +245,13 @@ class Connection extends Thread {
                     System.out.println("\n*** Sintax incorrect for login/register..");
                 }
 
+            } catch (IOException e) {
+                System.out.println("\n*** Testing login..");
+                return;
             }
-        } catch (IOException e) {
         }
         System.out.println("->> Server: " + user + " connected");
-
+        int request;
         try {
             while (true) {
                 request = in.read();
@@ -634,7 +678,7 @@ class Connection extends Thread {
             System.out.println("->> Server: Message received, adding message now..");
             messageAdded += messageReaded;
             if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
-                System.out.println("->>>> "+dataBaseServer.getUsersOnChat(n,numAgendaItem,user));
+                System.out.println("->>>> " + dataBaseServer.getUsersOnChat(n, numAgendaItem, user));
                 for (Connection userOn : Server.onlineUsers) {
                     if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
                         clientsOnChat.add(userOn);
