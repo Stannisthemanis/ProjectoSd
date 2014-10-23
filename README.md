@@ -14,6 +14,7 @@ TODO:
 - Arranjay toStrings() das restantes classes **DONE
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
+- chat client fazer reconnect mesmo sem tentar escrever
 
 -menu login, register (3 tent, volta atras)
 -nov registro   **DONE
@@ -39,8 +40,7 @@ TODO:
                     - no eliminar impredir de eliminar o any other bs.... **DONE
                     - no elimnar por certeza que pretende eliminar o (nome, get do aray) **DONE
                     - no display dos titlos dos meetings, meter so 1 \n **DONE
-                    - no key dicision, mudar add para add/modify e tirar
-                        o 'New' do addkey decision, ERRO ortografico **DONE
+                    - no key dicision, mudar add para add/modify e tirar o 'New' do addkey decision, ERRO ortografico **DONE
 
 -past meeting       -consul agenda items: meter open chat antes do titulo para abrir aquela conversa **DONE
                     -request para pedir essa conversa **DONE
