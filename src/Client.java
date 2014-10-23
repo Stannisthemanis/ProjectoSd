@@ -1125,8 +1125,8 @@ public class Client {
         ReadingThread rt = new ReadingThread();
         String textRecived = null;
         System.out.println("Type '.quit' to leave");
+        System.out.print("\n>>: ");
         while (true) {
-            System.out.print("\n>>: ");
             if(textRecived==null){
                 try {
                     textRecived = bfr.readLine();
@@ -1150,8 +1150,9 @@ public class Client {
                 textRecived=null;
             } catch (IOException e) {
                 connect();
-                requestLeaveChat(optMeeting,optagendaItem);
-                requestMessagesFromAgendaItem(optMeeting, optagendaItem);
+//                requestLeaveChat(optMeeting,optagendaItem);
+                System.out.println(requestMessagesFromAgendaItem(optMeeting, optagendaItem));
+                rt = new ReadingThread();
             }
         }
     }
@@ -1446,7 +1447,7 @@ class ReadingThread extends Thread {
                 System.out.print(">>: ");
             }
         } catch (IOException e) {
-            Client.connect();
+            isRunning = false;
         }
     }
 

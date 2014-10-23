@@ -54,7 +54,7 @@ public interface RmiServerInterface extends Remote {
 
     public boolean addMessage(int nMeeting, int nAgenda, String user, String message) throws RemoteException;
 
-    public void addClientToChat(int nMeeting, int nAgenda, String user) throws RemoteException;
+    public int addClientToChat(int nMeeting, int nAgenda, String user) throws RemoteException;
 
     public boolean removeClientFromChat(int nMeeting, int nAgenda, String user) throws RemoteException;
 

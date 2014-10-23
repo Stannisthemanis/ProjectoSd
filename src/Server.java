@@ -579,6 +579,7 @@ class Connection extends Thread {
     public void replyMessagesFromAgendaItem() {
         int numAgendaItem;
         int n;
+        int flag;
         try {
             System.out.println("\n->> Server: Received request send messages from agenda item ..");
             out.writeBoolean(true);
@@ -589,7 +590,9 @@ class Connection extends Thread {
             System.out.println("->> Server: Info received sending messages now ..");
             out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
             System.out.println("->> Server: Agenda item messages sended with sucess ..");
-            dataBaseServer.addClientToChat(n, numAgendaItem, user);
+            flag = dataBaseServer.addClientToChat(n, numAgendaItem, user);
+            if (flag == 0)
+                return;
             ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
             for (Connection userOn : Server.onlineUsers) {
                 if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {

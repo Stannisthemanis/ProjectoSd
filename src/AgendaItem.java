@@ -23,7 +23,7 @@ public class AgendaItem implements Serializable {
 
     public String getUsersOnChat(){
         String aux="";
-        for (String s : chat) {
+        for (String s : clientsOnChat) {
             aux+=s+"\n";
         }
         return aux;
@@ -69,8 +69,13 @@ public class AgendaItem implements Serializable {
         return false;
     }
 
-    public void addClientToChat(String newClient) {
+    public int addClientToChat(String newClient) {
+        for (String s : clientsOnChat) {
+            if (s.equals(newClient))
+                return 0;
+        }
         this.clientsOnChat.add(newClient);
+        return 1;
     }
 
     public void removeClientFromChat(String newClient) {

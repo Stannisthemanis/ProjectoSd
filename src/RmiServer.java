@@ -487,7 +487,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
-            if (now.after(m.getStartDate()) && now.after(m.getEndDate())) {
+            if (now.after(m.getStartDate()) && now.before(m.getEndDate())) {
                 if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
                     i++;
                 }
@@ -517,7 +517,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
-    public void addClientToChat(int nMeeting, int nAgenda, String user) throws RemoteException {
+    public int addClientToChat(int nMeeting, int nAgenda, String user) throws RemoteException {
 //        System.out.println("adding client "+user+"to meeting "+nMeeting+" to agenda item "+nAgenda);
         int i = 0;
         Calendar now = Calendar.getInstance();
@@ -527,10 +527,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             if (m.getStartDate().before(now) && m.getEndDate().after(now))
                 i++;
             if (i == nMeeting) {
-                m.getAgendaItems().get(nAgenda - 1).addClientToChat(user);
-                return;
+                return m.getAgendaItems().get(nAgenda - 1).addClientToChat(user);
+
             }
         }
+        return 0;
     }
 
     public boolean removeClientFromChat(int nMeeting, int nAgenda, String user) throws RemoteException {
