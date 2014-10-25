@@ -389,7 +389,6 @@ class Connection extends Thread {
                         request = 0;
                         break;
                     case 25:
-                        System.out.println("a");
                         replyIfUserExists();
                         request = 0;
                         break;
@@ -957,46 +956,47 @@ class Connection extends Thread {
         int n = -1;
         int flag;
         boolean sucess = false;
-        while (sucess == false) {
-            try {
-                System.out.println("\n->> Server: Received request send messages from agenda item ..");
-                System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
-                if (n == -1){
-                    n = in.read();
-                    System.out.println("n: "+n);
-                }
-                if (numAgendaItem == -1){
-                    numAgendaItem = in.read();
-                    System.out.println("numagedaaitem: "+numAgendaItem);
-                }
-                System.out.println("->> Server: Info received sending messages now ..");
-                out.writeUTF(Server.dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
-                System.out.println("->> Server: Agenda item messages sended with sucess ..");
-                flag = Server.dataBaseServer.addClientToChat(n, numAgendaItem, user);
-                if (flag == 0)
-                    return;
-                ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
-                for (Connection userOn : Server.onlineUsers) {
-                    if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
-                        clientsOnChat.add(userOn);
+        synchronized (Server.dataBaseServer) {
+            while (sucess == false) {
+                try {
+                    System.out.println("\n->> Server: Received request send messages from agenda item ..");
+                    System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
+                    if (n == -1) {
+                        n = in.read();
                     }
-                }
-                for (Connection outs : clientsOnChat) {
-                    System.out.println("->> Server: Broadcasting message to " + outs.user);
-                    outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
-                }
+                    if (numAgendaItem == -1) {
+                        numAgendaItem = in.read();
+                    }
+                    System.out.println("->> Server: Info received sending messages now ..");
+                    out.writeUTF(Server.dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
+                    System.out.println("->> Server: Agenda item messages sended with sucess ..");
+                    flag = Server.dataBaseServer.addClientToChat(n, numAgendaItem, user);
+                    if (flag == 0) {
+                        return;
+                    }
+                    ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
+                    for (Connection userOn : Server.onlineUsers) {
+                        if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                            clientsOnChat.add(userOn);
+                        }
+                    }
+                    for (Connection outs : clientsOnChat) {
+                        System.out.println("->> Server: Broadcasting message to " + outs.user);
+                        outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
+                    }
 
-                sucess = true;
-            } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
-                    try {
-                        Server.connectToRmi();
-                    } catch (IOException e1) {
-                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    sucess = true;
+                } catch (IOException e) {
+                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                        try {
+                            Server.connectToRmi();
+                        } catch (IOException e1) {
+                            System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                        }
+                    } else {
+                        System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                        return;
                     }
-                } else {
-                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
-                    return;
                 }
             }
         }
@@ -1010,47 +1010,52 @@ class Connection extends Thread {
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
-        while (sucess == false) {
-            String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
-                    " -> " + user + ": ";
-            ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
-            try {
-                System.out.println("\n->> Server: Received request add messages to agenda item ..");
-                System.out.println("->> Server: Waiting for the info of meeting to add message..");
-                if (n == -1)
-                    n = in.read();
-                System.out.println("->> Server: Waiting for the info of agenda to add message..");
-                if (numAgendaItem == -1)
-                    numAgendaItem = in.read();
-                System.out.println("->> Server: Info of agenda item received waiting for message now ..");
-                if (messageReaded == null)
-                    messageReaded = in.readUTF();
-                System.out.println("->> Server: Message received, adding message now..");
-                messageAdded += messageReaded;
-                if (Server.dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
-                    System.out.println("->>>> " + Server.dataBaseServer.getUsersOnChat(n, numAgendaItem, user));
-                    for (Connection userOn : Server.onlineUsers) {
-                        if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
-                            clientsOnChat.add(userOn);
+        synchronized (Server.dataBaseServer) {
+            while (sucess == false) {
+                String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
+                        " -> " + user + ": ";
+                ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
+                try {
+                    System.out.println("\n->> Server: Received request add messages to agenda item ..");
+                    System.out.println("->> Server: Waiting for the info of meeting to add message..");
+                    if (n == -1) {
+                        n = in.read();
+                    }
+                    System.out.println("->> Server: Waiting for the info of agenda to add message..");
+                    if (numAgendaItem == -1) {
+                        numAgendaItem = in.read();
+                    }
+                    System.out.println("->> Server: Info of agenda item received waiting for message now ..");
+                    if (messageReaded == null) {
+                        messageReaded = in.readUTF();
+                    }
+                    System.out.println("->> Server: Message received, adding message now..");
+                    messageAdded += messageReaded;
+                    if (Server.dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
+                        System.out.println("->>>> " + Server.dataBaseServer.getUsersOnChat(n, numAgendaItem, user));
+                        for (Connection userOn : Server.onlineUsers) {
+                            if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                                clientsOnChat.add(userOn);
+                            }
                         }
+                        for (Connection outs : clientsOnChat) {
+                            System.out.println("->> Server: Broadcasting message to " + outs.user);
+                            outs.out.writeUTF(messageAdded.concat("\n"));
+                        }
+                    } else
+                        System.out.println("->> Server: Message sended with sucess ..");
+                    sucess = true;
+                } catch (IOException e) {
+                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                        try {
+                            Server.connectToRmi();
+                        } catch (IOException e1) {
+                            System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                        }
+                    } else {
+                        System.out.println("\n*** Server: Adding new message " + e.getMessage());
+                        return;
                     }
-                    for (Connection outs : clientsOnChat) {
-                        System.out.println("->> Server: Broadcasting message to " + outs.user);
-                        outs.out.writeUTF(messageAdded.concat("\n"));
-                    }
-                } else
-                    System.out.println("->> Server: Message sended with sucess ..");
-                sucess = true;
-            } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
-                    try {
-                        Server.connectToRmi();
-                    } catch (IOException e1) {
-                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
-                    }
-                } else {
-                    System.out.println("\n*** Server: Adding new message " + e.getMessage());
-                    return;
                 }
             }
         }
@@ -1062,7 +1067,7 @@ class Connection extends Thread {
         boolean sucess = false;
         while (sucess == false) {
             try {
-                out.writeUTF("");
+                out.writeUTF("Thread leaving");
                 System.out.println("\n->> Server: leaving chat ..");
                 System.out.println("->> Server: leaving chat n meeting..");
                 if (n == -1)
@@ -1071,7 +1076,7 @@ class Connection extends Thread {
                 if (numAgendaItem == -1)
                     numAgendaItem = in.read();
                 System.out.println("->> Server: leaving chat 2..");
-//                out.writeBoolean(Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
+                Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user);
                 sucess = true;
             } catch (IOException e) {
                 if (e.getCause().toString().equals(Server.rmiConnectionException)) {
@@ -1130,7 +1135,7 @@ class Connection extends Thread {
                     n = in.read();
                 if (invitedUser == null)
                     invitedUser = in.readUTF();
-                out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser,user));
+                out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser, user));
             } catch (IOException e) {
                 if (e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {

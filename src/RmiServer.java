@@ -1,3 +1,6 @@
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
+
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,15 +21,26 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     protected RmiServer() throws RemoteException {
         super();
-//        try {
-//            Save.loadForAL();
-//        } catch (IOException e) {
-//        } catch (ClassNotFoundException e) {
-//        }
+        Signal.handle(new Signal("INT"), new SignalHandler() {
+            public void handle(Signal sig) {
+                try {
+                    Save.storeInFiles();
+                    System.out.println("files saved");
+                    System.out.println("leaving");
+                    System.exit(0);
+                } catch (IOException e) {
+                    System.out.println("Saving...");
+                }
+            }
+        });
         try {
-            this.firstUse();
+            Save.loadForAL();
+//            this.firstUse();
+//            Save.storeInFiles();
             displayAllAL(); // all info IN the files
-        } catch (RemoteException e) {
+
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
         }
     }
 
@@ -648,22 +662,26 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
 }
 
+
 class Save {
 
     public static void loadForAL() throws IOException, ClassNotFoundException {
         if (new File("meetings.dat").exists()) {
+            System.out.println("gg");
             FileInputStream fis = new FileInputStream("meetings.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.meetings = (ArrayList<Meeting>) oos.readObject();
             oos.close();
         }
         if (new File("users.dat").exists()) {
+            System.out.println("bb");
             FileInputStream fis = new FileInputStream("users.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.users = (ArrayList<User>) oos.readObject();
             oos.close();
         }
         if (new File("invitations.dat").exists()) {
+            System.out.println("ggaga");
             FileInputStream fis = new FileInputStream("invitations.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.invitations = (ArrayList<Invite>) oos.readObject();
