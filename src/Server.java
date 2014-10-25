@@ -401,6 +401,10 @@ class Connection extends Thread {
                         replyMessageHistoryFromAgendaItem();
                         request = 0;
                         break;
+                    case 28:
+                        replyInviteToMeeting();
+                        request = 0;
+                        break;
                 }
             } catch (EOFException e) {
                 System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
@@ -1106,6 +1110,32 @@ class Connection extends Thread {
                     }
                 } else {
                     System.out.println("\n*** Sending pass Meeting history chat " + e.getMessage());
+                    return;
+                }
+            }
+        }
+    }
+
+    public void replyInviteToMeeting() {
+        boolean sucess = false;
+        int n = -1;
+        String invitedUser = null;
+        while (sucess == false) {
+            try {
+                if (n == -1)
+                    n = in.read();
+                if (invitedUser == null)
+                    invitedUser = in.readUTF();
+                out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser));
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Inviting to meeting " + e.getMessage());
                     return;
                 }
             }
