@@ -106,7 +106,7 @@ public class Server {
 
     public static void connectToRmi() throws IOException {
         //Acesso ao servidor rmi
-        String rmiHost[] = {"Roxkax", "PC_Ricardo"};
+        String rmiHost[] = {"Roxkax", "ricardo"};
         boolean connected = false;
         int i = 0;
         while (connected == false) {
@@ -139,7 +139,7 @@ public class Server {
             flag = 0;
         } catch (UnknownHostException e) {
             try {
-                hostTest = InetAddress.getByName("PC_Ricardo");
+                hostTest = InetAddress.getByName("ricardo");
                 flag = 1;
             } catch (UnknownHostException e1) {
                 flag = 2;
@@ -154,8 +154,8 @@ public class Server {
             } catch (IOException e) {
                 System.out.println("1-" + e.getMessage());
                 try {
-                    test = new Socket("PC_Ricardo", serverPort);
-                    return "PC_Ricardo";
+                    test = new Socket("ricardo", serverPort);
+                    return "ricardo";
                 } catch (IOException e1) {
                     System.out.println("2-" + e.getMessage());
                     return null;

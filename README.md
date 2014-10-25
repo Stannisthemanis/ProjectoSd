@@ -5,7 +5,6 @@ Projecto bueda fixe
 
 TODO fixe:
 - ver qd o rmi vai abaixo
-- serve 2 substituir 1 em pcsdiferentes
 - mensagem ao fim de muito tempo sem server
 - erros de sc.next...
 - melhor reconeccao do chat -> marquisse
