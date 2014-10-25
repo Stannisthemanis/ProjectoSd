@@ -544,7 +544,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (m.getStartDate().before(now) && m.getEndDate().after(now))
-                i++;
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
             if (i == nMeeting) {
                 m.getAgendaItems().get(nAgenda - 1).removeClientFromChat(user);
                 return true;
@@ -589,7 +591,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                         return false;
                 }
                 for (Invite invite : invitations) {
-                    if (invite.getInvitedUser().getUserName().equals(userInvited) || invite.getMeeting().equals(m))
+                    if (invite.getInvitedUser().getUserName().equals(userInvited) && invite.getMeeting().equals(m))
                         return false;
                 }
                 Invite newInvite = new Invite(m, 0, findUser(userInvited));
