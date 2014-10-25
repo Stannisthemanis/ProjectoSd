@@ -961,10 +961,14 @@ class Connection extends Thread {
             try {
                 System.out.println("\n->> Server: Received request send messages from agenda item ..");
                 System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
-                if (n == -1)
+                if (n == -1){
                     n = in.read();
-                if (numAgendaItem == -1)
+                    System.out.println("n: "+n);
+                }
+                if (numAgendaItem == -1){
                     numAgendaItem = in.read();
+                    System.out.println("numagedaaitem: "+numAgendaItem);
+                }
                 System.out.println("->> Server: Info received sending messages now ..");
                 out.writeUTF(Server.dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
                 System.out.println("->> Server: Agenda item messages sended with sucess ..");
@@ -1058,7 +1062,7 @@ class Connection extends Thread {
         boolean sucess = false;
         while (sucess == false) {
             try {
-                out.writeUTF("");
+                out.writeUTF("thread leaving");
                 System.out.println("\n->> Server: leaving chat ..");
                 System.out.println("->> Server: leaving chat n meeting..");
                 if (n == -1)
@@ -1067,7 +1071,7 @@ class Connection extends Thread {
                 if (numAgendaItem == -1)
                     numAgendaItem = in.read();
                 System.out.println("->> Server: leaving chat 2..");
-                out.writeBoolean(Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
+//                out.writeBoolean(Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
                 sucess = true;
             } catch (IOException e) {
                 if (e.getCause().toString().equals(Server.rmiConnectionException)) {
@@ -1126,7 +1130,7 @@ class Connection extends Thread {
                     n = in.read();
                 if (invitedUser == null)
                     invitedUser = in.readUTF();
-                out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser));
+                out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser,user));
             } catch (IOException e) {
                 if (e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {

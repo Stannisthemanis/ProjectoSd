@@ -17,6 +17,7 @@ TODO fixe:
 - deixar nao convidar nenhum user ao criar meeting
 - mandar quando nao existe mensagens
 - relatorio...
+- botar o ligando ao server-..
 
 
 

@@ -20,8 +20,10 @@ public class Client {
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
-        HOSTNAME = new String[]{"Roxkax", "ricardo"};
+        HOSTNAME = new String[]{"localhost","ricardo","Roxkax"};
         SERVERSOCKET = 6000;
+        System.out.println("Conecting to sever, please wait.");
+        System.out.println("\n\n\n\n\n\n");
         connect(0);
 //        try { //store IN files
 //            Save.storeInFiles();
@@ -47,13 +49,14 @@ public class Client {
                 }
 
 //            SOCKET = new Socket("Roxkax", SERVERSOCKET);
-            SOCKET = new Socket(HOSTNAME[i % 2], SERVERSOCKET);
+            SOCKET = new Socket(HOSTNAME[i % 3], SERVERSOCKET);
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
 //            System.out.println("socket: " + SOCKET);
+
             loginMenu();
         } catch (IOException e) {
-            connect((i + 1) % 2);
+            connect((i + 1) % 3);
         }
     }
 
@@ -308,8 +311,7 @@ public class Client {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
-        }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        }while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
         optUm = Integer.parseInt(optionString);
 
         do {
@@ -375,7 +377,6 @@ public class Client {
         } while (true);
     }
 
-
     public static void SubMenuCurrentMeetings() {
         int size, optMeeting, optAi;
         System.out.println("All Current meetings: ");
@@ -388,6 +389,7 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
+
             if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
@@ -523,7 +525,9 @@ public class Client {
             switch (opt2) {
                 case 1: {
                     System.out.println("\n\n\n");
+                    System.out.println("11111");
                     System.out.println(requestMessagesFromAgendaItem(optMeeting, optItem));
+                    System.out.println("2222222");
                     chat(optMeeting, optItem);
                     requestLeaveChat(optMeeting, optItem);
                 }
@@ -724,6 +728,8 @@ public class Client {
             System.out.println("\n User invited with success! ");
         else
             System.out.println("\n User is already invited...");
+        System.out.println("Press any key to continue...");
+        SC.next();
     }
 
 
@@ -1123,19 +1129,27 @@ public class Client {
     public static String requestMessagesFromAgendaItem(int optCurrentMeeting, int optItem) {
         String result = "";
         try {
+            System.out.println("1");
             OUT.write(23);
         } catch (Exception e) {
+            System.out.println("err2");
             connect(0);
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
         }
         try {
+            System.out.println("3");
             OUT.write(optCurrentMeeting);
+            System.out.println("4");
             OUT.write(optItem);
-            result = IN.readUTF(IN);
+            System.out.println("5");
+            result = IN.readUTF();
+            System.out.println("read");
         } catch (IOException e) {
+            System.out.println("err6");
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
 
         }
+        System.out.println("7");
         return result;
     }
 
@@ -1166,6 +1180,7 @@ public class Client {
         try {
             OUT.write(optCurrentMeeting);
             OUT.write(optItem);
+//            IN.readBoolean();
         } catch (IOException e) {
             connect(0);
             requestLeaveChat(optCurrentMeeting, optItem);
@@ -1176,8 +1191,8 @@ public class Client {
     public static boolean requestInviteNewUser(int optmeeting, String username) {
         boolean success=false;
         try {
-            System.out.println("27");
-            OUT.write(27);
+            System.out.println("28");
+            OUT.write(28);
         } catch (Exception e) {
             System.out.println("cathc 27");
             connect(0);
