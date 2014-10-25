@@ -5,7 +5,7 @@ Projecto bueda fixe
 
 TODO fixe:
 - ver qd o rmi vai abaixo
--serve 2 substituir 1 em pcsdiferentes
+- serve 2 substituir 1 em pcsdiferentes
 - mensagem ao fim de muito tempo sem server
 - erros de sc.next...
 - melhor reconeccao do chat -> marquisse
@@ -15,6 +15,7 @@ TODO fixe:
 - por o welcom uuuser
 - invitar alguem para entrar na reuniao depois de criada
 - sincronizacao
+- deixar nao convidar nenhum user ao criar meeting
 - relatorio...
 
 
