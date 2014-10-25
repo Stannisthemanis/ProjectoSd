@@ -1062,7 +1062,7 @@ class Connection extends Thread {
         boolean sucess = false;
         while (sucess == false) {
             try {
-                out.writeUTF("thread leaving");
+                out.writeUTF("");
                 System.out.println("\n->> Server: leaving chat ..");
                 System.out.println("->> Server: leaving chat n meeting..");
                 if (n == -1)

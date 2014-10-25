@@ -53,7 +53,7 @@ public class Client {
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
 //            System.out.println("socket: " + SOCKET);
-            System.out.println("connected!\n");
+            System.out.println("\n\nconnected!");
             loginMenu();
         } catch (IOException e) {
             connect((i + 1) % 3);
@@ -93,9 +93,9 @@ public class Client {
                             password = SC.nextLine();
                             try {
                                 OUT.writeUTF(name + "," + password);
-                                System.out.println("a");
+//                                System.out.println("a");
                                 logIn = IN.readBoolean();
-                                System.out.println("b");
+//                                System.out.println("b");
                             } catch (IOException e) {
                                 connect(0);
                             }
@@ -118,7 +118,7 @@ public class Client {
                             }
                         } while (!logIn);
                         if (tryagain.equalsIgnoreCase("y")) {
-                            System.out.println("c");
+//                            System.out.println("c");
 //                            break;
                             USERNAME = name;
                             PASSWORD = password;
@@ -226,18 +226,14 @@ public class Client {
             //reply
             if (dec.equals("y")) {
                 aux = replyInvite(true);
-            } else if (dec.equals("n")) {
-                aux = replyInvite(false);
-            }
-            //response
-            if (aux) {
                 System.out.println("Invite accept with success!\n");
                 break;
-            } else {
+            } else if (dec.equals("n")) {
+                aux = replyInvite(false);
                 System.out.println("Invite not accepted...\n");
                 break;
             }
-        } while (true);
+            } while (true);
     }
 
     public static void subMenuMeetings() {
@@ -313,11 +309,11 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
-        }while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        }while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optUm = Integer.parseInt(optionString);
 
         do {
@@ -336,15 +332,17 @@ public class Client {
             System.out.println("0-> Back");
             System.out.println("Choose an option: ");
             optionString = SC.nextLine();
+            System.out.println("|" + optionString + "| legth= " + optionString.length());
             if (!isNumeric(optionString) || optionString.length() == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                System.out.println("Wrong option");
+                System.out.println("Wrong optionhhhh");
             }
-            while (!isNumeric(optionString) || optionString.length() == 0) ;
+            System.out.println("while");
+        }while (!isNumeric(optionString) || optionString.length() == 0) ;
             optAi = Integer.parseInt(optionString);
             if (optAi == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
+
             }
             switch (optAi) {
                 case 1: {
@@ -380,7 +378,7 @@ public class Client {
                 }
                 break;
             }
-        } while (true);
+//        } while (true);
     }
 
     public static void SubMenuCurrentMeetings() {
@@ -389,7 +387,7 @@ public class Client {
         String options = requestCurrentMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        System.out.println("size-> "+size);
+//        System.out.println("size-> "+size);
         if(size==1 && countOptions[0].equals("")){
             System.out.println("No meetings found");
             System.out.println("Press any key to return");
@@ -403,12 +401,12 @@ public class Client {
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
 
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optMeeting = Integer.parseInt(optionString);
         do {
             if (optMeeting == 0) {
@@ -424,6 +422,8 @@ public class Client {
                 System.out.println("0-> Back");
                 System.out.println("Choose an option: ");
                 optionString = SC.nextLine();
+
+
                 if (!isNumeric(optionString) || optionString.length() == 0) {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
@@ -550,9 +550,7 @@ public class Client {
             switch (opt2) {
                 case 1: {
                     System.out.println("\n\n\n");
-                    System.out.println("11111");
                     System.out.println(requestMessagesFromAgendaItem(optMeeting, optItem));
-                    System.out.println("2222222");
                     chat(optMeeting, optItem);
                     requestLeaveChat(optMeeting, optItem);
                 }
@@ -589,12 +587,12 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            if (!isNumeric(optionString) ||  optionString.length() == 0 ||(Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while ((!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0));
+        while (!isNumeric(optionString) ||  optionString.length() == 0 ||(Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optUm = Integer.parseInt(optionString);
         do {
             if (optUm == 0) {
