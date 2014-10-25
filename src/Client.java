@@ -20,8 +20,10 @@ public class Client {
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
-        HOSTNAME = new String[]{"localhost", "Roxkax", "ricardo"};
+        HOSTNAME = new String[]{"localhost","ricardo","Roxkax"};
         SERVERSOCKET = 6000;
+        System.out.println("Connecting to sever, please wait.");
+        System.out.println("\n\n\n\n\n\n");
         connect(0);
 //        try { //store IN files
 //            Save.storeInFiles();
@@ -51,6 +53,7 @@ public class Client {
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
 //            System.out.println("socket: " + SOCKET);
+            System.out.println("connected!\n");
             loginMenu();
         } catch (IOException e) {
             connect((i + 1) % 3);
@@ -298,6 +301,12 @@ public class Client {
         String options = requestUpcomingMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -308,8 +317,7 @@ public class Client {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
-        }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        }while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
         optUm = Integer.parseInt(optionString);
 
         do {
@@ -375,19 +383,26 @@ public class Client {
         } while (true);
     }
 
-
     public static void SubMenuCurrentMeetings() {
         int size, optMeeting, optAi;
         System.out.println("All Current meetings: ");
         String options = requestCurrentMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        System.out.println("size-> "+size);
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
+
             if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
@@ -459,6 +474,12 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -483,6 +504,12 @@ public class Client {
         String options = requestAgendaItemsFromCurrentMeetings(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -523,8 +550,9 @@ public class Client {
             switch (opt2) {
                 case 1: {
                     System.out.println("\n\n\n");
+                    System.out.println("11111");
                     System.out.println(requestMessagesFromAgendaItem(optMeeting, optItem));
-
+                    System.out.println("2222222");
                     chat(optMeeting, optItem);
                     requestLeaveChat(optMeeting, optItem);
                 }
@@ -549,6 +577,12 @@ public class Client {
         String options = requestPastMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -618,6 +652,12 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No Items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -716,14 +756,17 @@ public class Client {
             System.out.println("User to intive: ");
             userName=SC.nextLine();
             if (!testIfUserNamesExists(userName) || userName.length()==0){
-                System.out.println("\n Name does not exist, try again");
+                System.out.println("\n Name does not exist, try again\n");
             }
         }while(!testIfUserNamesExists(userName) || userName.length()==0);
+        System.out.println(".....");
         boolean success = requestInviteNewUser(optMeeting,userName);
         if(success)
             System.out.println("\n User invited with success! ");
         else
-            System.out.println("\n User not invited with sucess.....");
+            System.out.println("\n User is already invited...");
+        System.out.println("Press any key to continue...");
+        SC.next();
     }
 
 
@@ -1123,19 +1166,27 @@ public class Client {
     public static String requestMessagesFromAgendaItem(int optCurrentMeeting, int optItem) {
         String result = "";
         try {
+            System.out.println("1");
             OUT.write(23);
         } catch (Exception e) {
+            System.out.println("err2");
             connect(0);
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
         }
         try {
+            System.out.println("3");
             OUT.write(optCurrentMeeting);
+            System.out.println("4");
             OUT.write(optItem);
-            result = IN.readUTF(IN);
+            System.out.println("5");
+            result = IN.readUTF();
+            System.out.println("read");
         } catch (IOException e) {
+            System.out.println("err6");
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
 
         }
+        System.out.println("7");
         return result;
     }
 
@@ -1166,6 +1217,7 @@ public class Client {
         try {
             OUT.write(optCurrentMeeting);
             OUT.write(optItem);
+//            IN.readBoolean();
         } catch (IOException e) {
             connect(0);
             requestLeaveChat(optCurrentMeeting, optItem);
@@ -1173,20 +1225,27 @@ public class Client {
         }
     }
 
-    public static boolean requestInviteNewUser(int optCurrentMeeting, String username) {
+    public static boolean requestInviteNewUser(int optmeeting, String username) {
+        boolean success=false;
         try {
-            OUT.write(27);
+            System.out.println("28");
+            OUT.write(28);
         } catch (Exception e) {
+            System.out.println("cathc 27");
             connect(0);
-            requestInviteNewUser(optCurrentMeeting, username);
+            requestInviteNewUser(optmeeting, username);
         }
         try {
-            OUT.write(optCurrentMeeting);
+            System.out.println("optmeeting");
+            OUT.write(optmeeting);
+            System.out.println("username");
             OUT.writeUTF(username);
-            return IN.readBoolean();
+            success = IN.readBoolean();
+            System.out.println("returnning " + success);
+            return success;
         } catch (IOException e) {
             connect(0);
-            requestInviteNewUser(optCurrentMeeting, username);
+            requestInviteNewUser(optmeeting, username);
 
         }
         return false;
