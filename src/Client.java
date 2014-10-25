@@ -22,7 +22,7 @@ public class Client {
         SOCKET = null;
         HOSTNAME = new String[]{"localhost","ricardo","Roxkax"};
         SERVERSOCKET = 6000;
-        System.out.println("Conecting to sever, please wait.");
+        System.out.println("Connecting to sever, please wait.");
         System.out.println("\n\n\n\n\n\n");
         connect(0);
 //        try { //store IN files
@@ -53,7 +53,7 @@ public class Client {
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
 //            System.out.println("socket: " + SOCKET);
-
+            System.out.println("connected!\n");
             loginMenu();
         } catch (IOException e) {
             connect((i + 1) % 3);
@@ -301,6 +301,12 @@ public class Client {
         String options = requestUpcomingMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -383,6 +389,13 @@ public class Client {
         String options = requestCurrentMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        System.out.println("size-> "+size);
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -461,6 +474,12 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -485,6 +504,12 @@ public class Client {
         String options = requestAgendaItemsFromCurrentMeetings(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -552,6 +577,12 @@ public class Client {
         String options = requestPastMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
@@ -621,6 +652,12 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if(size==1 && countOptions[0].equals("")){
+            System.out.println("No Items found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings

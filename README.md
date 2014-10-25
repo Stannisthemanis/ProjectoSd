@@ -17,7 +17,13 @@ TODO fixe:
 - deixar nao convidar nenhum user ao criar meeting
 - mandar quando nao existe mensagens
 - relatorio...
-- botar o ligando ao server-..
+- por o please wait quando se reconecta
+- fazer fucherios de dados em condições
+-tirar prints estupidos
+- remover cliente do chat qd ele vai abaixo
+- botar o ligando ao server-.. **DONE
+- erro na escolha das meetings **DONE
+ver ficheiros
 
 
 
