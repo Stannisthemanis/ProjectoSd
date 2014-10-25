@@ -21,6 +21,10 @@ public class Server {
     public static void main(String[] args) {
         String hostname = null;
         try {
+            System.out.println(InetAddress.getByName("PC_Ricardo").equals(InetAddress.getLocalHost()));
+        } catch (UnknownHostException e) {
+        }
+        try {
             hostname = mainIsRunning();
             System.out.println(hostname);
             if (hostname == null)
@@ -30,8 +34,12 @@ public class Server {
         } catch (IOException e) {
             System.out.println("\n*** Creating Server: " + e.getMessage());
         }
-
-
+//        try { //store IN files
+//            Save.storeInFiles();
+//            System.out.println("Data Stored!");
+//        } catch (IOException e) {
+//            System.out.println("Storing Data: ");
+//        }
     }
 
     private static void checkMainServer(String hostname) {
@@ -103,7 +111,7 @@ public class Server {
 
     private static void connectToRmi() throws IOException {
         //Acesso ao servidor rmi
-        String rmiHost[] = {"Roxkax", "192.168.1.89"};
+        String rmiHost[] = {"Roxkax", "192.168.1.65"};
         boolean connected = false;
         int i = 0;
         while (connected == false) {
@@ -126,10 +134,25 @@ public class Server {
         System.out.println("->> Server: Connection to RmiServer ok...");
     }
 
-    private static String mainIsRunning() throws UnknownHostException {
+    private static String mainIsRunning() {
         int serverPort = 6000;
         Socket test;
-        if (InetAddress.getByName("Roxkax").equals(InetAddress.getLocalHost())) {
+        InetAddress hostTest;
+        int flag;
+        try {
+            hostTest = InetAddress.getByName("Roxkax");
+            flag = 0;
+        } catch (UnknownHostException e) {
+            try {
+                hostTest = InetAddress.getByName("PC_Ricardo");
+                flag = 1;
+            } catch (UnknownHostException e1) {
+                flag = 2;
+                System.out.println("ggajgaj");
+            }
+        }
+
+        if (flag == 0) {
             try {
                 test = new Socket("localhost", serverPort);
                 return "localhost";
@@ -144,7 +167,7 @@ public class Server {
                 }
             }
 
-        } else {
+        } else if (flag == 1) {
             try {
                 test = new Socket("localhost", serverPort);
                 return "localhost";
@@ -158,6 +181,9 @@ public class Server {
                     return null;
                 }
             }
+        } else {
+            System.out.println("gjajga");
+            return null;
         }
     }
 }

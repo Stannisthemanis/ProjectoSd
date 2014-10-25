@@ -4,8 +4,6 @@ ProjectoSd
 Projecto bueda fixe
 
 TODO fixe:
-- ver qd o rmi vai abaixo
--serve 2 substituir 1 em pcsdiferentes
 - mensagem ao fim de muito tempo sem server
 - erros de sc.next...
 - melhor reconeccao do chat -> marquisse
@@ -16,6 +14,12 @@ TODO fixe:
 - invitar alguem para entrar na reuniao depois de criada
 - sincronizacao
 - mandar quando nao existe mensagens
+- depois de criar uma nova reniao, dá espiga
+, returnar do consulta agenda items, da espiga
+- se nao aceitar mensagem da espiga
+- se nao aceitar TODO da espiga
+- por o consult agenda items nas past meetings com retrn key, e dá espiga com palavras
+-quando ando do menu meetings para tras (depois de criar uma nova meeting)
 - relatorio...
 
 
