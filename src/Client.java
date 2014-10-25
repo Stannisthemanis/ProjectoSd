@@ -48,17 +48,23 @@ public class Client {
 
     public static void loginMenu() {
         int option;
-        String name, password, tryagain = "y";
+        String name, password, tryagain = "y", optionString;
         boolean logIn = false;
         if (USERNAME == null) {
             do {
-                System.out.println("\n\n\n\n\n");
-                System.out.println("1-> Login");
-                System.out.println("2-> Register");
-                System.out.println("0-> Leave");
-                System.out.println("choose an option: ");
-                option = SC.nextInt();
-                SC.nextLine();
+                do {
+                    System.out.println("\n\n\n");
+                    System.out.println("1-> Login");
+                    System.out.println("2-> Register");
+                    System.out.println("0-> Leave");
+                    System.out.println("choose an option: ");
+                    optionString = SC.nextLine();
+                    if (!isNumeric(optionString)) {
+                        System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                        System.out.println("Wrong option");
+                    }
+                } while (!isNumeric(optionString));
+                option = Integer.parseInt(optionString);
                 if (option == 0) {
                     System.exit(0);
                 }
@@ -86,7 +92,7 @@ public class Client {
 
                                 System.out.println("try again: " + tryagain);
                                 if (tryagain.equalsIgnoreCase("n")) {
-                                  System.exit(0);
+                                    System.exit(0);
 //                                    break;
                                 }
 //                                else{
@@ -97,10 +103,10 @@ public class Client {
                         if (tryagain.equalsIgnoreCase("y")) {
                             System.out.println("c");
 //                            break;
-                        USERNAME = name;
-                        PASSWORD = password;
-                        System.out.println("\n\nWelcome " + name);
-                        mainMenu();
+                            USERNAME = name;
+                            PASSWORD = password;
+                            System.out.println("\n\nWelcome " + name);
+                            mainMenu();
                         }
 
                     }
@@ -128,20 +134,23 @@ public class Client {
 
     public static void mainMenu() {
         int option;
+        String optionString;
         System.out.println("\n\n");
         do {
-
-            System.out.println("Main Menu");
-            System.out.println("1-> Meetings");
-            System.out.println("2-> Messages (" + requestNumberOfMessegesToRead() + " new messages)");
-            System.out.println("3-> TODO list (" + requestSizeToDo() + " actions to be done)");
-            System.out.println("0-> Leave");
-            System.out.print("Choose option: ");
-            try {
-                option = SC.nextInt();
-            } catch (Exception e) {
-                option = -1;
-            }
+            do {
+                System.out.println("Main Menu");
+                System.out.println("1-> Meetings");
+                System.out.println("2-> Messages (" + requestNumberOfMessegesToRead() + " new messages)");
+                System.out.println("3-> TODO list (" + requestSizeToDo() + " actions to be done)");
+                System.out.println("0-> Leave");
+                System.out.print("Choose option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            } while (!isNumeric(optionString));
+            option = Integer.parseInt(optionString);
             switch (option) {
                 case 0:
                     System.exit(0);
@@ -171,7 +180,7 @@ public class Client {
 
     public static void subMenuMessages() {
         int optUm, size;
-        String dec = "";
+        String dec = "", optionString;
         boolean aux = false;
         String options = requestMessages();
         String[] countOptions = options.split("\n");
@@ -180,8 +189,13 @@ public class Client {
             System.out.println(options); //display all messages
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optUm = SC.nextInt();
-        } while (optUm < 0 || optUm > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        } while (!isNumeric(optionString));
+        optUm = Integer.parseInt(optionString);
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
@@ -210,17 +224,25 @@ public class Client {
     }
 
     public static void subMenuMeetings() {
+        String optionString;
         int option;
         do {
-            System.out.println("\n\n\n");
-            System.out.println("Menu Meetings");
-            System.out.println("1-> Create new meeting");
-            System.out.println("2-> Check upcoming meetings");
-            System.out.println("3-> Check current Meetings");
-            System.out.println("4-> Check past meetings");
-            System.out.println("0-> Back");
-            System.out.print("Choose option: ");
-            option = SC.nextInt();
+            do {
+                System.out.println("\n\n\n");
+                System.out.println("Menu Meetings");
+                System.out.println("1-> Create new meeting");
+                System.out.println("2-> Check upcoming meetings");
+                System.out.println("3-> Check current Meetings");
+                System.out.println("4-> Check past meetings");
+                System.out.println("0-> Back");
+                System.out.print("Choose option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            } while (!isNumeric(optionString));
+            option = Integer.parseInt(optionString);
             if (option == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -262,27 +284,41 @@ public class Client {
         String options = requestUpcomingMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
             System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optUm = SC.nextInt();
-        } while (optUm < 0 || optUm > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        }
+        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optUm = Integer.parseInt(optionString);
+
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("Resume from meeting " + optUm);
-            System.out.println("\n" + requestResumeUpcumingMeeting(optUm)); // resume of chosen meeting
-            System.out.println("Options for meeting " + optUm);
-            System.out.println("1-> Consult Agenda Items");
-            System.out.println("2-> Add items to agenda");
-            System.out.println("3-> Modify items in agenda");
-            System.out.println("4-> Delete items from agenda");
-            System.out.println("0-> Back");
-            System.out.println("Choose an option: ");
-            optAi = SC.nextInt();
+                System.out.println("Resume from meeting " + optUm);
+                System.out.println("\n" + requestResumeUpcumingMeeting(optUm)); // resume of chosen meeting
+                System.out.println("Options for meeting " + optUm);
+                System.out.println("1-> Consult Agenda Items");
+                System.out.println("2-> Add items to agenda");
+                System.out.println("3-> Modify items in agenda");
+                System.out.println("4-> Delete items from agenda");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+            }
+            while (!isNumeric(optionString));
+            optAi = Integer.parseInt(optionString);
             if (optAi == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -319,31 +355,47 @@ public class Client {
         } while (true);
     }
 
+
     public static void SubMenuCurrentMeetings() {
         int size, optMeeting, optAi;
         System.out.println("All Current meetings: ");
         String options = requestCurrentMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
-            System.out.println(options); //display name of all current meetings
-            System.out.println("\n0-> Back");
+            System.out.println(options); //display name of all upcoming meetings
+            System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optMeeting = SC.nextInt();
-        } while (optMeeting < 0 || optMeeting > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        }
+        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optMeeting = Integer.parseInt(optionString);
         do {
             if (optMeeting == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("Resume from meeting " + optMeeting);
-            System.out.println("\n" + requestResumeCurrentMeetings(optMeeting) + "\n"); // resume of chosen meeting
-            System.out.println("\nOptions for meeting " + optMeeting);
-            System.out.println("1-> Consult/modify/discuss Agenda Items");
-            System.out.println("2-> Add new action Item");
-            System.out.println("0-> Back");
-            System.out.println("Choose an option: ");
-            optAi = SC.nextInt();
+            do {
+                System.out.println("Resume from meeting " + optMeeting);
+                System.out.println("\n" + requestResumeCurrentMeetings(optMeeting) + "\n"); // resume of chosen meeting
+                System.out.println("\nOptions for meeting " + optMeeting);
+                System.out.println("1-> Consult/modify/discuss Agenda Items");
+                System.out.println("2-> Add new action Item");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            }
+            while (!isNumeric(optionString));
+            optAi = Integer.parseInt(optionString);
             if (optAi == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -387,12 +439,18 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
-            System.out.println(options); //display name of all agen1da items
+            System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
-            System.out.print("Choose an item to open chat: ");
-            optUm = SC.nextInt();
-        } while (optUm < 0 || optUm > size);
+            System.out.print("Choose an option: ");
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString)  || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        } while (!isNumeric(optionString)  || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optUm = Integer.parseInt(optionString);
         System.out.println(resquestChatFromItemPastMeeting(opt, optUm));
         System.out.println("Press any key to continue...");
         SC.next();
@@ -404,24 +462,39 @@ public class Client {
         String options = requestAgendaItemsFromCurrentMeetings(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
-            System.out.println(options);
+            System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optItem = SC.nextInt();
-        } while (optItem < 0 || optItem > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        }
+        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optItem = Integer.parseInt(optionString);
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
         do {
             if (optItem == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("Options for Agenda item " + optItem);
-            System.out.println("1-> Open chat");
-            System.out.println("2-> Add key decsions");
-            System.out.println("0-> Back");
-            System.out.println("Choose an option: ");
-            opt2 = SC.nextInt();
+            do {
+                System.out.println("Options for Agenda item " + optItem);
+                System.out.println("1-> Open chat");
+                System.out.println("2-> Add key decsions");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            }
+            while (!isNumeric(optionString));
+            opt2 = Integer.parseInt(optionString);
             if (opt2 == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -454,26 +527,40 @@ public class Client {
         String options = requestPastMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
-            System.out.println(options); //display name of all past meetings
+            System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optUm = SC.nextInt();
-        } while (optUm < 0 || optUm > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        }
+        while ((!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)));
+        optUm = Integer.parseInt(optionString);
         do {
             if (optUm == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("Resume from meeting " + optUm);
-
-            System.out.println("\n" + requestResumePastMeeting(optUm) + "\n"); // resume of chosen meeting
-            System.out.println("\nOptions from meeting " + optUm);
-            System.out.println("1-> Consult Agenda Items");
-            System.out.println("2-> Consult Action Items");
-            System.out.println("0-> Back");
-            System.out.println("Choose an option: ");
-            optAi = SC.nextInt();
+            do {
+                System.out.println("Resume from meeting " + optUm);
+                System.out.println("\n" + requestResumePastMeeting(optUm) + "\n"); // resume of chosen meeting
+                System.out.println("\nOptions from meeting " + optUm);
+                System.out.println("1-> Consult Agenda Items");
+                System.out.println("2-> Consult Action Items");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            }
+            while (!isNumeric(optionString));
+            optAi = Integer.parseInt(optionString);
             if (optAi == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -509,45 +596,56 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        String optionString;
         do {
-            System.out.println(options); //display name of all agenda items
+            System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optItemtoModify = SC.nextInt();
-            if (optItemtoModify == 0) {
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                return;
-            } else if (optItemtoModify < 0 || optItemtoModify > size) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                System.out.println("Wrong option, try again");
+                System.out.println("Wrong option");
             }
-        } while (optItemtoModify < 0 || optItemtoModify > size);
-
+        } while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optItemtoModify = Integer.parseInt(optionString);
         modifyNameFromAgendaItem(optMeeting, optItemtoModify);
     }
 
     public static void subMenuTodo() {
         int size, optActionItem, optAux;
         System.out.println("All my actions to be done: ");
-        String options = requestActionItemsFromUser();
+        String options = requestActionItemsFromUser(), optionString;
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         do {
-            System.out.println(options); //display all action items
-            System.out.println("\n0-> Back");
+            System.out.println(options); //display name of all upcoming meetings
+            System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optActionItem = SC.nextInt();
-        } while (optActionItem < 0 || optActionItem > size);
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        } while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optActionItem = Integer.parseInt(optionString);
         do {
             boolean aux = false;
             if (optActionItem == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
             }
-            System.out.println("1-> Mark as done");
-            System.out.println("0-> Back");
-            System.out.println("Choose an option: ");
-            optAux = SC.nextInt();
+            do {
+                System.out.println("1-> Mark as done");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            }
+            while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+            optAux = Integer.parseInt(optionString);
             if (optAux == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 break;
@@ -1193,10 +1291,11 @@ public class Client {
 
     public static void subMenuDeleteItemstFromAgenda(int optMeeting) {
         int optItemtoDelete, size;
-        String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
+        String options = requestAgendaItemsFromUpComingMeeting(optMeeting), optString;
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         options = options.replaceAll("Any other businness", "");
+
         do {
             for (int i = 0; i < size - 1; i++) {
                 System.out.println(countOptions[i]);
@@ -1204,24 +1303,22 @@ public class Client {
             System.out.println();
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optItemtoDelete = SC.nextInt();
-            if (optItemtoDelete == 0) {
+            optString = SC.nextLine();
+
+            if (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size-1))) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                return;
-            } else if (optItemtoDelete < 0 || optItemtoDelete > size) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                System.out.println("Wrong option, try again");
+                System.out.println("Wrong option");
             }
 
-        } while (optItemtoDelete < 0 || optItemtoDelete > size);
-
+        } while (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size-1)));
+        optItemtoDelete=Integer.parseInt(optString);
         String deleteConfirm = "";
         do {
             System.out.println("Delete this item? (y/n)");
             deleteConfirm = SC.next();
         } while (!deleteConfirm.equals("y") && !deleteConfirm.equals("n"));
         System.out.println("------------------");
-        if (deleteConfirm.equals("y")) {
+        if (deleteConfirm.equalsIgnoreCase("y")) {
             boolean success = requestDeleteItemToAgenda(optMeeting, optItemtoDelete);
             if (success) {
                 System.out.println("Agenda item was deleted successfully!!");
@@ -1230,13 +1327,12 @@ public class Client {
             }
             System.out.println("Press any key to return ");
             SC.next();
-        }
+        }else return;
     }
 
     public static void modifyNameFromAgendaItem(int optMeeting, int optItemtoModify) {
         String NewItemToDiscuss;
         System.out.println("New item to discuss: ");
-        SC.nextLine();
         NewItemToDiscuss = SC.nextLine();
         boolean success = requestMofifyItemToAgenda(optMeeting, optItemtoModify, NewItemToDiscuss);
         if (success)
@@ -1262,7 +1358,6 @@ public class Client {
 
     public static void addNewActionItem(int optMeeting) {
         String newActionItem = "", responsableUser = "";
-        SC.nextLine();
         System.out.println("New ation Item: ");
         newActionItem = SC.nextLine();
         System.out.println("Responsable USER: ");
@@ -1391,6 +1486,15 @@ public class Client {
                 } else if (day > 30 && (month == 4 || month == 6 || month == 9 || month == 11)) {
                     return false;
                 }
+            }
+        }
+        return true;
+    }
+
+    public static boolean isNumeric(String str) {
+        for (char c : str.toCharArray()) {
+            if (!Character.isDigit(c)) {
+                return false;
             }
         }
         return true;

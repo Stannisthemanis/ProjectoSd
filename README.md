@@ -16,6 +16,7 @@ TODO fixe:
 - invitar alguem para entrar na reuniao depois de criada
 - sincronizacao
 - deixar nao convidar nenhum user ao criar meeting
+- mandar quando nao existe mensagens
 - relatorio...
 
 
