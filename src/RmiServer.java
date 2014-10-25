@@ -526,7 +526,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (m.getStartDate().before(now) && m.getEndDate().after(now))
-                i++;
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
             if (i == nMeeting) {
                 return m.getAgendaItems().get(nAgenda - 1).addClientToChat(user);
 
@@ -558,7 +560,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (m.getStartDate().before(now) && m.getEndDate().after(now))
-                i++;
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
             if (i == nMeeting) {
                 return m.getAgendaItems().get(nAgenda - 1).isOnChat(user);
 
@@ -567,26 +571,28 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
-    public boolean inviteUserToMeeting(int nMeeting, String user) throws RemoteException {
+    public boolean inviteUserToMeeting(int nMeeting, String userInvited, String user) throws RemoteException {
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
         now.add(Calendar.MONTH, 1);
         for (Meeting m : meetings) {
             if (m.getStartDate().after(now) && m.getEndDate().after(now))
-                i++;
+                if (m.getResponsibleUser().getUserName().equals(user) || m.isInvited(user)) {
+                    i++;
+                }
             if (i == nMeeting) {
-                if(m.getResponsibleUser().getUserName().equals(user))
+                if (m.getResponsibleUser().getUserName().equals(userInvited))
                     return false;
                 for (User iUser : m.getUsersInvited()) {
-                    if (iUser.getUserName().equals(user))
+                    if (iUser.getUserName().equals(userInvited))
                         return false;
                 }
                 for (Invite invite : invitations) {
-                    if (invite.getInvitedUser().getUserName().equals(user) && invite.getMeeting().equals(m))
+                    if (invite.getInvitedUser().getUserName().equals(userInvited) || invite.getMeeting().equals(m))
                         return false;
                 }
-                Invite newInvite = new Invite(m, 0, findUser(user));
+                Invite newInvite = new Invite(m, 0, findUser(userInvited));
                 invitations.add(newInvite);
                 return true;
             }
@@ -604,9 +610,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2015,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2015,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-25/10/2014,15:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2014,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2014,16:00-manel,Jon Snow-Ai3,Ai4-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-24/10/2014,23:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);

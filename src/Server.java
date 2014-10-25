@@ -1127,7 +1127,6 @@ class Connection extends Thread {
                 if (invitedUser == null)
                     invitedUser = in.readUTF();
                 out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser));
-                sucess=true;
             } catch (IOException e) {
                 if (e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
@@ -1139,9 +1138,8 @@ class Connection extends Thread {
                     System.out.println("\n*** Inviting to meeting " + e.getMessage());
                     return;
                 }
-
             }
-
+            sucess = true;
         }
     }
 
