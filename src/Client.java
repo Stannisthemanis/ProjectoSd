@@ -715,14 +715,15 @@ public class Client {
             System.out.println("User to intive: ");
             userName=SC.nextLine();
             if (!testIfUserNamesExists(userName) || userName.length()==0){
-                System.out.println("\n Name does not exist, try again");
+                System.out.println("\n Name does not exist, try again\n");
             }
         }while(!testIfUserNamesExists(userName) || userName.length()==0);
+        System.out.println(".....");
         boolean success = requestInviteNewUser(optMeeting,userName);
         if(success)
             System.out.println("\n User invited with success! ");
         else
-            System.out.println("\n User not invited with sucess.....");
+            System.out.println("\n User is already invited...");
     }
 
 
@@ -1172,20 +1173,27 @@ public class Client {
         }
     }
 
-    public static boolean requestInviteNewUser(int optCurrentMeeting, String username) {
+    public static boolean requestInviteNewUser(int optmeeting, String username) {
+        boolean success=false;
         try {
+            System.out.println("27");
             OUT.write(27);
         } catch (Exception e) {
+            System.out.println("cathc 27");
             connect(0);
-            requestInviteNewUser(optCurrentMeeting, username);
+            requestInviteNewUser(optmeeting, username);
         }
         try {
-            OUT.write(optCurrentMeeting);
+            System.out.println("optmeeting");
+            OUT.write(optmeeting);
+            System.out.println("username");
             OUT.writeUTF(username);
-            return IN.readBoolean();
+            success = IN.readBoolean();
+            System.out.println("returnning " + success);
+            return success;
         } catch (IOException e) {
             connect(0);
-            requestInviteNewUser(optCurrentMeeting, username);
+            requestInviteNewUser(optmeeting, username);
 
         }
         return false;
