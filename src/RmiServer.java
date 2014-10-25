@@ -77,7 +77,8 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         date.set(year, month, day, hour, minutes);
         ArrayList<AgendaItem> agendaItems = new ArrayList<AgendaItem>();
         for (String s : tokenizer[6].split(",")) {
-            agendaItems.add(new AgendaItem(s));
+            if (s.length() > 1)
+                agendaItems.add(new AgendaItem(s));
         }
         agendaItems.add(new AgendaItem("Any other business"));
         int duration = Integer.parseInt(tokenizer[7]);
@@ -561,6 +562,31 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             if (i == nMeeting) {
                 return m.getAgendaItems().get(nAgenda - 1).isOnChat(user);
 
+            }
+        }
+        return false;
+    }
+
+    public boolean inviteUserToMeeting(int nMeeting, String user) throws RemoteException {
+        int i = 0;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        for (Meeting m : meetings) {
+            if (m.getStartDate().after(now) && m.getEndDate().after(now))
+                i++;
+            if (i == nMeeting) {
+                for (User iUser : m.getUsersInvited()) {
+                    if (iUser.getUserName().equals(user))
+                        return false;
+                }
+                for (Invite invite : invitations) {
+                    if (invite.getInvitedUser().getUserName().equals(user) && invite.getMeeting().equals(m))
+                        return false;
+                }
+                Invite newInvite = new Invite(m, 0, findUser(user));
+                invitations.add(newInvite);
+                return true;
             }
         }
         return false;

@@ -64,5 +64,6 @@ public interface RmiServerInterface extends Remote {
 
     public String getUsersOnChat(int n, int numAgendaItem, String user) throws RemoteException;
 
+    public boolean inviteUserToMeeting(int nMeeting, String user) throws RemoteException;
 
 }
