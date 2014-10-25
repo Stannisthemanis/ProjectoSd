@@ -90,7 +90,9 @@ public class Client {
                             password = SC.nextLine();
                             try {
                                 OUT.writeUTF(name + "," + password);
+                                System.out.println("a");
                                 logIn = IN.readBoolean();
+                                System.out.println("b");
                             } catch (IOException e) {
                                 connect(0);
                             }
@@ -113,6 +115,7 @@ public class Client {
                             }
                         } while (!logIn);
                         if (tryagain.equalsIgnoreCase("y")) {
+                            System.out.println("c");
 //                            break;
                             USERNAME = name;
                             PASSWORD = password;
@@ -715,7 +718,6 @@ public class Client {
     }
 
     public static boolean requestServerNewMeeting(String request) {
-        boolean aceptSignal;
         try {
             OUT.write(1);
         } catch (Exception e) {
@@ -723,7 +725,6 @@ public class Client {
             return requestServerNewMeeting(request);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(request);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -770,7 +771,6 @@ public class Client {
     }
 
     public static String requestAgendaItemsFromUpComingMeeting(int opt) {
-        boolean aceptSignal;
         String result = "";
         try {
             OUT.write(6);
@@ -779,7 +779,6 @@ public class Client {
             return requestAgendaItemsFromUpComingMeeting(opt);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -791,7 +790,6 @@ public class Client {
     }
 
     public static String requestAgendaItemsFromPastMeeting(int opt) {
-        boolean aceptSignal;
         String result = "";
         try {
             OUT.write(7);
@@ -800,7 +798,6 @@ public class Client {
             return requestAgendaItemsFromPastMeeting(opt);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -811,7 +808,6 @@ public class Client {
     }
 
     public static String requestAgendaItemsFromCurrentMeetings(int opt) {
-        boolean aceptSignal;
         String result = "";
         try {
             OUT.write(21);
@@ -820,7 +816,6 @@ public class Client {
             return requestAgendaItemsFromCurrentMeetings(opt);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -839,7 +834,6 @@ public class Client {
             return requestResumeUpcumingMeeting(opt);
         }
         try {
-            IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -860,7 +854,6 @@ public class Client {
 
         }
         try {
-            IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -881,7 +874,6 @@ public class Client {
 
         }
         try {
-            IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -893,7 +885,6 @@ public class Client {
     }
 
     public static String requestActionItemsPastMeeting(int opt) {
-        boolean aceptSignal;
         String result = "";
         try {
             OUT.write(22);
@@ -903,7 +894,6 @@ public class Client {
 
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -915,7 +905,6 @@ public class Client {
     }
 
     public static String resquestChatFromItemPastMeeting(int optMeeting, int optItem) {
-        boolean aceptSignal;
         String result = "";
         try {
             OUT.write(27);
@@ -925,9 +914,7 @@ public class Client {
 
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(optMeeting);
-            aceptSignal = IN.readBoolean();
             OUT.write(optItem);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -950,7 +937,6 @@ public class Client {
     }
 
     public static boolean requestAddItemToAgenda(int opt, String itemToadd) {
-        boolean aceptSignal;
         try {
             OUT.write(11);
         } catch (Exception e) {
@@ -958,9 +944,7 @@ public class Client {
             return requestAddItemToAgenda(opt, itemToadd);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(itemToadd);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -971,7 +955,6 @@ public class Client {
     }
 
     public static boolean requestDeleteItemToAgenda(int optMeetenig, int itemToDelete) {
-        boolean aceptSignal;
         try {
             OUT.write(12);
         } catch (Exception e) {
@@ -979,9 +962,7 @@ public class Client {
             return requestDeleteItemToAgenda(optMeetenig, itemToDelete);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(optMeetenig);
-            aceptSignal = IN.readBoolean();
             OUT.write(itemToDelete);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -991,7 +972,6 @@ public class Client {
     }
 
     public static boolean requestMofifyItemToAgenda(int optMeeting, int optItemToModify, String newAgendaItem) {
-        boolean aceptSignal;
         try {
             OUT.write(13);
         } catch (Exception e) {
@@ -999,11 +979,8 @@ public class Client {
             return requestMofifyItemToAgenda(optMeeting, optItemToModify, newAgendaItem);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(optMeeting);
-            aceptSignal = IN.readBoolean();
             OUT.write(optItemToModify);
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(newAgendaItem);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -1014,7 +991,6 @@ public class Client {
     }
 
     public static boolean requestAddKeyDecisionToAgendaItem(int optMeeting, int optItemToModify, String newKeyDecision) {
-        boolean aceptSignal;
         try {
             OUT.write(14);
         } catch (Exception e) {
@@ -1022,11 +998,8 @@ public class Client {
             return requestAddKeyDecisionToAgendaItem(optMeeting, optItemToModify, newKeyDecision);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(optMeeting);
-            aceptSignal = IN.readBoolean();
             OUT.write(optItemToModify);
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(newKeyDecision);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -1037,7 +1010,6 @@ public class Client {
     }
 
     public static boolean requestAddNewAcionItem(int opt, String newActionItem) {
-        boolean aceptSignal;
         try {
             OUT.write(15);
         } catch (Exception e) {
@@ -1045,9 +1017,7 @@ public class Client {
             return requestAddNewAcionItem(opt, newActionItem);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.write(opt);
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(newActionItem);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -1086,12 +1056,9 @@ public class Client {
     }
 
     public static boolean requestMarkActionAsDone(int optAction, boolean decision) {
-        boolean success;
         try {
             OUT.write(18);
-            success = IN.readBoolean();
             OUT.write(optAction);
-            success = IN.readBoolean();
             OUT.writeBoolean(decision);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -1122,7 +1089,6 @@ public class Client {
 
         }
         try {
-            IN.readBoolean();
             OUT.write(optCurrentMeeting);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -1141,9 +1107,7 @@ public class Client {
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
         }
         try {
-            IN.readBoolean();
             OUT.write(optCurrentMeeting);
-            IN.readBoolean();
             OUT.write(optItem);
             result = IN.readUTF(IN);
         } catch (IOException e) {
@@ -1154,7 +1118,6 @@ public class Client {
     }
 
     public static boolean requestIfClientExists(String userName) {
-        boolean aceptSignal;
         try {
             OUT.write(25);
         } catch (Exception e) {
@@ -1162,7 +1125,6 @@ public class Client {
             return requestIfClientExists(userName);
         }
         try {
-            aceptSignal = IN.readBoolean();
             OUT.writeUTF(userName);
             return IN.readBoolean();
         } catch (IOException e) {
@@ -1180,11 +1142,8 @@ public class Client {
             requestLeaveChat(optCurrentMeeting, optItem);
         }
         try {
-            IN.readBoolean();
             OUT.write(optCurrentMeeting);
-            IN.readBoolean();
             OUT.write(optItem);
-            IN.readBoolean();
         } catch (IOException e) {
             connect(0);
             requestLeaveChat(optCurrentMeeting, optItem);
@@ -1270,17 +1229,12 @@ public class Client {
 
             try {
                 OUT.write(24);
-//            IN.readBoolean();
                 OUT.write(optMeeting);
-//            IN.readBoolean();
                 OUT.write(optagendaItem);
-//            IN.readBoolean();
                 OUT.writeUTF(textRecived);
-//            IN.readBoolean();
                 textRecived = null;
             } catch (IOException e) {
                 connect(0);
-//                requestLeaveChat(optMeeting,optagendaItem);
                 System.out.println(requestMessagesFromAgendaItem(optMeeting, optagendaItem));
                 rt = new ReadingThread();
             }

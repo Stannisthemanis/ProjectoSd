@@ -17,29 +17,24 @@ public class Server {
 
     public static ArrayList<Connection> onlineUsers = new ArrayList<Connection>();
     public static RmiServerInterface dataBaseServer;
+    public static String rmiConnectionException = "java.net.ConnectException: Connection refused: connect";
 
     public static void main(String[] args) {
         String hostname = null;
-        try {
-            System.out.println(InetAddress.getByName("PC_Ricardo").equals(InetAddress.getLocalHost()));
-        } catch (UnknownHostException e) {
+        while (true) {
+            try {
+                hostname = mainIsRunning();
+                System.out.println(hostname);
+                if (hostname == null)
+                    createServer();
+                else
+                    checkMainServer(hostname);
+            } catch (IOException e) {
+                System.out.println("\n*** Creating Server: " + e.getMessage());
+            }
         }
-        try {
-            hostname = mainIsRunning();
-            System.out.println(hostname);
-            if (hostname == null)
-                createServer();
-            else
-                checkMainServer(hostname);
-        } catch (IOException e) {
-            System.out.println("\n*** Creating Server: " + e.getMessage());
-        }
-//        try { //store IN files
-//            Save.storeInFiles();
-//            System.out.println("Data Stored!");
-//        } catch (IOException e) {
-//            System.out.println("Storing Data: ");
-//        }
+
+
     }
 
     private static void checkMainServer(String hostname) {
@@ -105,13 +100,13 @@ public class Server {
             System.out.println("Aqui");
             Socket clientSocket = listenSocket.accept();
             System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
-            new Connection(clientSocket, dataBaseServer);
+            new Connection(clientSocket);
         }
     }
 
-    private static void connectToRmi() throws IOException {
+    public static void connectToRmi() throws IOException {
         //Acesso ao servidor rmi
-        String rmiHost[] = {"Roxkax", "192.168.1.65"};
+        String rmiHost[] = {"Roxkax", "PC_Ricardo"};
         boolean connected = false;
         int i = 0;
         while (connected == false) {
@@ -227,16 +222,14 @@ class Connection extends Thread {
     DataInputStream in;
     Socket clientSocket;
     String user;
-    RmiServerInterface dataBaseServer;
 
-    Connection(Socket cSocket, RmiServerInterface dataBaseServer) {
+    Connection(Socket cSocket) {
 
         try {
 
             this.clientSocket = cSocket;
             this.out = new DataOutputStream(clientSocket.getOutputStream());
             this.in = new DataInputStream(clientSocket.getInputStream());
-            this.dataBaseServer = dataBaseServer;
             this.user = null;
 
             Server.onlineUsers.add(this); //
@@ -248,194 +241,314 @@ class Connection extends Thread {
     }
 
     public void run() {
-        String read;
+        String read = null;
         boolean login;
         while (user == null) {
             try {
-                read = in.readUTF();
+                System.out.println(read);
+                if (read == null)
+                    read = in.readUTF();
                 if (read.split(",").length == 1) {
-                    out.writeBoolean(dataBaseServer.findUser(read) != null);
+                    out.writeBoolean(Server.dataBaseServer.findUser(read) != null);
+                    read = null;
                 } else if (read.split(",").length == 2) {
-                    login = dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
+                    login = Server.dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
                     out.writeBoolean(login);
-                    if (login)
-                        this.user = dataBaseServer.findUser(read.split(",")[0]).getUserName();
+                    if (login) {
+                        this.user = Server.dataBaseServer.findUser(read.split(",")[0]).getUserName();
+                    }
+                    read = null;
                 } else if (read.split(",").length == 6) {
-                    this.user = dataBaseServer.addNewUser(read.replaceAll(",", "-")).getUserName();
+                    this.user = Server.dataBaseServer.addNewUser(read.replaceAll(",", "-")).getUserName();
                     if (this.user == null)
                         out.writeBoolean(false);
                     else
                         out.writeBoolean(true);
+                    read = null;
                 } else {
                     out.writeBoolean(false);
+                    read = null;
                     System.out.println("\n*** Sintax incorrect for login/register..");
                 }
 
             } catch (IOException e) {
-                System.out.println("\n*** Testing login..");
-                return;
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Testing login.." + e.getMessage());
+                    return;
+                }
             }
         }
         System.out.println("->> Server: " + user + " connected");
-        int request;
-        try {
-            while (true) {
-                request = in.read();
+        int request = 0;
+        while (true) {
+            System.out.println("waintg request");
+            try {
+                if (request == 0)
+                    request = in.read();
                 switch (request) {
                     case 1:
                         replyNewMeeting();
+                        request = 0;
                         break;
                     case 2:
                         replyCheckUpcumingMeetings();
+                        request = 0;
                         break;
                     case 3:
                         replyCheckPassedMeetings();
+                        request = 0;
                         break;
                     case 4:
                         replyInfoMeeting(1);
+                        request = 0;
                         break;
                     case 5:
                         replyInfoMeeting(2);
+                        request = 0;
                         break;
                     case 6:
                         replyAgendaItensFromMeeting(1);
+                        request = 0;
                         break;
                     case 7:
                         replyAgendaItensFromMeeting(2);
+                        request = 0;
                         break;
                     case 8:
                         replyUnreadMessages();
+                        request = 0;
                         break;
                     case 9:
                         replyMessage();
+                        request = 0;
                         break;
                     case 10:
                         replyNumberOfMessages();
+                        request = 0;
                         break;
                     case 11:
                         replyAddAgendaItem();
+                        request = 0;
                         break;
                     case 12:
                         replyRemoveAgendaItem();
+                        request = 0;
                         break;
                     case 13:
                         replyModifyTitleAgendaItem();
+                        request = 0;
                         break;
                     case 14:
                         replyAddKeyDecisionToAgendaItem();
+                        request = 0;
                         break;
                     case 15:
                         replyAddActionItem();
+                        request = 0;
                         break;
                     case 16:
                         replySizeOfTodo();
+                        request = 0;
                         break;
                     case 17:
                         replyActionItemsFromUser();
+                        request = 0;
                         break;
                     case 18:
                         replySetActionAsDone();
+                        request = 0;
                         break;
                     case 19:
                         replyCheckCurrentMeetings();
+                        request = 0;
                         break;
                     case 20:
                         replyInfoMeeting(3);
+                        request = 0;
                         break;
                     case 21:
                         replyAgendaItensFromMeeting(3);
+                        request = 0;
                         break;
                     case 22:
                         replyActionItensFromMeeting();
+                        request = 0;
                         break;
                     case 23:
                         replyMessagesFromAgendaItem();
+                        request = 0;
                         break;
                     case 24:
                         replyAddMessageToAgendaItem();
+                        request = 0;
                         break;
                     case 25:
+                        System.out.println("a");
                         replyIfUserExists();
+                        request = 0;
                         break;
                     case 26:
                         replyRemoveFromChat();
+                        request = 0;
                         break;
                     case 27:
                         replyMessageHistoryFromAgendaItem();
+                        request = 0;
                         break;
                 }
+            } catch (EOFException e) {
+                System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
+                return;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** IO Receiving request from " + user + ": " + e.getMessage());
+                    return;
+                }
             }
-        } catch (EOFException e) {
-            System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
-        } catch (IOException e) {
-            System.out.println("\n*** IO Receiving request from " + user + ": " + e.getMessage());
         }
 
     }
 
     public void replyNewMeeting() {
         String newMeeting = null;
-        try {
-            System.out.println("\n->> Server: Received request from " + this.user + " to create new meeting");
-            out.writeBoolean(true);
-            System.out.println("->>Server: Waiting for meeting information");
-            newMeeting = in.readUTF();
-            System.out.println("->> Server: Information received");
-            if (dataBaseServer.addNewMeeting(newMeeting) == true) {
-                System.out.println("->> Server: New meeting created");
-                out.writeBoolean(true);
-            } else {
-                out.writeBoolean(false);
-                System.out.println("->> Server: Failed to create new meeting");
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request from " + this.user + " to create new meeting");
+                System.out.println("->>Server: Waiting for meeting information");
+                if (newMeeting == null)
+                    newMeeting = in.readUTF();
+                System.out.println("->> Server: Information received");
+                if (Server.dataBaseServer.addNewMeeting(newMeeting) == true) {
+                    System.out.println("->> Server: New meeting created");
+                    out.writeBoolean(true);
+                } else {
+                    out.writeBoolean(false);
+                    System.out.println("->> Server: Failed to create new meeting");
+                }
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Reply new meeting creating by " + user + ": " + e.getMessage());
+                    return;
+                }
             }
-        } catch (IOException e) {
-            System.out.println("\n*** Reply new meeting creating by " + user + ": " + e.getMessage());
         }
     }
 
     public void replyCheckUpcumingMeetings() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send all upcuming meeting of " + this.user);
-        try {
-            System.out.println("->> Server: Sending all upcuming meeting of " + this.user);
-            out.writeUTF(dataBaseServer.getUpcumingMeetings(user));
-            System.out.println("-> sended.....");
-        } catch (IOException e) {
-            System.out.println("\n*** Replying upcuming meeting by " + user + ": " + e.getMessage());
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Sending all upcuming meeting of " + this.user);
+                out.writeUTF(Server.dataBaseServer.getUpcumingMeetings(user));
+                System.out.println("-> sended.....");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying upcuming meeting by " + user + ": " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyCheckPassedMeetings() {
         System.out.println("\n->> Server: Received request to send all passed meeting of " + this.user);
-        try {
-            System.out.println("->> Server: Sending all passed meeting of " + this.user);
-            out.writeUTF(dataBaseServer.getPassedMeetings(user));
-        } catch (IOException e) {
-            System.out.println("\n*** Replying passed Meeting: " + e.getMessage());
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Sending all passed meeting of " + this.user);
+                out.writeUTF(Server.dataBaseServer.getPassedMeetings(user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying passed Meeting: " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyCheckCurrentMeetings() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send all current meeting of " + this.user);
-        try {
-            System.out.println("->> Server: Sending all current meeting of " + this.user);
-            out.writeUTF(dataBaseServer.getCurrentMeetings(user));
-        } catch (IOException e) {
-            System.out.println("\n*** Replying current meeting by " + user + ": " + e.getMessage());
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Sending all current meeting of " + this.user);
+                out.writeUTF(Server.dataBaseServer.getCurrentMeetings(user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying current meeting by " + user + ": " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyInfoMeeting(int flag) {
         System.out.println("\n->> Server: Received request to send meeting information from " + this.user);
-        int meeting;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for info of requested meeting by " + this.user);
-            meeting = in.read();
-            System.out.println("->> Server: Sending meeting info to " + this.user);
-            out.writeUTF(dataBaseServer.getMeetingInfo(flag, meeting, this.user));
-        } catch (IOException e) {
-            System.out.println("\n*** Replying to send info of meeting to " + user + ": " + e.getMessage());
+        int meeting = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Waiting for info of requested meeting by " + this.user);
+                if (meeting == -1)
+                    meeting = in.read();
+                System.out.println("->> Server: Sending meeting info to " + this.user);
+                out.writeUTF(Server.dataBaseServer.getMeetingInfo(flag, meeting, this.user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying to send info of meeting to " + user + ": " + e.getMessage());
+                    return;
+                }
+            }
         }
 
     }
@@ -443,193 +556,363 @@ class Connection extends Thread {
     //flag 1- FutureMeeting 2- PassedMeeting
     public void replyAgendaItensFromMeeting(int flag) {
         System.out.println("\n->> Server: Received request to send agenda itens from a meeting by " + user);
-        int n;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Wainting for info meeting...");
-            n = in.read();
-            System.out.println("->> Server: Sending agenda itens of meeting.. ");
-            out.writeUTF(dataBaseServer.getAgendaItemFromMeeting(flag, n, user));
-            System.out.println("->> Server Info send with sucess..");
-        } catch (IOException e) {
-            System.out.println("\n*** Receiving meeting number for agenda item... " + e.getMessage());
+        int n = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Wainting for info meeting...");
+                if (n == -1)
+                    n = in.read();
+                System.out.println("->> Server: Sending agenda itens of meeting.. ");
+                out.writeUTF(Server.dataBaseServer.getAgendaItemFromMeeting(flag, n, user));
+                System.out.println("->> Server Info send with sucess..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Receiving meeting number for agenda item... " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyUnreadMessages() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send messages of USER: " + user);
-        try {
-            System.out.println("->> Server: Sending messages of " + user);
-            out.writeUTF(dataBaseServer.getMessagesByUser(user));
-            System.out.println("->> Server: Messages send with sucess ");
-        } catch (IOException e) {
-            System.out.println("\n*** Sending messages: " + e.getMessage());
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Sending messages of " + user);
+                out.writeUTF(Server.dataBaseServer.getMessagesByUser(user));
+                System.out.println("->> Server: Messages send with sucess ");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Sending messages: " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyMessage() {
         System.out.println("\n->> Server: Received request of " + user + " to respond to a message..");
-        int n;
-        boolean reply;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for message number..");
-            n = in.read();
-            System.out.println("->> Server: Sending message resume..");
-            out.writeUTF(dataBaseServer.getResumeOfMessage(user, n));
-            System.out.println("->> Server: Waiting for USER to decline or accept..");
-            reply = in.readBoolean();
-            out.writeBoolean(dataBaseServer.setReplyOfInvite(user, n, reply));
-            System.out.println("->> Server: Answer received with sucess");
-        } catch (IOException e) {
-            System.out.println("\n*** Replying to message: " + e.getMessage());
+        int n = -1;
+        boolean reply = false;
+        boolean readedReply = false;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Waiting for message number..");
+                if (n == -1)
+                    n = in.read();
+                System.out.println("->> Server: Sending message resume..");
+                out.writeUTF(Server.dataBaseServer.getResumeOfMessage(user, n));
+                System.out.println("->> Server: Waiting for USER to decline or accept..");
+                if (readedReply == false) {
+                    reply = in.readBoolean();
+                    readedReply = true;
+                }
+                out.writeBoolean(Server.dataBaseServer.setReplyOfInvite(user, n, reply));
+                System.out.println("->> Server: Answer received with sucess");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying to message: " + e.getMessage());
+                    return;
+                }
+            }
         }
 
     }
 
     public void replyNumberOfMessages() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send number of messages of USER " + user);
-        try {
-            out.write(dataBaseServer.getNumberOfMessages(user));
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Sending number of messages of USER " + user);
+        while (sucess == false) {
+            try {
+                out.write(Server.dataBaseServer.getNumberOfMessages(user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Sending number of messages of USER " + user + ":" + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyAddAgendaItem() {
-        String newItem = "";
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request to add a new agenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of the new agenda item ..");
-            n = in.read();
-            out.writeBoolean(true);
-            newItem = in.readUTF();
-            System.out.println("->> Server: Info received add agenda item now ..");
-            out.writeBoolean(dataBaseServer.addAgendaItem(n, newItem, user));
-            System.out.println("->> Server: New agenda item added with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+        String newItem = null;
+        int n = -1;
+        boolean sucess = false;
+
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request to add a new agenda item ..");
+                System.out.println("->> Server: Waiting for the info of the new agenda item ..");
+                if (n == -1)
+                    n = in.read();
+                if (newItem == null)
+                    newItem = in.readUTF();
+                System.out.println("->> Server: Info received add agenda item now ..");
+                out.writeBoolean(Server.dataBaseServer.addAgendaItem(n, newItem, user));
+                System.out.println("->> Server: New agenda item added with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                    return;
+                }
+            }
         }
 
     }
 
     public void replyRemoveAgendaItem() {
-        int numAgendaItem;
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request to remove aagenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to remove..");
-            n = in.read();
-            out.writeBoolean(true);
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info received, removing agenda item now ..");
-            out.writeBoolean(dataBaseServer.removeAgendaItem(n, numAgendaItem, user));
-            System.out.println("->> Server: Agenda item removed with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+        int numAgendaItem = -1;
+        int n = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request to remove aagenda item ..");
+                System.out.println("->> Server: Waiting for the info of agenda item to remove..");
+                if (n == -1)
+                    n = in.read();
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info received, removing agenda item now ..");
+                out.writeBoolean(Server.dataBaseServer.removeAgendaItem(n, numAgendaItem, user));
+                System.out.println("->> Server: Agenda item removed with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyModifyTitleAgendaItem() {
-        int numAgendaItem;
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request to modify agenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to modify..");
-            n = in.read();
-            out.writeBoolean(true);
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info received Waiting for new agenda itemToDiscuss now ..");
-            out.writeBoolean(true);
-            out.writeBoolean(dataBaseServer.modifyTitleAgendaItem(n, numAgendaItem, in.readUTF(), user));
-            System.out.println("->> Server: Agenda item changed with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+        int numAgendaItem = -1;
+        int n = -1;
+        String newAgendaItem = null;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request to modify agenda item ..");
+                System.out.println("->> Server: Waiting for the info of agenda item to modify..");
+                if (n == -1)
+                    n = in.read();
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info received Waiting for new agenda itemToDiscuss now ..");
+                if (newAgendaItem == null)
+                    newAgendaItem = in.readUTF();
+                out.writeBoolean(Server.dataBaseServer.modifyTitleAgendaItem(n, numAgendaItem, newAgendaItem, user));
+                System.out.println("->> Server: Agenda item changed with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyAddKeyDecisionToAgendaItem() {
-        int numAgendaItem;
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request to add key decision to agenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to modify..");
-            n = in.read();
-            out.writeBoolean(true);
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info received Waiting for key decision now ..");
-            out.writeBoolean(true);
-            out.writeBoolean(dataBaseServer.addKeyDecisionToAgendaItem(n, numAgendaItem, in.readUTF(), user));
-            System.out.println("->> Server: Agenda item changed with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+        int numAgendaItem = -1;
+        int n = -1;
+        String newKeyDecision = null;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request to add key decision to agenda item ..");
+                System.out.println("->> Server: Waiting for the info of agenda item to modify..");
+                if (n == -1)
+                    n = in.read();
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info received Waiting for key decision now ..");
+                if (newKeyDecision == null) {
+                    newKeyDecision = in.readUTF();
+                }
+                out.writeBoolean(Server.dataBaseServer.addKeyDecisionToAgendaItem(n, numAgendaItem, newKeyDecision, user));
+                System.out.println("->> Server: Agenda item changed with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyAddActionItem() {
-        String newItem = "";
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request to add action item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of the new action item ..");
-            n = in.read();
-            out.writeBoolean(true);
-            newItem = in.readUTF();
-            System.out.println("->> Server: Info received add action item now ..");
-            out.writeBoolean(dataBaseServer.addActionItem(n, newItem, user));
-            System.out.println("->> Server: New action item added with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new actionItem " + e.getMessage());
+        String newItem = null;
+        int n = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request to add action item ..");
+                System.out.println("->> Server: Waiting for the info of the new action item ..");
+                if (n == -1)
+                    n = in.read();
+                if (newItem == null)
+                    newItem = in.readUTF();
+                System.out.println("->> Server: Info received add action item now ..");
+                out.writeBoolean(Server.dataBaseServer.addActionItem(n, newItem, user));
+                System.out.println("->> Server: New action item added with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new actionItem " + e.getMessage());
+                    return;
+                }
+            }
         }
 
     }
 
     public void replySizeOfTodo() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send number of action itens of USER " + user);
-        try {
-            out.write(dataBaseServer.getSizeOfTodo(user));
-        } catch (IOException e) {
-            System.out.println("*** Server: Sending number of action itens of USER " + user);
+        while (sucess == false) {
+            try {
+                out.write(Server.dataBaseServer.getSizeOfTodo(user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("*** Server: Sending number of action itens of USER " + user);
+                    return;
+                }
+            }
         }
     }
 
     public void replyActionItemsFromUser() {
+        boolean sucess = false;
         System.out.println("\n->> Server: Received request to send action of USER: " + user);
-        try {
-            System.out.println("->> Server: Sending actions of " + user);
-            out.writeUTF(dataBaseServer.getActionItemFromUser(user));
-            System.out.println("->> Server: actions send with sucess ");
-        } catch (IOException e) {
-            System.out.println("\n*** Sending actionItens of USER: " + e.getMessage());
+
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Sending actions of " + user);
+                out.writeUTF(Server.dataBaseServer.getActionItemFromUser(user));
+                System.out.println("->> Server: actions send with sucess ");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Sending actionItens of USER: " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replySetActionAsDone() {
         System.out.println("\n->> Server: Received request of " + user + " to complete a action..");
-        int n;
-        boolean reply;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for action number..");
-            n = in.read();
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for USER to decline or accept..");
-            reply = in.readBoolean();
-            if (reply) {
-                out.writeBoolean(dataBaseServer.setActionAsCompleted(user, n));
-                System.out.println("->> Server: Action set as completed with sucess");
-            } else {
-                out.writeBoolean(false);
-                System.out.println("->> Server: Operation canceled by USER");
+        int n = -1;
+        boolean reply = false;
+        boolean readedReply = false;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("->> Server: Waiting for action number..");
+                if (n == -1)
+                    n = in.read();
+                System.out.println("->> Server: Waiting for USER to decline or accept..");
+                if (readedReply == false) {
+                    reply = in.readBoolean();
+                    readedReply = true;
+                }
+                if (reply) {
+                    out.writeBoolean(Server.dataBaseServer.setActionAsCompleted(user, n));
+                    System.out.println("->> Server: Action set as completed with sucess");
+                } else {
+                    out.writeBoolean(false);
+                    System.out.println("->> Server: Operation canceled by USER");
+                }
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Replying to message: " + e.getMessage());
+                    return;
+                }
             }
-        } catch (IOException e) {
-            System.out.println("\n*** Replying to message: " + e.getMessage());
         }
 
 
@@ -637,135 +920,221 @@ class Connection extends Thread {
 
     public void replyActionItensFromMeeting() {
         System.out.println("\n->> Server: Received request to send action itens from a meeting by " + user);
-        int n;
-        try {
-            out.writeBoolean(true);
-            System.out.println("->> Server: Wainting for info meeting...");
-            n = in.read();
-            System.out.println("->> Server: Sending agenda itens of meeting.. ");
-            out.writeUTF(dataBaseServer.getActionItensFromMeeting(n, user));
-            System.out.println("->> Server Info send with sucess..");
-        } catch (IOException e) {
-            System.out.println("\n*** Receiving meeting number for action item... " + e.getMessage());
+        int n = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                out.writeBoolean(true);
+                System.out.println("->> Server: Wainting for info meeting...");
+                if (n == -1) {
+                    n = in.read();
+                }
+                System.out.println("->> Server: Sending agenda itens of meeting.. ");
+                out.writeUTF(Server.dataBaseServer.getActionItensFromMeeting(n, user));
+                System.out.println("->> Server Info send with sucess..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Receiving meeting number for action item... " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyMessagesFromAgendaItem() {
-        int numAgendaItem;
-        int n;
+        int numAgendaItem = -1;
+        int n = -1;
         int flag;
-        try {
-            System.out.println("\n->> Server: Received request send messages from agenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
-            n = in.read();
-            out.writeBoolean(true);
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info received sending messages now ..");
-            out.writeUTF(dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
-            System.out.println("->> Server: Agenda item messages sended with sucess ..");
-            flag = dataBaseServer.addClientToChat(n, numAgendaItem, user);
-            if (flag == 0)
-                return;
-            ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
-            for (Connection userOn : Server.onlineUsers) {
-                if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
-                    clientsOnChat.add(userOn);
-                }
-            }
-            for (Connection outs : clientsOnChat) {
-                System.out.println("->> Server: Broadcasting message to " + outs.user);
-                outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
-            }
-
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
-        }
-    }
-
-    public void replyAddMessageToAgendaItem() {
-        int numAgendaItem;
-        int n;
-        String messageReaded;
-        Calendar now = Calendar.getInstance();
-        now.setTime(new Date());
-        now.add(Calendar.MONTH, 1);
-        String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
-                " -> " + user + ": ";
-        ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
-        try {
-            System.out.println("\n->> Server: Received request add messages to agenda item ..");
-            System.out.println("->> Server: Waiting for the info of meeting to add message..");
-            n = in.read();
-            System.out.println("->> Server: Waiting for the info of agenda to add message..");
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info of agenda item received waiting for message now ..");
-            messageReaded = in.readUTF();
-            System.out.println("->> Server: Message received, adding message now..");
-            messageAdded += messageReaded;
-            if (dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
-                System.out.println("->>>> " + dataBaseServer.getUsersOnChat(n, numAgendaItem, user));
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request send messages from agenda item ..");
+                System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
+                if (n == -1)
+                    n = in.read();
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info received sending messages now ..");
+                out.writeUTF(Server.dataBaseServer.getMessagesFromAgendaItem(n, numAgendaItem, user));
+                System.out.println("->> Server: Agenda item messages sended with sucess ..");
+                flag = Server.dataBaseServer.addClientToChat(n, numAgendaItem, user);
+                if (flag == 0)
+                    return;
+                ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
                 for (Connection userOn : Server.onlineUsers) {
-                    if (dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                    if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
                         clientsOnChat.add(userOn);
                     }
                 }
                 for (Connection outs : clientsOnChat) {
                     System.out.println("->> Server: Broadcasting message to " + outs.user);
-                    outs.out.writeUTF(messageAdded.concat("\n"));
+                    outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
                 }
-            } else
-                System.out.println("->> Server: Message sended with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Server: Adding new message " + e.getMessage());
+
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
+                    return;
+                }
+            }
+        }
+    }
+
+    public void replyAddMessageToAgendaItem() {
+        int numAgendaItem = -1;
+        int n = -1;
+        boolean sucess = false;
+        String messageReaded = null;
+        Calendar now = Calendar.getInstance();
+        now.setTime(new Date());
+        now.add(Calendar.MONTH, 1);
+        while (sucess == false) {
+            String messageAdded = now.get(Calendar.DAY_OF_MONTH) + "/" + now.get(Calendar.MONTH) + "/" + now.get(Calendar.YEAR) + " " + now.get(Calendar.HOUR) + ":" + now.get(Calendar.MINUTE) +
+                    " -> " + user + ": ";
+            ArrayList<Connection> clientsOnChat = new ArrayList<Connection>();
+            try {
+                System.out.println("\n->> Server: Received request add messages to agenda item ..");
+                System.out.println("->> Server: Waiting for the info of meeting to add message..");
+                if (n == -1)
+                    n = in.read();
+                System.out.println("->> Server: Waiting for the info of agenda to add message..");
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info of agenda item received waiting for message now ..");
+                if (messageReaded == null)
+                    messageReaded = in.readUTF();
+                System.out.println("->> Server: Message received, adding message now..");
+                messageAdded += messageReaded;
+                if (Server.dataBaseServer.addMessage(n, numAgendaItem, user, messageAdded.concat("\n"))) {
+                    System.out.println("->>>> " + Server.dataBaseServer.getUsersOnChat(n, numAgendaItem, user));
+                    for (Connection userOn : Server.onlineUsers) {
+                        if (Server.dataBaseServer.userOnChat(n, numAgendaItem, userOn.user)) {
+                            clientsOnChat.add(userOn);
+                        }
+                    }
+                    for (Connection outs : clientsOnChat) {
+                        System.out.println("->> Server: Broadcasting message to " + outs.user);
+                        outs.out.writeUTF(messageAdded.concat("\n"));
+                    }
+                } else
+                    System.out.println("->> Server: Message sended with sucess ..");
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Server: Adding new message " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     public void replyRemoveFromChat() {
-        int n, numAgendaItem;
-        try {
-            out.writeUTF("");
-            System.out.println("\n->> Server: leaving chat ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: leaving chat n meeting..");
-            n = in.read();
-            out.writeBoolean(true);
-            System.out.println("->> Server: leaving chat n Agenda..");
-            numAgendaItem = in.read();
-            System.out.println("->> Server: leaving chat 2..");
-            out.writeBoolean(dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
-        } catch (IOException e) {
-            e.printStackTrace();
+        int n = -1;
+        int numAgendaItem = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                out.writeUTF("");
+                System.out.println("\n->> Server: leaving chat ..");
+                System.out.println("->> Server: leaving chat n meeting..");
+                if (n == -1)
+                    n = in.read();
+                System.out.println("->> Server: leaving chat n Agenda..");
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: leaving chat 2..");
+                out.writeBoolean(Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user));
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** removing from chat" + e.getMessage());
+                    return;
+                }
+            }
         }
 
     }
 
     public void replyMessageHistoryFromAgendaItem() {
-        int numAgendaItem;
-        int n;
-        try {
-            System.out.println("\n->> Server: Received request send history of messages from agenda item ..");
-            out.writeBoolean(true);
-            System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
-            n = in.read();
-            out.writeBoolean(true);
-            numAgendaItem = in.read();
-            System.out.println("->> Server: Info received,sending messages now ..");
-            out.writeUTF(dataBaseServer.getMessagesHistoryFromAgendaItem(n, numAgendaItem, user));
-            System.out.println("->> Server: Agenda item messages sended with sucess ..");
-        } catch (IOException e) {
-            System.out.println("\n*** Sending pass Meeting history chat " + e.getMessage());
+        int numAgendaItem = -1;
+        int n = -1;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                System.out.println("\n->> Server: Received request send history of messages from agenda item ..");
+                System.out.println("->> Server: Waiting for the info of agenda item to send messages..");
+                if (n == -1)
+                    n = in.read();
+                if (numAgendaItem == -1)
+                    numAgendaItem = in.read();
+                System.out.println("->> Server: Info received,sending messages now ..");
+                out.writeUTF(Server.dataBaseServer.getMessagesHistoryFromAgendaItem(n, numAgendaItem, user));
+                sucess = true;
+                System.out.println("->> Server: Agenda item messages sended with sucess ..");
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n*** Sending pass Meeting history chat " + e.getMessage());
+                    return;
+                }
+            }
         }
     }
 
     //TODO put sout's
     public void replyIfUserExists() {
-        String name = "";
-        try {
-            out.writeBoolean(true);
-            name = in.readUTF();
-            out.writeBoolean(dataBaseServer.findUser(name) != null);
-        } catch (IOException e) {
+        String name = null;
+        boolean sucess = false;
+        while (sucess == false) {
+            try {
+                if (name == null)
+                    name = in.readUTF();
+                out.writeBoolean(Server.dataBaseServer.findUser(name) != null);
+                sucess = true;
+            } catch (IOException e) {
+                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    try {
+                        Server.connectToRmi();
+                    } catch (IOException e1) {
+                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                    }
+                } else {
+                    System.out.println("\n *** testing if user exists" + e.getMessage());
+                    return;
+                }
+            }
+
         }
 
     }
