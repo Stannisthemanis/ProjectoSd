@@ -20,7 +20,7 @@ public class Client {
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
-        HOSTNAME = new String[]{"Roxkax", "PC_Ricardo"};
+        HOSTNAME = new String[]{"Roxkax", "ricardo"};
         SERVERSOCKET = 6000;
         connect(0);
 //        try { //store IN files
@@ -32,12 +32,12 @@ public class Client {
     }
 
     public static void connect(int i) {
-        try { //store IN files
-            Save.storeInFiles();
-//            System.out.println("Data Stored!");
-        } catch (IOException e) {
-            System.out.println("Storing Data: ");
-        }
+//        try { //store IN files
+//            Save.storeInFiles();
+////            System.out.println("Data Stored!");
+//        } catch (IOException e) {
+//            System.out.println("Storing Data: ");
+//        }
 
         try {
             if (SOCKET != null)
@@ -361,6 +361,11 @@ public class Client {
                     System.out.println("Delete items from agenda: ");
                     subMenuDeleteItemstFromAgenda(optUm);
                 }
+                case 5:{
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Inviting new user ");
+                    subMenuInviteNewUser(optUm);
+                }break;
                 default: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Wrong option");
@@ -702,6 +707,22 @@ public class Client {
             }
             if (aux) break;
         } while (true);
+    }
+
+    public static void subMenuInviteNewUser(int optMeeting){
+        String userName;
+        do{
+            System.out.println("User to intive: ");
+            userName=SC.nextLine();
+            if (!testIfUserNamesExists(userName) || userName.length()==0){
+                System.out.println("\n Name does not exist, try again");
+            }
+        }while(!testIfUserNamesExists(userName) || userName.length()==0);
+        boolean success = requestInviteNewUser(optMeeting,userName);
+        if(success)
+            System.out.println("\n User invited with success! ");
+        else
+            System.out.println("\n User not invited with sucess.....");
     }
 
 
@@ -1151,6 +1172,25 @@ public class Client {
         }
     }
 
+    public static boolean requestInviteNewUser(int optCurrentMeeting, String username) {
+        try {
+            OUT.write(27);
+        } catch (Exception e) {
+            connect(0);
+            requestInviteNewUser(optCurrentMeeting, username);
+        }
+        try {
+            OUT.write(optCurrentMeeting);
+            OUT.writeUTF(username);
+            return IN.readBoolean();
+        } catch (IOException e) {
+            connect(0);
+            requestInviteNewUser(optCurrentMeeting, username);
+
+        }
+        return false;
+    }
+
 
     //-------------------------------------- AUXILIAR FUNCTIONS MENU
 
@@ -1272,7 +1312,7 @@ public class Client {
         do {
             System.out.print("Guests (g1,g2,...): ");
             guests = SC.nextLine();
-            if (guests == null){
+            if (guests == null || guests.length()==0){
                 guests = "none";
                 break;
             }
@@ -1287,7 +1327,7 @@ public class Client {
         do {
             System.out.print("Duration in minutes: ");
             dur = SC.nextLine();
-            if (!isNumeric(dur)) {
+            if (!isNumeric(dur) || dur.length()==0) {
                 System.out.println("\nBad format, try again: ");
             }
         } while (!isNumeric(dur));
