@@ -1268,16 +1268,19 @@ public class Client {
         date = date.replaceAll(" ", ",");
 
         boolean userTest = false;
+
         do {
             System.out.print("Guests (g1,g2,...): ");
             guests = SC.nextLine();
+            if (guests == null){
+                guests = "none";
+                break;
+            }
             userTest = testIfUserNamesExists(guests);
             if (userTest == false) {
                 System.out.println("One or more USER names do not exist, try again");
             }
         } while (!userTest);
-        if (guests == null)
-            guests = "none";
 
         System.out.print("agendaItems (ai1,ai2,...): ");
         agendaItems = SC.nextLine();
