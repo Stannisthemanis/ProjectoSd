@@ -1,3 +1,6 @@
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
+
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -18,15 +21,26 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     protected RmiServer() throws RemoteException {
         super();
-//        try {
-//            Save.loadForAL();
-//        } catch (IOException e) {
-//        } catch (ClassNotFoundException e) {
-//        }
+        Signal.handle(new Signal("INT"), new SignalHandler() {
+            public void handle(Signal sig) {
+                try {
+                    Save.storeInFiles();
+                    System.out.println("files saved");
+                    System.out.println("leaving");
+                    System.exit(0);
+                } catch (IOException e) {
+                    System.out.println("Saving...");
+                }
+            }
+        });
         try {
-            this.firstUse();
+            Save.loadForAL();
+//            this.firstUse();
+//            Save.storeInFiles();
             displayAllAL(); // all info IN the files
-        } catch (RemoteException e) {
+
+        } catch (IOException e) {
+        } catch (ClassNotFoundException e) {
         }
     }
 
@@ -612,9 +626,9 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
         users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2014,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2014,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-24/10/2014,23:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2015,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
+        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2015,16:00-manel,Jon Snow-Ai3,Ai4-120");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-25/10/2014,17:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);
@@ -648,22 +662,26 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
 }
 
+
 class Save {
 
     public static void loadForAL() throws IOException, ClassNotFoundException {
         if (new File("meetings.dat").exists()) {
+            System.out.println("gg");
             FileInputStream fis = new FileInputStream("meetings.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.meetings = (ArrayList<Meeting>) oos.readObject();
             oos.close();
         }
         if (new File("users.dat").exists()) {
+            System.out.println("bb");
             FileInputStream fis = new FileInputStream("users.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.users = (ArrayList<User>) oos.readObject();
             oos.close();
         }
         if (new File("invitations.dat").exists()) {
+            System.out.println("ggaga");
             FileInputStream fis = new FileInputStream("invitations.dat");
             ObjectInputStream oos = new ObjectInputStream(fis);
             RmiServer.invitations = (ArrayList<Invite>) oos.readObject();

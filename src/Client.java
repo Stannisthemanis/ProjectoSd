@@ -20,7 +20,7 @@ public class Client {
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
-        HOSTNAME = new String[]{"Roxkax", "ricardo"};
+        HOSTNAME = new String[]{"localhost", "Roxkax", "ricardo"};
         SERVERSOCKET = 6000;
         connect(0);
 //        try { //store IN files
@@ -47,13 +47,13 @@ public class Client {
                 }
 
 //            SOCKET = new Socket("Roxkax", SERVERSOCKET);
-            SOCKET = new Socket(HOSTNAME[i % 2], SERVERSOCKET);
+            SOCKET = new Socket(HOSTNAME[i % 3], SERVERSOCKET);
             IN = new DataInputStream(SOCKET.getInputStream());
             OUT = new DataOutputStream(SOCKET.getOutputStream());
 //            System.out.println("socket: " + SOCKET);
             loginMenu();
         } catch (IOException e) {
-            connect((i + 1) % 2);
+            connect((i + 1) % 3);
         }
     }
 
@@ -524,6 +524,7 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n");
                     System.out.println(requestMessagesFromAgendaItem(optMeeting, optItem));
+
                     chat(optMeeting, optItem);
                     requestLeaveChat(optMeeting, optItem);
                 }
