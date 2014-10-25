@@ -1139,6 +1139,7 @@ class Connection extends Thread {
                     return;
                 }
             }
+            sucess = true;
         }
     }
 
