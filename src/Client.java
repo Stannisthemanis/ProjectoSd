@@ -20,7 +20,7 @@ public class Client {
         USERNAME = null;
         PASSWORD = null;
         SOCKET = null;
-        HOSTNAME = new String[]{"localhost","ricardo","Roxkax"};
+        HOSTNAME = new String[]{"localhost", "ricardo", "Roxkax"};
         SERVERSOCKET = 6000;
         System.out.println("Connecting to sever, please wait.");
         System.out.println("\n\n\n\n\n\n");
@@ -102,7 +102,7 @@ public class Client {
                             if (!logIn) {
                                 do {
 
-                                    System.out.println("\nLogin failed, please try again? (y/n)");
+                                    System.out.println("\nUser invalid or allready logged in, try again? (y/n)");
                                     tryagain = SC.nextLine();
                                     System.out.println();
                                 } while (!tryagain.equalsIgnoreCase("y") && !tryagain.equalsIgnoreCase("n"));
@@ -202,6 +202,13 @@ public class Client {
         String options = requestMessages();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        System.out.println(size);
+        if (size == 1 && countOptions[0].equals("")) {
+            System.out.println("You have no message");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         do {
             System.out.println(options); //display all messages
             System.out.println("0-> Back");
@@ -222,18 +229,17 @@ public class Client {
             System.out.println(requestResumeMesage(optUm));
             System.out.println("Do you accept this invite? (y/n)");
             dec = SC.next();
-            dec = dec.toLowerCase();
             //reply
-            if (dec.equals("y")) {
+            if (dec.equalsIgnoreCase("y")) {
                 aux = replyInvite(true);
                 System.out.println("Invite accept with success!\n");
                 break;
-            } else if (dec.equals("n")) {
+            } else if (dec.equalsIgnoreCase("n")) {
                 aux = replyInvite(false);
                 System.out.println("Invite not accepted...\n");
                 break;
             }
-            } while (true);
+        } while (true);
     }
 
     public static void subMenuMeetings() {
@@ -297,7 +303,7 @@ public class Client {
         String options = requestUpcomingMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
             System.out.println("Press any key to return");
             SC.next();
@@ -313,7 +319,8 @@ public class Client {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
-        }while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        }
+        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optUm = Integer.parseInt(optionString);
 
         do {
@@ -338,46 +345,47 @@ public class Client {
                 System.out.println("Wrong optionhhhh");
             }
             System.out.println("while");
-        }while (!isNumeric(optionString) || optionString.length() == 0) ;
-            optAi = Integer.parseInt(optionString);
-            if (optAi == 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+        } while (!isNumeric(optionString) || optionString.length() == 0);
+        optAi = Integer.parseInt(optionString);
+        if (optAi == 0) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
 
+        }
+        switch (optAi) {
+            case 1: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Consult Agenda Items: ");
+                SubMenuConsultAgendaItemsUM(optUm);
             }
-            switch (optAi) {
-                case 1: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Consult Agenda Items: ");
-                    SubMenuConsultAgendaItemsUM(optUm);
-                }
-                break;
-                case 2: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    addItemstoAgenda(optUm);
-                }
-                break;
-                case 3: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Modify items IN agenda: ");
-                    subMenuModifyAgendaItem(optUm);
-                }
-                break;
-                case 4: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Delete items from agenda: ");
-                    subMenuDeleteItemstFromAgenda(optUm);
-                }
-                case 5:{
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Inviting new user ");
-                    subMenuInviteNewUser(optUm);
-                }break;
-                default: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Wrong option");
-                }
-                break;
+            break;
+            case 2: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                addItemstoAgenda(optUm);
             }
+            break;
+            case 3: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Modify items IN agenda: ");
+                subMenuModifyAgendaItem(optUm);
+            }
+            break;
+            case 4: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Delete items from agenda: ");
+                subMenuDeleteItemstFromAgenda(optUm);
+            }
+            case 5: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Inviting new user ");
+                subMenuInviteNewUser(optUm);
+            }
+            break;
+            default: {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+            break;
+        }
 //        } while (true);
     }
 
@@ -388,7 +396,7 @@ public class Client {
         String[] countOptions = options.split("\n");
         size = countOptions.length;
 //        System.out.println("size-> "+size);
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
             System.out.println("Press any key to return");
             SC.next();
@@ -474,7 +482,7 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No items found");
             System.out.println("Press any key to return");
             SC.next();
@@ -504,7 +512,7 @@ public class Client {
         String options = requestAgendaItemsFromCurrentMeetings(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No items found");
             System.out.println("Press any key to return");
             SC.next();
@@ -575,7 +583,7 @@ public class Client {
         String options = requestPastMeetings();
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
             System.out.println("Press any key to return");
             SC.next();
@@ -587,12 +595,12 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) ||  optionString.length() == 0 ||(Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while (!isNumeric(optionString) ||  optionString.length() == 0 ||(Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optUm = Integer.parseInt(optionString);
         do {
             if (optUm == 0) {
@@ -650,7 +658,7 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No Items found");
             System.out.println("Press any key to return");
             SC.next();
@@ -678,6 +686,12 @@ public class Client {
         String options = requestActionItemsFromUser(), optionString;
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if (size == 1 && countOptions[0].equals("")) {
+            System.out.println("You have nothing on your TODO list");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         do {
             System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
@@ -748,18 +762,18 @@ public class Client {
         } while (true);
     }
 
-    public static void subMenuInviteNewUser(int optMeeting){
+    public static void subMenuInviteNewUser(int optMeeting) {
         String userName;
-        do{
+        do {
             System.out.println("User to intive: ");
-            userName=SC.nextLine();
-            if (!testIfUserNamesExists(userName) || userName.length()==0){
+            userName = SC.nextLine();
+            if (!testIfUserNamesExists(userName) || userName.length() == 0) {
                 System.out.println("\n Name does not exist, try again\n");
             }
-        }while(!testIfUserNamesExists(userName) || userName.length()==0);
+        } while (!testIfUserNamesExists(userName) || userName.length() == 0);
         System.out.println(".....");
-        boolean success = requestInviteNewUser(optMeeting,userName);
-        if(success)
+        boolean success = requestInviteNewUser(optMeeting, userName);
+        if (success)
             System.out.println("\n User invited with success! ");
         else
             System.out.println("\n User is already invited...");
@@ -1224,7 +1238,7 @@ public class Client {
     }
 
     public static boolean requestInviteNewUser(int optmeeting, String username) {
-        boolean success=false;
+        boolean success = false;
         try {
             System.out.println("28");
             OUT.write(28);
@@ -1370,7 +1384,7 @@ public class Client {
         do {
             System.out.print("Guests (g1,g2,...): ");
             guests = SC.nextLine();
-            if (guests == null || guests.length()==0){
+            if (guests == null || guests.length() == 0) {
                 guests = "none";
                 break;
             }
@@ -1385,7 +1399,7 @@ public class Client {
         do {
             System.out.print("Duration in minutes: ");
             dur = SC.nextLine();
-            if (!isNumeric(dur) || dur.length()==0) {
+            if (!isNumeric(dur) || dur.length() == 0) {
                 System.out.println("\nBad format, try again: ");
             }
         } while (!isNumeric(dur));
@@ -1639,7 +1653,8 @@ class ReadingThread extends Thread {
         try {
             while (isRunning) {
                 System.out.println(din.readUTF());
-                System.out.print(">>: ");
+                if (isRunning == true)
+                    System.out.print(">>: ");
             }
         } catch (IOException e) {
             isRunning = false;

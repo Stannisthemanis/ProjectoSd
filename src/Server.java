@@ -97,7 +97,6 @@ public class Server {
 
         //Aceitar novas connecçoes de cliente e ligar com elas
         while (true) {
-            System.out.println("Aqui");
             Socket clientSocket = listenSocket.accept();
             System.out.println("\n->> Server: Client connected with SOCKET " + clientSocket);
             new Connection(clientSocket);
@@ -106,14 +105,13 @@ public class Server {
 
     public static void connectToRmi() throws IOException {
         //Acesso ao servidor rmi
-        String rmiHost[] = {"Roxkax", "ricardo"};
+        String rmiHost[] = {"localhost", "Roxkax", "ricardo"};
         boolean connected = false;
         int i = 0;
         while (connected == false) {
-            i++;
-            System.out.println(i);
+            i = (i + 1) % 3;
             try {
-                dataBaseServer = (RmiServerInterface) Naming.lookup("rmi://" + rmiHost[i % 2] + ":1099/DataBase");
+                dataBaseServer = (RmiServerInterface) Naming.lookup("rmi://" + rmiHost[i] + ":1099/DataBase");
                 connected = true;
             } catch (MalformedURLException e) {
                 System.out.println("->> URL Server: Registing to rmiServer " + e.getMessage());
@@ -235,27 +233,36 @@ class Connection extends Thread {
             Server.onlineUsers.add(this); //
             this.start();
         } catch (IOException e) {
-            Server.onlineUsers.remove(this);
             System.out.println("\n*** Connection of  " + user + ": " + e.getMessage());
         }
     }
 
     public void run() {
         String read = null;
-        boolean login;
+        boolean login = false;
+        boolean allReadyLogged = false;
         while (user == null) {
             try {
-                System.out.println(read);
-                if (read == null)
+                allReadyLogged = false;
+                if (read == null) {
                     read = in.readUTF();
+                }
+                System.out.println(read);
                 if (read.split(",").length == 1) {
                     out.writeBoolean(Server.dataBaseServer.findUser(read) != null);
                     read = null;
                 } else if (read.split(",").length == 2) {
                     login = Server.dataBaseServer.checkLogin(read.split(",")[0], read.split(",")[1]);
-                    out.writeBoolean(login);
-                    if (login) {
+                    for (Connection onUser : Server.onlineUsers) {
+                        if (onUser.user != null && onUser.user.equals(read.split(",")[0])) {
+                            allReadyLogged = true;
+                        }
+                    }
+                    if (login == true && allReadyLogged == false) {
                         this.user = Server.dataBaseServer.findUser(read.split(",")[0]).getUserName();
+                        out.writeBoolean(true);
+                    } else {
+                        out.writeBoolean(false);
                     }
                     read = null;
                 } else if (read.split(",").length == 6) {
@@ -279,6 +286,7 @@ class Connection extends Thread {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Testing login.." + e.getMessage());
                     return;
                 }
@@ -287,7 +295,9 @@ class Connection extends Thread {
         System.out.println("->> Server: " + user + " connected");
         int request = 0;
         while (true) {
-            System.out.println("waintg request");
+            for (Connection onlineUser : Server.onlineUsers) {
+                System.out.println(onlineUser.user);
+            }
             try {
                 if (request == 0)
                     request = in.read();
@@ -409,13 +419,19 @@ class Connection extends Thread {
                 System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
                 return;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
+                    try {
+                        Server.dataBaseServer.tryRemoveFromChats(user);
+                    } catch (RemoteException e1) {
+                        System.out.println("\n*** removing from chat");
+                    }
                     System.out.println("\n*** IO Receiving request from " + user + ": " + e.getMessage());
                     return;
                 }
@@ -443,13 +459,14 @@ class Connection extends Thread {
                 }
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Reply new meeting creating by " + user + ": " + e.getMessage());
                     return;
                 }
@@ -467,13 +484,14 @@ class Connection extends Thread {
                 System.out.println("-> sended.....");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying upcuming meeting by " + user + ": " + e.getMessage());
                     return;
                 }
@@ -490,13 +508,14 @@ class Connection extends Thread {
                 out.writeUTF(Server.dataBaseServer.getPassedMeetings(user));
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying passed Meeting: " + e.getMessage());
                     return;
                 }
@@ -513,13 +532,14 @@ class Connection extends Thread {
                 out.writeUTF(Server.dataBaseServer.getCurrentMeetings(user));
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying current meeting by " + user + ": " + e.getMessage());
                     return;
                 }
@@ -541,13 +561,14 @@ class Connection extends Thread {
                 out.writeUTF(Server.dataBaseServer.getMeetingInfo(flag, meeting, this.user));
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying to send info of meeting to " + user + ": " + e.getMessage());
                     return;
                 }
@@ -571,13 +592,14 @@ class Connection extends Thread {
                 System.out.println("->> Server Info send with sucess..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Receiving meeting number for agenda item... " + e.getMessage());
                     return;
                 }
@@ -595,13 +617,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: Messages send with sucess ");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Sending messages: " + e.getMessage());
                     return;
                 }
@@ -631,13 +654,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: Answer received with sucess");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying to message: " + e.getMessage());
                     return;
                 }
@@ -654,13 +678,14 @@ class Connection extends Thread {
                 out.write(Server.dataBaseServer.getNumberOfMessages(user));
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Sending number of messages of USER " + user + ":" + e.getMessage());
                     return;
                 }
@@ -686,13 +711,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: New agenda item added with sucess ..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
                     return;
                 }
@@ -718,13 +744,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: Agenda item removed with sucess ..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
                     return;
                 }
@@ -752,13 +779,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: Agenda item changed with sucess ..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
                     return;
                 }
@@ -787,13 +815,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: Agenda item changed with sucess ..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
                     return;
                 }
@@ -818,13 +847,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: New action item added with sucess ..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Server: Adding new actionItem " + e.getMessage());
                     return;
                 }
@@ -841,13 +871,14 @@ class Connection extends Thread {
                 out.write(Server.dataBaseServer.getSizeOfTodo(user));
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("*** Server: Sending number of action itens of USER " + user);
                     return;
                 }
@@ -866,13 +897,14 @@ class Connection extends Thread {
                 System.out.println("->> Server: actions send with sucess ");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Sending actionItens of USER: " + e.getMessage());
                     return;
                 }
@@ -905,13 +937,14 @@ class Connection extends Thread {
                 }
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Replying to message: " + e.getMessage());
                     return;
                 }
@@ -937,13 +970,14 @@ class Connection extends Thread {
                 System.out.println("->> Server Info send with sucess..");
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Receiving meeting number for action item... " + e.getMessage());
                     return;
                 }
@@ -984,16 +1018,16 @@ class Connection extends Thread {
                         System.out.println("->> Server: Broadcasting message to " + outs.user);
                         outs.out.writeUTF("\n>>: \n*** " + user + " as entered the chat \n***");
                     }
-
                     sucess = true;
                 } catch (IOException e) {
-                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                         try {
                             Server.connectToRmi();
                         } catch (IOException e1) {
                             System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                         }
                     } else {
+                        Server.onlineUsers.remove(this);
                         System.out.println("\n*** Server: Adding new agendaItem " + e.getMessage());
                         return;
                     }
@@ -1046,13 +1080,14 @@ class Connection extends Thread {
                         System.out.println("->> Server: Message sended with sucess ..");
                     sucess = true;
                 } catch (IOException e) {
-                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                    if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                         try {
                             Server.connectToRmi();
                         } catch (IOException e1) {
                             System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                         }
                     } else {
+                        Server.onlineUsers.remove(this);
                         System.out.println("\n*** Server: Adding new message " + e.getMessage());
                         return;
                     }
@@ -1067,7 +1102,7 @@ class Connection extends Thread {
         boolean sucess = false;
         while (sucess == false) {
             try {
-                out.writeUTF("Thread leaving");
+                out.writeUTF("");
                 System.out.println("\n->> Server: leaving chat ..");
                 System.out.println("->> Server: leaving chat n meeting..");
                 if (n == -1)
@@ -1079,13 +1114,14 @@ class Connection extends Thread {
                 Server.dataBaseServer.removeClientFromChat(n, numAgendaItem, user);
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** removing from chat" + e.getMessage());
                     return;
                 }
@@ -1111,13 +1147,14 @@ class Connection extends Thread {
                 sucess = true;
                 System.out.println("->> Server: Agenda item messages sended with sucess ..");
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Sending pass Meeting history chat " + e.getMessage());
                     return;
                 }
@@ -1137,13 +1174,14 @@ class Connection extends Thread {
                     invitedUser = in.readUTF();
                 out.writeBoolean(Server.dataBaseServer.inviteUserToMeeting(n, invitedUser, user));
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n*** Inviting to meeting " + e.getMessage());
                     return;
                 }
@@ -1163,13 +1201,14 @@ class Connection extends Thread {
                 out.writeBoolean(Server.dataBaseServer.findUser(name) != null);
                 sucess = true;
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
                     try {
                         Server.connectToRmi();
                     } catch (IOException e1) {
                         System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
                     }
                 } else {
+                    Server.onlineUsers.remove(this);
                     System.out.println("\n *** testing if user exists" + e.getMessage());
                     return;
                 }

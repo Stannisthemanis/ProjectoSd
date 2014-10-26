@@ -4,25 +4,18 @@ ProjectoSd
 Projecto bueda fixe
 
 TODO fixe:
-- ver qd o rmi vai abaixo
 - mensagem ao fim de muito tempo sem server
 - erros de sc.next...
 - melhor reconeccao do chat -> marquisse
-- melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
 - impar cmentarios desnecessarios / codigo antigo
 - por o welcom uuuser
-- invitar alguem para entrar na reuniao depois de criada
 - sincronizacao
 - deixar nao convidar nenhum user ao criar meeting
-- mandar quando nao existe mensagens
 - relatorio...
 - por o please wait quando se reconecta
 - fazer fucherios de dados em condições
 -tirar prints estupidos
-- remover cliente do chat qd ele vai abaixo
-- botar o ligando ao server-.. **DONE
-- erro na escolha das meetings **DONE
 ver ficheiros
 
 
