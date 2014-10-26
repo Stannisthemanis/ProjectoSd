@@ -354,41 +354,35 @@ public class Client {
 
         }
         switch (optAi) {
-            case 1: {
+            case 1:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Consult Agenda Items: ");
                 SubMenuConsultAgendaItemsUM(optUm);
-            }
-            break;
-            case 2: {
+                break;
+            case 2:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 addItemstoAgenda(optUm);
-            }
-            break;
-            case 3: {
+                break;
+            case 3:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Modify items IN agenda: ");
                 subMenuModifyAgendaItem(optUm);
-            }
-            break;
-            case 4: {
+                break;
+            case 4:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Delete items from agenda: ");
                 subMenuDeleteItemstFromAgenda(optUm);
-            }
-            case 5: {
+                break;
+            case 5:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Inviting new user ");
                 subMenuInviteNewUser(optUm);
-            }
-            break;
-            default: {
+                break;
+            default:
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
-            }
-            break;
+                break;
         }
-//        } while (true);
     }
 
     public static void SubMenuCurrentMeetings() {
@@ -398,7 +392,7 @@ public class Client {
         String[] countOptions = options.split("\n");
         size = countOptions.length;
 //        System.out.println("size-> "+size);
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
             System.out.println("Press any key to return");
             SC.next();
@@ -467,6 +461,80 @@ public class Client {
         } while (true);
     }
 
+    public static void SubMenupPastMeetings() {
+        int size, optUm, optAi;
+        System.out.println("All past meetings: ");
+        String options = requestPastMeetings();
+        String[] countOptions = options.split("\n");
+        size = countOptions.length;
+        if (size == 1 && countOptions[0].equals("")) {
+            System.out.println("No meetings found");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
+        String optionString;
+        do {
+            System.out.println(options); //display name of all upcoming meetings
+            System.out.println("0-> Back");
+            System.out.print("Choose an option: ");
+            optionString = SC.nextLine();
+            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                System.out.println("Wrong option");
+            }
+        }
+        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        optUm = Integer.parseInt(optionString);
+        do {
+            if (optUm == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            do {
+                System.out.println("Resume from meeting " + optUm);
+                System.out.println("\n" + requestResumePastMeeting(optUm) + "\n"); // resume of chosen meeting
+                System.out.println("\nOptions from meeting " + optUm);
+                System.out.println("1-> Consult Agenda Items");
+                System.out.println("2-> Consult Action Items");
+                System.out.println("0-> Back");
+                System.out.println("Choose an option: ");
+                optionString = SC.nextLine();
+                if (!isNumeric(optionString) || optionString.length() == 0) {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+            }
+            while (!isNumeric(optionString) || optionString.length() == 0);
+            optAi = Integer.parseInt(optionString);
+            if (optAi == 0) {
+                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                break;
+            }
+            switch (optAi) {
+                case 1: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Consult Agenda Items: ");
+                    SubMenuConsultAgendaItemsPM(optUm);
+                }
+                break;
+                case 2: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Consult Action Items: ");
+                    System.out.println(requestActionItemsPastMeeting(optUm));
+                    System.out.println("Press any key to continue...");
+                    SC.nextLine();
+                }
+                break;
+                default: {
+                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+                    System.out.println("Wrong option");
+                }
+                break;
+            }
+        } while (true);
+    }
+
     public static void SubMenuConsultAgendaItemsUM(int opt) {
         String options = requestAgendaItemsFromUpComingMeeting(opt);
         do {
@@ -484,7 +552,7 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if(size==1 && countOptions[0].equals("")){
+        if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No items found");
             System.out.println("Press any key to return");
             SC.next();
@@ -579,81 +647,6 @@ public class Client {
         } while (true);
     }
 
-    public static void SubMenupPastMeetings() {
-        int size, optUm, optAi;
-        System.out.println("All past meetings: ");
-        String options = requestPastMeetings();
-        String[] countOptions = options.split("\n");
-        size = countOptions.length;
-        if (size == 1 && countOptions[0].equals("")) {
-            System.out.println("No meetings found");
-            System.out.println("Press any key to return");
-            SC.next();
-            return;
-        }
-        String optionString;
-        do {
-            System.out.println(options); //display name of all upcoming meetings
-            System.out.println("0-> Back");
-            System.out.print("Choose an option: ");
-            optionString = SC.nextLine();
-            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                System.out.println("Wrong option");
-            }
-        }
-        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
-        optUm = Integer.parseInt(optionString);
-        do {
-            if (optUm == 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
-            }
-            do {
-                System.out.println("Resume from meeting " + optUm);
-                System.out.println("\n" + requestResumePastMeeting(optUm) + "\n"); // resume of chosen meeting
-                System.out.println("\nOptions from meeting " + optUm);
-                System.out.println("1-> Consult Agenda Items");
-                System.out.println("2-> Consult Action Items");
-                System.out.println("0-> Back");
-                System.out.println("Choose an option: ");
-                optionString = SC.nextLine();
-                if (!isNumeric(optionString) || optionString.length() == 0) {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Wrong option");
-                }
-            }
-            while (!isNumeric(optionString) || optionString.length() == 0);
-            optAi = Integer.parseInt(optionString);
-            if (optAi == 0) {
-                System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                break;
-            }
-            switch (optAi) {
-                case 1: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Consult Agenda Items: ");
-                    SubMenuConsultAgendaItemsPM(optUm);
-                }
-                break;
-                case 2: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Consult Action Items: ");
-                    System.out.println(requestActionItemsPastMeeting(optUm));
-                    System.out.println("Press any key to continue...");
-//                    SC.next();
-                    SC.nextLine();
-                }
-                break;
-                default: {
-                    System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
-                    System.out.println("Wrong option");
-                }
-                break;
-            }
-        } while (true);
-    }
-
     public static void subMenuModifyAgendaItem(int optMeeting) {
         int optItemtoModify, size;
         String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
@@ -687,17 +680,23 @@ public class Client {
         String options = requestActionItemsFromUser(), optionString;
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        if (size == 1 && countOptions[0].equals("")) {
+            System.out.println("You have no message");
+            System.out.println("Press any key to return");
+            SC.next();
+            return;
+        }
         do {
             System.out.println(options); //display name of all upcoming meetings
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > requestSizeToDo()) || optionString.length() == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > requestSizeToDo()) || optionString.length() == 0);
         optActionItem = Integer.parseInt(optionString);
         do {
             boolean aux = false;
@@ -959,7 +958,7 @@ public class Client {
     public static String requestActionItemsPastMeeting(int opt) {
         String result = "";
         try {
-            OUT.write(22);
+            OUT.write(29);
         } catch (Exception e) {
             connect(0);
             return requestActionItemsPastMeeting(opt);
@@ -968,7 +967,6 @@ public class Client {
         try {
             OUT.write(opt);
             result = IN.readUTF();
-            System.out.println("->"+result);
         } catch (IOException e) {
             connect(0);
             return requestActionItemsPastMeeting(opt);
@@ -1420,7 +1418,6 @@ public class Client {
         String[] countOptions = options.split("\n");
         size = countOptions.length;
         options = options.replaceAll("Any other businness", "");
-
         do {
             for (int i = 0; i < size - 1; i++) {
                 System.out.println(countOptions[i]);
@@ -1429,7 +1426,6 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optString = SC.nextLine();
-
             if (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size - 1))) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
@@ -1438,6 +1434,9 @@ public class Client {
         }
         while (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size - 1)));
         optItemtoDelete = Integer.parseInt(optString);
+        if (optItemtoDelete == 0) {
+            return;
+        }
         String deleteConfirm = "";
         do {
             System.out.println("Delete this item? (y/n)");

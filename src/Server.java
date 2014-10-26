@@ -129,55 +129,32 @@ public class Server {
 
     private static String mainIsRunning() {
         int serverPort = 6000;
-        Socket test;
+        Socket test = null;
         InetAddress hostTest;
-        int flag;
+        String hostname = null;
         try {
-            hostTest = InetAddress.getByName("Roxkax");
-            flag = 0;
-        } catch (UnknownHostException e) {
+            test = new Socket("localhost", serverPort);
+            hostname = "localhost";
+        } catch (IOException e) {
             try {
-                hostTest = InetAddress.getByName("ricardo");
-                flag = 1;
-            } catch (UnknownHostException e1) {
-                flag = 2;
-                System.out.println("ggajgaj");
-            }
-        }
-
-        if (flag == 0) {
-            try {
-                test = new Socket("localhost", serverPort);
-                return "localhost";
-            } catch (IOException e) {
-                System.out.println("1-" + e.getMessage());
+                test = new Socket("Roxkax", serverPort);
+                hostname = "Roxkax";
+            } catch (IOException e1) {
                 try {
                     test = new Socket("ricardo", serverPort);
-                    return "ricardo";
-                } catch (IOException e1) {
-                    System.out.println("2-" + e.getMessage());
-                    return null;
+                    hostname = "ricardo";
+                } catch (IOException e2) {
+                    hostname = null;
                 }
             }
-
-        } else if (flag == 1) {
-            try {
-                test = new Socket("localhost", serverPort);
-                return "localhost";
-            } catch (IOException e) {
-                System.out.println("1-" + e.getMessage());
-                try {
-                    test = new Socket("Roxkax", serverPort);
-                    return "Roxkax";
-                } catch (IOException e1) {
-                    System.out.println("2-" + e.getMessage());
-                    return null;
-                }
-            }
-        } else {
-            System.out.println("gjajga");
-            return null;
         }
+        if (test != null)
+            try {
+                test.close();
+            } catch (IOException e) {
+                System.out.println("*** Closing test socket" + e.getMessage());
+            }
+        return hostname;
     }
 }
 
@@ -233,6 +210,7 @@ class Connection extends Thread {
             Server.onlineUsers.add(this); //
             this.start();
         } catch (IOException e) {
+            Server.onlineUsers.remove(this);
             System.out.println("\n*** Connection of  " + user + ": " + e.getMessage());
         }
     }
@@ -279,11 +257,13 @@ class Connection extends Thread {
                 }
 
             } catch (IOException e) {
-                if (e.getCause().toString().equals(Server.rmiConnectionException)) {
-                    try {
-                        Server.connectToRmi();
-                    } catch (IOException e1) {
-                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                if (e.getCause() != null) {
+                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                        try {
+                            Server.connectToRmi();
+                        } catch (IOException e1) {
+                            System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                        }
                     }
                 } else {
                     Server.onlineUsers.remove(this);
@@ -387,7 +367,7 @@ class Connection extends Thread {
                         request = 0;
                         break;
                     case 22:
-                        replyActionItensFromMeeting();
+                        replyActionItensFromMeeting(1);
                         request = 0;
                         break;
                     case 23:
@@ -414,16 +394,22 @@ class Connection extends Thread {
                         replyInviteToMeeting();
                         request = 0;
                         break;
+                    case 29:
+                        replyActionItensFromMeeting(2);
+                        request = 0;
+                        break;
                 }
             } catch (EOFException e) {
                 System.out.println("\n*** EOF Receiving request from " + user + ": " + e.getMessage());
                 return;
             } catch (IOException e) {
-                if (e.getCause() != null && e.getCause().toString().equals(Server.rmiConnectionException)) {
-                    try {
-                        Server.connectToRmi();
-                    } catch (IOException e1) {
-                        System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                if (e.getCause() != null) {
+                    if (e.getCause().toString().equals(Server.rmiConnectionException)) {
+                        try {
+                            Server.connectToRmi();
+                        } catch (IOException e1) {
+                            System.out.println("*** Reconnecting to rmiServer" + e1.getMessage());
+                        }
                     }
                 } else {
                     Server.onlineUsers.remove(this);
@@ -954,20 +940,19 @@ class Connection extends Thread {
 
     }
 
-    public void replyActionItensFromMeeting() {
+    public void replyActionItensFromMeeting(int flag) {
         System.out.println("\n->> Server: Received request to send action itens from a meeting by " + user);
         int n = -1;
         boolean sucess = false;
         while (sucess == false) {
             try {
-                out.writeBoolean(true);
                 System.out.println("->> Server: Wainting for info meeting...");
                 if (n == -1) {
                     n = in.read();
                 }
                 System.out.println("->> Server: Sending agenda itens of meeting.. ");
-                System.out.println("ii-> "+Server.dataBaseServer.getActionItensFromMeeting(n, user));
-                out.writeUTF(Server.dataBaseServer.getActionItensFromMeeting(n, user));
+                System.out.println("ii-> " + Server.dataBaseServer.getActionItensFromMeeting(n, user, flag));
+                out.writeUTF(Server.dataBaseServer.getActionItensFromMeeting(n, user, flag));
                 System.out.println("->> Server Info send with sucess..");
                 sucess = true;
             } catch (IOException e) {

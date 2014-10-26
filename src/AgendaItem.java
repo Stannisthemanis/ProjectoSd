@@ -21,10 +21,10 @@ public class AgendaItem implements Serializable {
         return ItemToDiscuss;
     }
 
-    public String getUsersOnChat(){
-        String aux="";
+    public String getUsersOnChat() {
+        String aux = "";
         for (String s : clientsOnChat) {
-            aux+=s+"\n";
+            aux += s + "\n";
         }
         return aux;
     }
@@ -50,10 +50,14 @@ public class AgendaItem implements Serializable {
     }
 
     public String getMessages() {
-        String chatHistory = "";
+        String chatHistory = null;
         for (String s : this.chat) {
+            if (chatHistory == null)
+                chatHistory = "";
             chatHistory += s + "\n";
         }
+        if (chatHistory == null)
+            chatHistory = "There is no messages in this agenda item";
         return chatHistory;
     }
 

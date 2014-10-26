@@ -445,7 +445,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
-    public String getActionItensFromMeeting(int nMeeting, String user) throws RemoteException {
+    public String getActionItensFromMeeting(int nMeeting, String user, int flag) throws RemoteException {
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
