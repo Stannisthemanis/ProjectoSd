@@ -1258,7 +1258,7 @@ public class Client {
         String userName, passWord, address, dob, phoneNumer, mail, finalInfo = "";
         boolean testName = false, testDob = false;
         System.out.println("Register new USER\n");
-        SC.nextLine();
+//        SC.nextLine();
         do {
             System.out.println("Insert USER name:");
             userName = SC.nextLine();
@@ -1342,7 +1342,7 @@ public class Client {
     }
 
     public static void creatNewMeeting() {
-        String responsible, desireOutCome, local, title, date = "", guests = null, agendaItems, request, dur;
+        String responsible="", desireOutCome="", local, title, date = "", guests = null, agendaItems, request, dur;
         int duration;
         responsible = USERNAME;
         System.out.print("Title: ");
@@ -1442,7 +1442,7 @@ public class Client {
         do {
             System.out.println("Delete this item? (y/n)");
             deleteConfirm = SC.nextLine();
-        } while (!deleteConfirm.equals("y") && !deleteConfirm.equals("n"));
+        } while (!deleteConfirm.equals("y") || !deleteConfirm.equals("n"));
         System.out.println("------------------");
         if (deleteConfirm.equalsIgnoreCase("y")) {
             boolean success = requestDeleteItemToAgenda(optMeeting, optItemtoDelete);
