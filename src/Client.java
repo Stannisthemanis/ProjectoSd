@@ -474,6 +474,7 @@ public class Client {
         String options = requestAgendaItemsFromPastMeeting(opt);
         String[] countOptions = options.split("\n");
         size = countOptions.length;
+        System.out.println("-> "+size);
         if(size==1 && countOptions[0].equals("")){
             System.out.println("No items found");
             System.out.println("Press any key to return");
@@ -486,12 +487,12 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
+            if (!isNumeric(optionString) || optionString.equals("") || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
+        while (!isNumeric(optionString) || optionString.equals("") || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optUm = Integer.parseInt(optionString);
         System.out.println(resquestChatFromItemPastMeeting(opt, optUm));
         System.out.println("Press any key to continue...");
@@ -623,7 +624,6 @@ public class Client {
                 case 1: {
                     System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                     System.out.println("Consult Agenda Items: ");
-                    //System.OUT.println("Under construction... sorry :( \n\n");
                     SubMenuConsultAgendaItemsPM(optUm);
                 }
                 break;
@@ -843,7 +843,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestAgendaItemsFromUpComingMeeting(opt);
@@ -862,7 +862,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestAgendaItemsFromPastMeeting(opt);
@@ -880,7 +880,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestAgendaItemsFromCurrentMeetings(opt);
@@ -898,7 +898,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestResumeUpcumingMeeting(opt);
@@ -918,7 +918,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestResumePastMeeting(opt);
@@ -938,7 +938,7 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestResumeMesage(opt);
@@ -958,7 +958,8 @@ public class Client {
         }
         try {
             OUT.write(opt);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
+            System.out.println("->"+result);
         } catch (IOException e) {
             connect(0);
             return requestActionItemsPastMeeting(opt);
@@ -979,7 +980,7 @@ public class Client {
         try {
             OUT.write(optMeeting);
             OUT.write(optItem);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return resquestChatFromItemPastMeeting(optMeeting, optItem);
@@ -1153,7 +1154,7 @@ public class Client {
         }
         try {
             OUT.write(optCurrentMeeting);
-            result = IN.readUTF(IN);
+            result = IN.readUTF();
         } catch (IOException e) {
             connect(0);
             return requestResumeCurrentMeetings(optCurrentMeeting);
@@ -1164,27 +1165,19 @@ public class Client {
     public static String requestMessagesFromAgendaItem(int optCurrentMeeting, int optItem) {
         String result = "";
         try {
-            System.out.println("1");
             OUT.write(23);
         } catch (Exception e) {
-            System.out.println("err2");
             connect(0);
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
         }
         try {
-            System.out.println("3");
             OUT.write(optCurrentMeeting);
-            System.out.println("4");
             OUT.write(optItem);
-            System.out.println("5");
             result = IN.readUTF();
-            System.out.println("read");
         } catch (IOException e) {
-            System.out.println("err6");
             return requestMessagesFromAgendaItem(optCurrentMeeting, optItem);
 
         }
-        System.out.println("7");
         return result;
     }
 

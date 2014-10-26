@@ -933,6 +933,7 @@ class Connection extends Thread {
                     n = in.read();
                 }
                 System.out.println("->> Server: Sending agenda itens of meeting.. ");
+                System.out.println("ii-> "+Server.dataBaseServer.getActionItensFromMeeting(n, user));
                 out.writeUTF(Server.dataBaseServer.getActionItensFromMeeting(n, user));
                 System.out.println("->> Server Info send with sucess..");
                 sucess = true;

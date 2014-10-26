@@ -646,8 +646,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 //        try { //store IN files
 //            Save.storeInFiles();
 //        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
     }
 
     public static void displayAllAL() {
