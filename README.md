@@ -6,7 +6,7 @@ Projecto bueda fixe
 TODO fixe:
 - ver qd o rmi vai abaixo
 - mensagem ao fim de muito tempo sem server
-- erros de sc.next... **DONE
+- erros de sc.next...
 - melhor reconeccao do chat -> marquisse
 - melhor gravar em ficheiro(gravar quando rmiserver vai abaixo)
 - protecçao de dados
@@ -16,13 +16,13 @@ TODO fixe:
 - sincronizacao **DONE
 - deixar nao convidar nenhum user ao criar meeting **DONE
 - mandar quando nao existe mensagens
+- por o welcom uuuser
+- sincronizacao
+- deixar nao convidar nenhum user ao criar meeting
 - relatorio...
 - por o please wait quando se reconecta
 - fazer fucherios de dados em condições
 -tirar prints estupidos
-- remover cliente do chat qd ele vai abaixo
-- botar o ligando ao server-.. **DONE
-- erro na escolha das meetings **DONE
 ver ficheiros
 
 
@@ -52,10 +52,10 @@ REQUEST CODE:
 18- request action as done
 19- request current meetings
 20- request resume current meeting
-21- request agenda items from current meeting
+21-request agenda items from current meeting
 22- request action items from past meetings
 23- request messeges from agenda items
-24- add messeges to agenda items
+24 - add messeges to agenda items
 25- request if name of client exists
-26- request leave chat
-27- request message history past meeting agenda item
+26 - request leave chat
+27 - request message history past meeting agenda item

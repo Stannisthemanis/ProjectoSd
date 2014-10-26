@@ -34,14 +34,15 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         });
         try {
-            Save.loadForAL();
-//            this.firstUse();
+//            Save.loadForAL();
+            this.firstUse();
 //            Save.storeInFiles();
             displayAllAL(); // all info IN the files
 
         } catch (IOException e) {
-        } catch (ClassNotFoundException e) {
         }
+//        catch (ClassNotFoundException e) {
+//        }
     }
 
     public User findUser(String username) throws RemoteException {
@@ -257,7 +258,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         }
         if (output == null)
-            output = "You have no messages";
+            output = "";
         return output;
     }
 
@@ -413,7 +414,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         }
         if (output == null)
-            output = "You have no action to be done";
+            output = "";
         return output;
     }
 
@@ -616,6 +617,18 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         return false;
     }
 
+    public boolean tryRemoveFromChats(String user) throws RemoteException {
+        for (Meeting m : meetings) {
+            for (AgendaItem aItem : m.getAgendaItems()) {
+                if (aItem.isOnChat(user)) {
+                    aItem.removeClientFromChat(user);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public void firstUse() throws RemoteException {
 
         users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));
@@ -628,7 +641,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
         addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2015,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
         addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2015,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-25/10/2014,18:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
+        addNewMeeting("manel-talk about Jon-wall-jonthemannis-26/10/2014,00:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
         addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
         ActionItem teste = new ActionItem("teste", "Jon Snow");
         meetings.get(0).addActionItem(teste);
@@ -659,7 +672,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
 }
-
 
 class Save {
 
