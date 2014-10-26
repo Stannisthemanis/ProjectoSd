@@ -94,7 +94,7 @@ public class Meeting implements Serializable {
     }
 
     public void addAgendaItem(AgendaItem agendaItem, boolean flag) {
-        this.agendaItems.add(this.agendaItems.size()-1,agendaItem);
+        this.agendaItems.add(this.agendaItems.size() - 1, agendaItem);
     }
 
     public void removerAgendaItem(int nAgendaItem) {
@@ -162,8 +162,10 @@ public class Meeting implements Serializable {
             for (ActionItem aItem : actionItems) {
                 outPut += (i++) + aItem.toString();
             }
+            return outPut;
+        } else {
+            return "This meeting have no agenda itens";
         }
-        return outPut;
     }
 
     @Override
@@ -176,6 +178,6 @@ public class Meeting implements Serializable {
                 "END DATE: " + printDate(endDate) +
                 "INVITATIONS: " + printAcceptedUsers() + "\n" +
                 "AGENDA ITEMS:\n" + printAgendaItems() +
-                printActionItens();
+                printActionItens() + "\n\n\n";
     }
 }

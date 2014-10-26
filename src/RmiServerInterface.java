@@ -48,7 +48,7 @@ public interface RmiServerInterface extends Remote {
 
     public boolean setActionAsCompleted(String user, int n) throws RemoteException;
 
-    public String getActionItensFromMeeting(int nMeeting, String user) throws RemoteException;
+    public String getActionItensFromMeeting(int nMeeting, String user, int flag) throws RemoteException;
 
     public String getMessagesFromAgendaItem(int nMeeting, int nAgenda, String user) throws RemoteException;
 
