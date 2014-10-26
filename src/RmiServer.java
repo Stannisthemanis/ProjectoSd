@@ -34,15 +34,15 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
             }
         });
         try {
-//            Save.loadForAL();
-            this.firstUse();
+            Save.loadForAL();
+//            this.firstUse();
 //            Save.storeInFiles();
             displayAllAL(); // all info IN the files
 
         } catch (IOException e) {
         }
-//        catch (ClassNotFoundException e) {
-//        }
+        catch (ClassNotFoundException e) {
+        }
     }
 
     public User findUser(String username) throws RemoteException {
@@ -491,7 +491,7 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     i++;
                 }
                 if (i == nMeeting)
-                    return m.getAgendaItems().get(nAgenda - 1).getMessages();
+                    return m.getAgendaItems().get(nAgenda).getMessages();
             }
         }
         return "There are no messages for this agenda item";
