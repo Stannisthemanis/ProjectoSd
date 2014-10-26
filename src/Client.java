@@ -671,6 +671,10 @@ public class Client {
         }
         while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
         optItemtoModify = Integer.parseInt(optionString);
+        if (optItemtoModify == 0) {
+            System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
+            return;
+        }
         modifyNameFromAgendaItem(optMeeting, optItemtoModify);
     }
 
