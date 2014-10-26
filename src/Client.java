@@ -214,11 +214,12 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || optionString.length() == 0) {
+            if (!isNumeric(optionString) || Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > requestNumberOfMessegesToRead()) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
-        } while (!isNumeric(optionString) || optionString.length() == 0);
+        }
+        while (!isNumeric(optionString) || Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > requestNumberOfMessegesToRead());
         optUm = Integer.parseInt(optionString);
         do {
             if (optUm == 0) {
