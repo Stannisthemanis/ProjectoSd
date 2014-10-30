@@ -205,7 +205,7 @@ public class Client {
         System.out.println(size);
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("You have no message");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -307,7 +307,7 @@ public class Client {
         size = countOptions.length;
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -394,7 +394,7 @@ public class Client {
 //        System.out.println("size-> "+size);
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -469,7 +469,7 @@ public class Client {
         size = countOptions.length;
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No meetings found");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -539,7 +539,7 @@ public class Client {
         String options = requestAgendaItemsFromUpComingMeeting(opt);
         do {
             System.out.println(options); //display name of all agenda items
-            System.out.println("Press any key to return!");
+            System.out.println("Insert any key to return!");
 //            SC.next();
             SC.nextLine();
             System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
@@ -554,7 +554,7 @@ public class Client {
         size = countOptions.length;
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No items found");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -584,7 +584,7 @@ public class Client {
         size = countOptions.length;
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("No items found");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -594,12 +594,12 @@ public class Client {
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
             optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            if (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size)) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
         }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
+        while (!isNumeric(optionString) || optionString.length() == 0 || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size));
         optItem = Integer.parseInt(optionString);
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
         do {
@@ -649,28 +649,28 @@ public class Client {
 
     public static void subMenuModifyAgendaItem(int optMeeting) {
         int optItemtoModify, size;
-        String options = requestAgendaItemsFromUpComingMeeting(optMeeting);
+        String options = requestAgendaItemsFromUpComingMeeting(optMeeting), optString;
         String[] countOptions = options.split("\n");
         size = countOptions.length;
-        if (size == 1 && countOptions[0].equals("")) {
-            System.out.println("No Items found");
-            System.out.println("Press any key to return");
-            SC.next();
-            return;
-        }
-        String optionString;
+        options = options.replaceAll("Any other businness", "");
         do {
-            System.out.println(options); //display name of all upcoming meetings
+            for (int i = 0; i < size - 1; i++) {
+                System.out.println(countOptions[i]);
+            }
+            System.out.println();
             System.out.println("0-> Back");
             System.out.print("Choose an option: ");
-            optionString = SC.nextLine();
-            if (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0) {
+            optString = SC.nextLine();
+            if (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size - 1)) || optString.length() == 0) {
                 System.out.println("\n\n\n\n\n\n\n\n\n\n\n");
                 System.out.println("Wrong option");
             }
+
         }
-        while (!isNumeric(optionString) || (Integer.parseInt(optionString) < 0 || Integer.parseInt(optionString) > size) || optionString.length() == 0);
-        optItemtoModify = Integer.parseInt(optionString);
+        while (!isNumeric(optString) || (Integer.parseInt(optString) < 0 || Integer.parseInt(optString) > (size - 1)) || optString.length() == 0);
+        optItemtoModify = Integer.parseInt(optString);
+        if (optItemtoModify == 0)
+            return;
         modifyNameFromAgendaItem(optMeeting, optItemtoModify);
     }
 
@@ -682,7 +682,7 @@ public class Client {
         size = countOptions.length;
         if (size == 1 && countOptions[0].equals("")) {
             System.out.println("You have no message");
-            System.out.println("Press any key to return");
+            System.out.println("Insert any key to return");
             SC.next();
             return;
         }
@@ -1450,7 +1450,7 @@ public class Client {
             } else {
                 System.out.println("Error deleting Item from Agenda....");
             }
-            System.out.println("Press any key to return ");
+            System.out.println("Insert any key to return ");
             SC.next();
         }
     }
@@ -1469,7 +1469,6 @@ public class Client {
     public static void addNewKeyDecisionToAgendaitem(int optMeeting, int optItemtoAddKeyDecision) {
         String NewKeyDecision;
         System.out.println("New key Decision: ");
-        SC.nextLine();
         NewKeyDecision = SC.nextLine();
         boolean success = requestAddKeyDecisionToAgendaItem(optMeeting, optItemtoAddKeyDecision, NewKeyDecision);
         if (success) {

@@ -36,12 +36,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
         try {
             Save.loadForAL();
 //            this.firstUse();
-//            Save.storeInFiles();
+            Save.storeInFiles();
             displayAllAL(); // all info IN the files
 
         } catch (IOException e) {
-        }
-        catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException e) {
         }
     }
 
@@ -64,8 +63,6 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     public User addNewUser(String newUser) throws RemoteException {
         String[] tokenizer = newUser.split("-");
         String username = tokenizer[0];
-        if (findUser(username) != null)
-            return null;
         String password = tokenizer[1];
         String address = tokenizer[2];
         Date dob = new Date(tokenizer[3]);
@@ -78,6 +75,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public boolean addNewMeeting(String newMeeting) throws RemoteException {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("sleeping..");
+        }
         String[] tokenizer = newMeeting.split("-");
         User responsibleUser = findUser(tokenizer[0]);
         String desireOutcome = tokenizer[1];
@@ -106,6 +108,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                 newInvite = new Invite(meeting, 0, findUser(s));
                 invitations.add(newInvite);
             }
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("sleeping..");
         }
         return true;
 
@@ -515,6 +522,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
     }
 
     public boolean addMessage(int nMeeting, int nAgenda, String user, String message) throws RemoteException {
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("sleeping..");
+        }
         int i = 0;
         Calendar now = Calendar.getInstance();
         now.setTime(new Date());
@@ -529,6 +541,11 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
                     return true;
                 }
             }
+        }
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            System.out.println("sleeping..");
         }
         return false;
     }
@@ -631,21 +648,13 @@ public class RmiServer extends UnicastRemoteObject implements RmiServerInterface
 
     public void firstUse() throws RemoteException {
 
-        users.add(new User("Stannis Baratheon", "root", "Dragonstone/Wall", new Date("10/10/1000"), 912345678, "stannisthemannis@therightfullking@wes"));
-        users.add(new User("Jon Snow", "root", "Winterfell/Wall/The North", new Date("10/10/1000"), 912345678, "JonSnow@bastard.wall"));
-        users.add(new User("Daenerys Targaryen", "root", "Westeros/Pentos/Dothraki_sea/Qarth/Astapor/Yunkai/Meree", new Date("10/10/1000"),
-                912345678, "Daenerys_Stormborn_of_the_House_Targaryen,_the_First_of_Her_Name,_the_Unburnt,_Queen_of_Meereen,_Queen_of_the_Andals_and_the_" +
-                "Rhoynar_and_the_First_Men,_Khaleesi_of_the_Great_Grass_Sea,_Breaker_of_Chains,_and_Mother_of_Dragons@mesedUpGirl.essos"));
-        users.add(new User("Reek", "root", "DreadFort/Winterfell", new Date("10/10/1000"), 912345678, "theycutofmydick@theon.varys"));
-        users.add(new User("manel", "root", "santaterriola", new Date("12/1/2110"), 212233, "manel@tenhodemijar.ja"));
+        addNewUser("Joao Antonio-root-Rua 1-10/10/1992-912345678-joaoantonio@email.com");
+        addNewUser("Jose Antonio-root-Rua 2-1/1/1986-934567812-joseantonio@email.com");
 
-        addNewMeeting("manel-talk about stannis-wall-stannisthemannis-22/10/2015,17:30-Stannis Baratheon,Jon Snow-Ai1,Ai2-120");
-        addNewMeeting("Stannis Baratheon-talk about mellissandre-wall-mellissandrethemannis-22/10/2015,16:00-manel,Jon Snow-Ai3,Ai4-120");
-        addNewMeeting("manel-talk about Jon-wall-jonthemannis-26/10/2014,00:20-Stannis Baratheon,Jon Snow-Ai5,Ai6-360");
-        addNewMeeting("manel-talk about Robert-wall-robertthemannis-22/10/2014,14:00-Stannis Baratheon,Jon Snow-Ai7,Ai8-120");
-        ActionItem teste = new ActionItem("teste", "Jon Snow");
-        meetings.get(0).addActionItem(teste);
-        findUser("Jon Snow").addActionItem(teste);
+        addNewMeeting("Joao Antonio-Outcome 1-Local 1-Meeting 1-30/10/2014,13:30-Jose Antonio-Action Item 1,Action Item 2-720");
+        addNewMeeting("Joao Antonio-Outcome 2-Local 2-Meeting 2-26/10/2014,22:30-Jose Antonio-Action Item 3,Action Item 4-120");
+        addNewMeeting("Jose Antonio-Outcome 3-Local 3-Meeting 3-25/12/2014,17:30-Joao Antonio-Action Item 5,Action Item 6-120");
+
     }
 
     public static void main(String[] args) {
